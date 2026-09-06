@@ -1979,6 +1979,11 @@
         bodyComp: { musclePct: 35.0, fatPct: 38.0 },
         weightLog: [{ id: 'w1', date: '2026-09-01', weight: 100.0, note: 'بداية شهر سبتمبر' }],
         workouts: [],
+        todaySteps: 0,
+        todaySleep: 0,
+        waterGlasses: 0,
+        vitalityDay: 1,
+        vitalityCompletedDays: [],
         supplements: [
           { id: 'sup_creatine', name: 'كرياتين (~3 جم)', taken: false },
           { id: 'sup_omega3', name: 'أوميجا 3', taken: false },
@@ -1994,7 +1999,9 @@
           maghrib: { status: 'unmarked', jamaah: false },
           isha: { status: 'unmarked', jamaah: false }
         },
-        quranLogs: [{ id: 'q1', date: '2026-09-06', pages: 4, surah: 'سورة البقرة' }]
+        quranLogs: [{ id: 'q1', date: '2026-09-06', pages: 4, surah: 'سورة البقرة' }],
+        journeyDay: 1,
+        journeyCompletedDays: []
       },
       dev: {
         vocab: [
@@ -2971,21 +2978,73 @@
       showToast('تم حفظ مراجعة المساء');
     }
 
-    function continueVitalityPlan() { showToast('أنت تتابع اليوم 1 من 45 في خطة Vitality'); }
-    function toggleCurrentVitalityDayCompletion() { showToast('تم تحديث حالة إكمال يوم الخطة'); }
-    function openVitalityJumpModal() { showToast('يمكنك استعراض أي يوم من الخطة البدنية'); }
-    function openCustomizeMealModal() { showToast('تخصيص الوجبات متاح وسلس'); }
-    function navigateVitalityDay(dir) { showToast(`انتقال اليوم البدني (${dir > 0 ? '+' : ''}${dir})`); }
-    function goToVitalityToday() { showToast('العودة لليوم الحسابي في خطة الصحة'); }
+    function continueVitalityPlan() { showToast(`أنت في اليوم ${appState.health.vitalityDay || 1} من 45`); }
+    function toggleCurrentVitalityDayCompletion() {
+      const day = appState.health.vitalityDay || 1;
+      appState.health.vitalityCompletedDays = appState.health.vitalityCompletedDays || [];
+      const idx = appState.health.vitalityCompletedDays.indexOf(day);
+      if (idx > -1) appState.health.vitalityCompletedDays.splice(idx, 1);
+      else appState.health.vitalityCompletedDays.push(day);
+      notifyStateChanged('vitality_day_toggle');
+      showToast('تم تحديث حالة إكمال يوم الخطة');
+    }
+    function openVitalityJumpModal() {
+      const val = prompt('اذهب إلى يوم رقم (1-45):', appState.health.vitalityDay || 1);
+      const n = parseInt(val);
+      if (isNaN(n) || n < 1 || n > 45) return;
+      appState.health.vitalityDay = n;
+      notifyStateChanged('vitality_jump');
+    }
+    function openCustomizeMealModal() { showToast('تخصيص الوجبات متاح قريباً'); }
+    function navigateVitalityDay(dir) {
+      let day = (appState.health.vitalityDay || 1) + dir;
+      day = Math.max(1, Math.min(45, day));
+      appState.health.vitalityDay = day;
+      notifyStateChanged('vitality_day_nav');
+    }
+    function goToVitalityToday() { appState.health.vitalityDay = 1; notifyStateChanged('vitality_today'); }
     function logCurrentDayWorkoutToHistory() { openLogWorkoutModal(); }
-    function promptUpdateVitalitySteps() { showToast('تم تحديث خطوات المشي'); }
-    function promptUpdateVitalitySleep() { showToast('تم تحديث ساعات النوم'); }
+    function promptUpdateVitalitySteps() {
+      const val = prompt('كام خطوة مشيت النهاردة؟', appState.health.todaySteps || 0);
+      const n = parseInt(val);
+      if (isNaN(n) || n < 0) return;
+      appState.health.todaySteps = n;
+      notifyStateChanged('steps_updated');
+      showToast('تم تحديث خطوات المشي');
+    }
+    function promptUpdateVitalitySleep() {
+      const val = prompt('كام ساعة نمت؟', appState.health.todaySleep || 0);
+      const n = parseFloat(val);
+      if (isNaN(n) || n < 0) return;
+      appState.health.todaySleep = n;
+      notifyStateChanged('sleep_updated');
+      showToast('تم تحديث ساعات النوم');
+    }
 
-    function continueJourney() { showToast('متابعة رحلة الـ 200 يوم الإيمانية'); }
-    function toggleCurrentDayCompletion() { showToast('تم تحديث إكمال اليوم الإيماني'); }
-    function openJumpToDayModal() { showToast('الانتقال لأي يوم من الـ 200 يوم متاح'); }
-    function navigateJourneyDay(dir) { showToast(`تصفح اليوم الإيماني (${dir > 0 ? '+' : ''}${dir})`); }
-    function goToJourneyToday() { showToast('العودة لورد اليوم الإيماني'); }
+    function continueJourney() { showToast(`أنت في اليوم ${appState.faith.journeyDay || 1} من 200`); }
+    function toggleCurrentDayCompletion() {
+      const day = appState.faith.journeyDay || 1;
+      appState.faith.journeyCompletedDays = appState.faith.journeyCompletedDays || [];
+      const idx = appState.faith.journeyCompletedDays.indexOf(day);
+      if (idx > -1) appState.faith.journeyCompletedDays.splice(idx, 1);
+      else appState.faith.journeyCompletedDays.push(day);
+      notifyStateChanged('journey_day_toggle');
+      showToast('تم تحديث إكمال اليوم الإيماني');
+    }
+    function openJumpToDayModal() {
+      const val = prompt('اذهب إلى يوم رقم (1-200):', appState.faith.journeyDay || 1);
+      const n = parseInt(val);
+      if (isNaN(n) || n < 1 || n > 200) return;
+      appState.faith.journeyDay = n;
+      notifyStateChanged('journey_jump');
+    }
+    function navigateJourneyDay(dir) {
+      let day = (appState.faith.journeyDay || 1) + dir;
+      day = Math.max(1, Math.min(200, day));
+      appState.faith.journeyDay = day;
+      notifyStateChanged('journey_day_nav');
+    }
+    function goToJourneyToday() { appState.faith.journeyDay = 1; notifyStateChanged('journey_today'); }
     function openJourneyBookmarksModal() { showToast('فتح المحفوظات الإيمانية'); }
     function toggleBookmarkJourneyItem(item) { showToast(`تمت إضافة ${item} إلى المحفوظات 🔖`); }
     function copyJourneyItemText(item) { showToast(`تم نسخ نص ${item} بنجاح 📋`); }
@@ -3008,17 +3067,395 @@
       notifyStateChanged('vocab_added');
       showToast('تمت إضافة الكلمة الإنجليزية');
     }
-    function openAddSpeakingModal() { showToast('تسجيل جلسة محادثة'); }
-    function openAddInterviewModal() { showToast('إضافة سؤال إنترفيو'); }
-    function openAddDeviceModal() { showToast('توثيق جهاز طبي جديد'); }
-    function openAddArduinoModal() { showToast('إضافة مشروع أردوينو'); }
-    function renderVocabList() {}
-    function renderTransactionList() {}
+    function openAddSpeakingModal() {
+      const topic = prompt('أدخل موضوع جلسة المحادثة:');
+      if (!topic || !topic.trim()) return;
+      appState.dev.speaking.unshift({ id: 'sp_' + Date.now(), topic: topic.trim(), date: appState.currentDate });
+      notifyStateChanged('speaking_added');
+      showToast('تم تسجيل جلسة المحادثة');
+    }
+    function openAddInterviewModal() {
+      const q = prompt('أدخل سؤال المقابلة:');
+      if (!q || !q.trim()) return;
+      appState.dev.interview.unshift({ id: 'iv_' + Date.now(), question: q.trim(), date: appState.currentDate });
+      notifyStateChanged('interview_added');
+      showToast('تمت إضافة سؤال المقابلة');
+    }
+    function openAddDeviceModal() {
+      const name = prompt('اسم الجهاز الطبي:');
+      if (!name || !name.trim()) return;
+      const notes = prompt('ملاحظات عن الجهاز:') || '';
+      appState.dev.devices.unshift({ id: 'd_' + Date.now(), name: name.trim(), category: 'عام', notes, date: appState.currentDate });
+      notifyStateChanged('device_added');
+      showToast('تم توثيق الجهاز الطبي');
+    }
+    function openAddArduinoModal() {
+      const name = prompt('اسم مشروع الأردوينو:');
+      if (!name || !name.trim()) return;
+      const notes = prompt('وصف مختصر للمشروع:') || '';
+      appState.dev.arduinoProjects.unshift({ id: 'ar_' + Date.now(), name: name.trim(), notes, date: appState.currentDate });
+      notifyStateChanged('arduino_added');
+      showToast('تمت إضافة مشروع الأردوينو');
+    }
+    function fmtMoney(n) {
+      n = Number(n) || 0;
+      return Math.round(n).toLocaleString('ar-EG') + ' ج.م';
+    }
+    function setElText(id, txt) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = txt;
+    }
+
+    /* ===================== MONEY VIEW ===================== */
+    function renderMoneyView() {
+      const m = appState.money;
+      const totalBalance = (m.accounts || []).reduce((s, a) => s + (Number(a.balance) || 0), 0);
+      const saved = (m.savingGoal && m.savingGoal.saved) || 0;
+      const safeToSpend = totalBalance;
+
+      setElText('money-total-val', fmtMoney(totalBalance));
+      setElText('money-available-val', fmtMoney(totalBalance));
+      setElText('money-saved-val', fmtMoney(saved));
+      setElText('money-planned-val', fmtMoney(0));
+      setElText('money-safetospend-val', fmtMoney(safeToSpend));
+
+      const target = (m.savingGoal && m.savingGoal.target) || 700;
+      const pct = target > 0 ? Math.min(100, Math.round((saved / target) * 100)) : 0;
+      setElText('money-goal-progress-text', `${fmtMoney(saved)} / ${fmtMoney(target)}`);
+      const bar = document.getElementById('money-goal-progress-bar');
+      if (bar) bar.style.width = pct + '%';
+      setElText('money-goal-pct', `${pct}% تم إنجازه`);
+      setElText('money-goal-remaining', `متبقي ${fmtMoney(Math.max(0, target - saved))}`);
+
+      const accList = document.getElementById('money-accounts-list');
+      if (accList) {
+        accList.innerHTML = '';
+        const accounts = m.accounts || [];
+        if (!accounts.length) {
+          accList.innerHTML = '<p class="text-slate-400 text-center py-3">لا توجد حسابات بعد</p>';
+        } else {
+          accounts.forEach(acc => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200';
+            row.innerHTML = `
+              <div>
+                <span class="font-bold text-slate-800 block">${escapeHtml(acc.name)}</span>
+                <span class="text-[10px] text-slate-400">${escapeHtml(acc.type || '')}</span>
+              </div>
+              <span class="font-mono font-bold ${acc.balance < 0 ? 'text-rose-600' : 'text-slate-900'}">${fmtMoney(acc.balance)}</span>
+            `;
+            accList.appendChild(row);
+          });
+        }
+      }
+
+      const bucketsContainer = document.getElementById('money-buckets-container');
+      if (bucketsContainer) {
+        bucketsContainer.innerHTML = '';
+        (m.buckets || []).forEach(b => {
+          const div = document.createElement('div');
+          div.innerHTML = `
+            <div class="flex justify-between mb-1">
+              <span class="text-slate-700 font-medium">${escapeHtml(b.name)}</span>
+              <span class="font-mono text-slate-500">${b.pct}%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mb-2.5">
+              <div class="bg-sky-500 h-1.5 rounded-full" style="width:${b.pct}%"></div>
+            </div>
+          `;
+          bucketsContainer.appendChild(div);
+        });
+      }
+
+      renderTransactionList();
+    }
+
+    function renderTransactionList() {
+      const container = document.getElementById('money-transactions-container');
+      if (!container) return;
+      const searchEl = document.getElementById('tx-search-input');
+      const q = (searchEl?.value || '').trim().toLowerCase();
+      let txs = (appState.money.transactions || []);
+      if (q) txs = txs.filter(t => (t.item || '').toLowerCase().includes(q) || (t.category || '').toLowerCase().includes(q));
+      container.innerHTML = '';
+      if (!txs.length) {
+        container.innerHTML = '<p class="text-slate-400 text-center py-6">لا توجد معاملات مسجلة بعد</p>';
+        return;
+      }
+      txs.forEach(t => {
+        const row = document.createElement('div');
+        const isIncome = t.type === 'income';
+        row.className = 'flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 border-b border-slate-100 last:border-0';
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs ${isIncome ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${isIncome ? '↑' : '↓'}</span>
+            <div>
+              <span class="font-semibold text-slate-800 block">${escapeHtml(t.item)}</span>
+              <span class="text-[10px] text-slate-400">${escapeHtml(t.date || '')} · ${escapeHtml(t.category || '')}</span>
+            </div>
+          </div>
+          <span class="font-mono font-bold ${isIncome ? 'text-emerald-700' : 'text-rose-700'}">${isIncome ? '+' : '-'}${fmtMoney(t.amount)}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    /* ===================== HEALTH VIEW ===================== */
+    function renderHealthView() {
+      const h = appState.health;
+      setElText('health-current-weight-val', `${h.weight.current} كجم`);
+      setElText('health-composition-val', `${h.bodyComp.musclePct}% عضل · ${h.bodyComp.fatPct}% دهون`);
+
+      const wlist = document.getElementById('health-workouts-list');
+      if (wlist) {
+        wlist.innerHTML = '';
+        if (!(h.workouts || []).length) {
+          wlist.innerHTML = '<p class="text-slate-400 text-center py-4">لا توجد تمارين مسجلة بعد</p>';
+        } else {
+          h.workouts.forEach(w => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200';
+            row.innerHTML = `
+              <div>
+                <span class="font-semibold text-slate-800 block">${escapeHtml(w.title)}</span>
+                <span class="text-[10px] text-slate-400">${escapeHtml(w.date || '')}</span>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-100 text-sky-700">${escapeHtml(w.focusTag || '')}</span>
+            `;
+            wlist.appendChild(row);
+          });
+        }
+      }
+
+      const supList = document.getElementById('health-supplements-list');
+      if (supList) {
+        supList.innerHTML = '';
+        (h.supplements || []).forEach(s => {
+          const row = document.createElement('label');
+          row.className = 'flex items-center gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer';
+          row.innerHTML = `
+            <input type="checkbox" ${s.taken ? 'checked' : ''} onchange="toggleSupplement('${s.id}')" class="rounded text-sky-600 w-4 h-4">
+            <span class="${s.taken ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${escapeHtml(s.name)}</span>
+          `;
+          supList.appendChild(row);
+        });
+      }
+
+      const vDay = h.vitalityDay || 1;
+      const vCompleted = (h.vitalityCompletedDays || []).length;
+      const vPct = Math.round((vCompleted / 45) * 100);
+      setElText('vitality-day-label', `اليوم ${vDay} من 45`);
+      setElText('vitality-progress-pct', `${vPct}%`);
+      const vBar = document.getElementById('vitality-progress-bar');
+      if (vBar) vBar.style.width = vPct + '%';
+      setElText('vitality-completed-count', `${vCompleted} يوم مكتمل`);
+      setElText('vitality-remaining-count', `${45 - vCompleted} يوماً متبقية`);
+      const vIsDone = (h.vitalityCompletedDays || []).includes(vDay);
+      setElText('vitality-complete-text', vIsDone ? 'إلغاء إكمال اليوم' : 'إكمال يوم الخطة');
+      const vDayStatusPill = document.getElementById('vitality-day-status-pill');
+      if (vDayStatusPill) vDayStatusPill.textContent = vIsDone ? 'مكتمل ✓' : 'قيد التنفيذ';
+
+      const filled = h.waterGlasses || 0;
+      const waterContainer = document.getElementById('v-water-glasses');
+      if (waterContainer) {
+        waterContainer.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.onclick = () => toggleWaterGlass(i);
+          btn.className = `flex-1 h-7 rounded-lg border text-xs nexus-btn ${i <= filled ? 'bg-sky-500 border-sky-500 text-white' : 'bg-slate-50 border-slate-200 text-slate-300'}`;
+          btn.textContent = '💧';
+          waterContainer.appendChild(btn);
+        }
+      }
+      setElText('v-water-text', `${filled} / 8 أكواب`);
+      setElText('v-steps-val', `${(h.todaySteps || 0).toLocaleString('ar-EG')} خطوة`);
+      setElText('v-sleep-val', `${h.todaySleep || 0} ساعة`);
+    }
+
+    function toggleSupplement(id) {
+      const s = (appState.health.supplements || []).find(x => x.id === id);
+      if (s) { s.taken = !s.taken; notifyStateChanged('supplement_toggle'); }
+    }
+
+    function toggleWaterGlass(n) {
+      appState.health.waterGlasses = (appState.health.waterGlasses === n) ? n - 1 : n;
+      notifyStateChanged('water_updated');
+    }
+
+    /* ===================== FAITH VIEW ===================== */
+    function renderFaithView() {
+      const f = appState.faith;
+      const names = { fajr: 'الفجر', dhuhr: 'الظهر', asr: 'العصر', maghrib: 'المغرب', isha: 'العشاء' };
+      const container = document.getElementById('faith-prayers-container');
+      let onTimeCount = 0;
+      if (container) {
+        container.innerHTML = '';
+        Object.keys(names).forEach(key => {
+          const p = f.prayersToday[key] || { status: 'unmarked', jamaah: false };
+          if (p.status === 'ontime') onTimeCount++;
+          const statusColor = p.status === 'ontime' ? 'emerald' : (p.status === 'late' ? 'amber' : 'slate');
+          const div = document.createElement('button');
+          div.type = 'button';
+          div.className = `p-2.5 rounded-xl border text-center nexus-btn bg-${statusColor}-50 border-${statusColor}-200`;
+          div.onclick = () => cyclePrayerStatus(key);
+          div.innerHTML = `
+            <span class="text-xs font-bold text-${statusColor}-800 block">${names[key]}</span>
+            <span class="text-[10px] text-${statusColor}-600 block mt-1">${p.status === 'ontime' ? 'في وقتها ✓' : (p.status === 'late' ? 'متأخرة' : 'لم تُسجل')}</span>
+          `;
+          container.appendChild(div);
+        });
+      }
+      setElText('faith-prayer-daily-score', `${onTimeCount} / 5 في وقتها`);
+
+      const qlist = document.getElementById('faith-quran-logs-list');
+      if (qlist) {
+        qlist.innerHTML = '';
+        if (!(f.quranLogs || []).length) {
+          qlist.innerHTML = '<p class="text-slate-400 text-center py-3">لا يوجد سجل قراءة بعد</p>';
+        } else {
+          f.quranLogs.forEach(q => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200';
+            row.innerHTML = `
+              <span class="text-slate-700">${escapeHtml(q.surah || '')} — ${escapeHtml(q.date || '')}</span>
+              <span class="font-mono font-bold text-emerald-700">${q.pages} صفحة</span>
+            `;
+            qlist.appendChild(row);
+          });
+        }
+      }
+
+      const jDay = f.journeyDay || 1;
+      const jCompleted = (f.journeyCompletedDays || []).length;
+      const jPct = Math.round((jCompleted / 200) * 100);
+      setElText('journey-day-label', `اليوم ${jDay} من 200`);
+      setElText('journey-progress-pct', `${jPct}%`);
+      const jBar = document.getElementById('journey-progress-bar');
+      if (jBar) jBar.style.width = Math.max(jPct, 0.5) + '%';
+      setElText('journey-completed-count', `${jCompleted} مكتمل`);
+      setElText('journey-remaining-count', `${200 - jCompleted} متبقٍ`);
+      const jIsDone = (f.journeyCompletedDays || []).includes(jDay);
+      setElText('journey-complete-text', jIsDone ? 'إلغاء إكمال اليوم' : 'تحديد اليوم كمكتمل');
+      const jDayStatusPill = document.getElementById('journey-day-status-pill');
+      if (jDayStatusPill) jDayStatusPill.textContent = jIsDone ? 'مكتمل ✓' : 'قيد المتابعة';
+    }
+
+    function cyclePrayerStatus(key) {
+      const order = ['unmarked', 'ontime', 'late'];
+      const cur = appState.faith.prayersToday[key] || { status: 'unmarked', jamaah: false };
+      const idx = order.indexOf(cur.status);
+      cur.status = order[(idx + 1) % order.length];
+      appState.faith.prayersToday[key] = cur;
+      notifyStateChanged('prayer_status');
+    }
+
+    /* ===================== DEV VIEW ===================== */
+    function renderDevView() {
+      const d = appState.dev;
+      renderVocabList();
+
+      const spList = document.getElementById('dev-speaking-list');
+      if (spList) {
+        spList.innerHTML = '';
+        if (!(d.speaking || []).length) {
+          spList.innerHTML = '<p class="text-slate-400 text-center py-3 text-[11px]">لا توجد جلسات مسجلة</p>';
+        } else {
+          d.speaking.forEach(s => {
+            const row = document.createElement('div');
+            row.className = 'p-2 rounded-lg bg-slate-50 border border-slate-200';
+            row.innerHTML = `<span class="text-slate-700 block">${escapeHtml(s.topic || '')}</span><span class="text-[9px] text-slate-400">${escapeHtml(s.date || '')}</span>`;
+            spList.appendChild(row);
+          });
+        }
+      }
+
+      const ivList = document.getElementById('dev-interview-list');
+      if (ivList) {
+        ivList.innerHTML = '';
+        if (!(d.interview || []).length) {
+          ivList.innerHTML = '<p class="text-slate-400 text-center py-3 text-[11px]">لا توجد أسئلة مسجلة</p>';
+        } else {
+          d.interview.forEach(q => {
+            const row = document.createElement('div');
+            row.className = 'p-2 rounded-lg bg-slate-50 border border-slate-200';
+            row.innerHTML = `<span class="text-slate-700 block">${escapeHtml(q.question || '')}</span>`;
+            ivList.appendChild(row);
+          });
+        }
+      }
+
+      const devList = document.getElementById('dev-device-list');
+      if (devList) {
+        devList.innerHTML = '';
+        if (!(d.devices || []).length) {
+          devList.innerHTML = '<p class="text-slate-400 text-center py-3 col-span-2">لا توجد أجهزة موثقة بعد</p>';
+        } else {
+          d.devices.forEach(dv => {
+            const div = document.createElement('div');
+            div.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200';
+            div.innerHTML = `
+              <span class="font-bold text-slate-800 text-xs block">${escapeHtml(dv.name)}</span>
+              <span class="text-[10px] text-indigo-600 block mb-1">${escapeHtml(dv.category || '')}</span>
+              <p class="text-[11px] text-slate-600 leading-relaxed">${escapeHtml(dv.notes || '')}</p>
+            `;
+            devList.appendChild(div);
+          });
+        }
+      }
+
+      const ardList = document.getElementById('dev-arduino-list');
+      if (ardList) {
+        ardList.innerHTML = '';
+        if (!(d.arduinoProjects || []).length) {
+          ardList.innerHTML = '<p class="text-slate-400 text-center py-3">لا توجد مشاريع بعد</p>';
+        } else {
+          d.arduinoProjects.forEach(p => {
+            const row = document.createElement('div');
+            row.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200';
+            row.innerHTML = `<span class="font-bold text-slate-800 text-xs block">${escapeHtml(p.name || '')}</span><p class="text-[11px] text-slate-600">${escapeHtml(p.notes || '')}</p>`;
+            ardList.appendChild(row);
+          });
+        }
+      }
+    }
+
+    function renderVocabList() {
+      const list = document.getElementById('dev-vocab-list');
+      if (!list) return;
+      const q = (document.getElementById('dev-vocab-search')?.value || '').trim().toLowerCase();
+      let items = appState.dev.vocab || [];
+      if (q) items = items.filter(v => v.word.toLowerCase().includes(q) || (v.meaning || '').toLowerCase().includes(q));
+      list.innerHTML = '';
+      if (!items.length) {
+        list.innerHTML = '<p class="text-slate-400 text-center py-3 text-[11px]">لا توجد كلمات بعد</p>';
+        return;
+      }
+      items.forEach(v => {
+        const row = document.createElement('div');
+        row.className = 'p-2 rounded-lg bg-slate-50 border border-slate-200';
+        row.innerHTML = `<span class="font-bold text-slate-800 text-xs block">${escapeHtml(v.word)}</span><span class="text-[11px] text-slate-600">${escapeHtml(v.meaning)}</span>`;
+        list.appendChild(row);
+      });
+    }
+
+    function closeModals() {
+      closeGoalDetailModal();
+      closeWeeklyReviewModal();
+      closeAchievementsModal();
+      closeSettingsModal();
+      closeAssistantModal();
+      closeConfirmModal();
+    }
 
     function renderAll() {
       renderHomeView();
       renderGoalsCenter();
       renderNotificationsUI();
+      renderMoneyView();
+      renderHealthView();
+      renderFaithView();
+      renderDevView();
     }
 
     window.onload = function () {
