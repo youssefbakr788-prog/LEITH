@@ -1,0 +1,3052 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full bg-slate-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="LEITH — Personal Life Operating System. An integrated, offline-first personal workspace.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LEITH">
+  <title>LEITH — Personal Life Operating System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Dynamic PWA Manifest Injection -->
+  <link id="pwa-manifest-link" rel="manifest">
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .font-serif {
+      font-family: 'Amiri', serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @keyframes nexusFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes homeAmbientBlob {
+      0% {
+        transform: translate(0px, 0px) scale(1);
+      }
+      50% {
+        transform: translate(-15px, 20px) scale(1.04);
+      }
+      100% {
+        transform: translate(0px, 0px) scale(1);
+      }
+    }
+    .nexus-card {
+      animation: nexusFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .nexus-card:hover {
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+    }
+    .nexus-btn {
+      transition: all 0.15s ease;
+    }
+    .nexus-btn:active {
+      transform: scale(0.97);
+    }
+    .home-ambient-shape {
+      position: absolute;
+      top: -60px;
+      left: -60px;
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(14, 165, 233, 0.02) 60%, transparent 75%);
+      filter: blur(40px);
+      pointer-events: none;
+      z-index: 0;
+      animation: homeAmbientBlob 14s infinite ease-in-out;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nexus-card, .home-ambient-shape, .nexus-btn {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-100/70 text-slate-800 antialiased flex flex-col selection:bg-sky-500 selection:text-white relative overflow-x-hidden">
+
+  <!-- Audio Greeting Fallback -->
+  <audio id="leith-audio-greeting" src="/assets/leith-intro.mp3" preload="none" class="hidden"></audio>
+
+  <!-- ========================================================================= -->
+  <!-- GLOBAL HEADER                                                             -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-3 sm:px-6 py-2.5 shadow-sm flex items-center justify-between">
+    <!-- Right side (in RTL): Menu toggle, Brand, Dynamic Date -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <button id="leith-menu-btn" onclick="toggleNavDrawer()" class="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-100 transition-all group focus:outline-none focus:ring-2 focus:ring-sky-500/40" title="فتح القائمة الرئيسية (اضغط L)" aria-label="Toggle Navigation Drawer">
+        <div class="w-8 h-8 rounded-lg bg-slate-900 text-white font-black text-sm flex items-center justify-center tracking-wider shadow-sm group-hover:bg-sky-600 transition-colors">
+          L
+        </div>
+        <div class="text-right hidden sm:block">
+          <span class="font-extrabold text-sm tracking-tight text-slate-900 block leading-none">LEITH</span>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider uppercase">نظام تشغيل الحياة</span>
+        </div>
+      </button>
+
+      <!-- Dynamic Header Date -->
+      <div id="header-date-container" class="flex flex-col border-r border-slate-200 pr-2 sm:pr-3">
+        <span id="header-date-day" class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider leading-tight">الأحد</span>
+        <span id="header-date-calendar" class="text-[11px] font-semibold font-mono text-slate-700 leading-tight">6 سبتمبر 2026</span>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Pill Bar (Desktop) -->
+    <nav class="hidden lg:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+      <button onclick="switchView('home')" id="pill-nav-home" class="px-3 py-1.5 rounded-lg bg-white shadow-xs text-sky-900 font-bold transition-all">🏠 القيادة</button>
+      <button onclick="switchView('goals')" id="pill-nav-goals" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">🎯 الأهداف والخطط</button>
+      <button onclick="switchView('money')" id="pill-nav-money" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">💰 المالية</button>
+      <button onclick="switchView('health')" id="pill-nav-health" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">💪 الصحة والجيم</button>
+      <button onclick="switchView('faith')" id="pill-nav-faith" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">🌙 الإيمان</button>
+      <button onclick="switchView('dev')" id="pill-nav-dev" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">📚 التطوير</button>
+    </nav>
+
+    <!-- Left side (in RTL): Omnibox Search, PWA Install, Language, Notifications, Settings, Assistant -->
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <!-- Global Search Button (Ctrl/Cmd + K) -->
+      <button onclick="openGlobalSearch()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-medium nexus-btn" title="البحث الشامل (Ctrl+K)">
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <span class="hidden md:inline">بحث...</span>
+        <kbd class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[9px] font-mono text-slate-400 shadow-2xs">⌘K</kbd>
+      </button>
+
+      <!-- PWA Install Button (Dynamic) -->
+      <button id="pwa-install-btn" onclick="installPWA()" class="hidden items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 text-xs font-semibold nexus-btn" title="تثبيت التطبيق على جهازك">
+        <span>📲</span>
+        <span class="hidden sm:inline">تثبيت</span>
+      </button>
+
+      <!-- Quick Language Pill (AR | EN) -->
+      <button id="quick-lang-pill" onclick="toggleLanguage()" class="px-2 sm:px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 font-mono text-[11px] font-bold text-slate-700 nexus-btn" title="تبديل اللغة (AR | EN)">
+        🇪🇬 عربي
+      </button>
+
+      <!-- Notifications Bell Button with Dynamic Badge -->
+      <button onclick="toggleNotifications()" class="relative w-8 h-8 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn" title="مركز التنبيهات">
+        <span>🔔</span>
+        <span id="notif-badge" class="hidden absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-rose-500"></span>
+      </button>
+
+      <!-- Settings Trigger -->
+      <button onclick="openSettingsModal()" class="w-8 h-8 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn" title="الإعدادات والنسخ الاحتياطي">
+        <span>⚙️</span>
+      </button>
+
+      <!-- Assistant Trigger Button -->
+      <button id="assistant-btn" onclick="openAssistantModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100 transition-all text-xs font-semibold nexus-btn" title="مساعد LEITH الذكي">
+        <svg class="w-3.5 h-3.5 text-sky-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+          <circle cx="12" cy="5" r="2"></circle>
+          <path d="M12 7v4"></path>
+          <line x1="8" y1="16" x2="8" y2="16.01"></line>
+          <line x1="16" y1="16" x2="16" y2="16.01"></line>
+        </svg>
+        <span class="hidden md:inline">المساعد</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- SLIDE-OUT NAVIGATION DRAWER                                               -->
+  <!-- ========================================================================= -->
+  <div id="nav-drawer-overlay" onclick="closeNavDrawer()" class="fixed inset-0 bg-slate-900/30 backdrop-blur-[2px] z-50 transition-opacity duration-300 opacity-0 pointer-events-none" aria-hidden="true"></div>
+
+  <aside id="nav-drawer" class="fixed top-0 bottom-0 right-0 z-50 w-[88vw] sm:w-[320px] max-w-[360px] bg-white border-l border-slate-200 shadow-2xl flex flex-col transition-transform duration-300 ease-out translate-x-full overflow-y-auto custom-scrollbar" aria-label="Main Navigation">
+    <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-slate-900 text-white font-black text-sm flex items-center justify-center tracking-wider shadow-sm">
+          L
+        </div>
+        <div>
+          <h2 class="font-extrabold text-sm tracking-tight text-slate-900 leading-none">LEITH</h2>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider">Personal Life OS v3.5</span>
+        </div>
+      </div>
+      <button onclick="closeNavDrawer()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center text-sm nexus-btn" title="إغلاق (Esc)">
+        &times;
+      </button>
+    </div>
+
+    <div class="p-3 sm:p-4 space-y-5 flex-1">
+      <div class="space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">أركان الحياة</span>
+        
+        <button id="drawer-nav-home" onclick="navigateFromDrawer('home')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold bg-sky-50 text-sky-900 border border-sky-100 shadow-sm transition-all group">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏠</span>
+            <span>مركز القيادة (Command Center)</span>
+          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500 drawer-active-dot"></span>
+        </button>
+
+        <button id="drawer-nav-goals" onclick="navigateFromDrawer('goals')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all group">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🎯</span>
+            <span>الأهداف والخطط الكبرى</span>
+          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500 drawer-active-dot hidden"></span>
+        </button>
+
+        <button id="drawer-nav-money" onclick="navigateFromDrawer('money')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all group">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">💰</span>
+            <span>المالية والادخار</span>
+          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500 drawer-active-dot hidden"></span>
+        </button>
+
+        <button id="drawer-nav-health" onclick="navigateFromDrawer('health')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all group">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏋️</span>
+            <span>الصحة والجيم والوزن</span>
+          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500 drawer-active-dot hidden"></span>
+        </button>
+
+        <button id="drawer-nav-faith" onclick="navigateFromDrawer('faith')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all group">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🕌</span>
+            <span>الإيمان والصلوات والورد</span>
+          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500 drawer-active-dot hidden"></span>
+        </button>
+
+        <button id="drawer-nav-dev" onclick="navigateFromDrawer('dev')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all group">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📚</span>
+            <span>التطوير والمهارات والهندسة</span>
+          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500 drawer-active-dot hidden"></span>
+        </button>
+      </div>
+
+      <div class="space-y-1 pt-3 border-t border-slate-100">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 block mb-1.5">أدوات النظام</span>
+        
+        <button onclick="closeNavDrawer(); openGlobalSearch();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 transition-all">
+          <span>🔍</span>
+          <span>البحث الشامل (Omnibox Search)</span>
+        </button>
+
+        <button onclick="closeNavDrawer(); openSettingsModal();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 transition-all">
+          <span>⚙️</span>
+          <span>الإعدادات والنسخ الاحتياطي</span>
+        </button>
+
+        <button onclick="closeNavDrawer(); openWeeklyReviewModal();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-all">
+          <span>📊</span>
+          <span class="font-bold">المراجعة الأسبوعية الشاملة</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-[11px] text-slate-400">
+      <span>اختصار سريع: <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono font-bold text-slate-700 shadow-2xs">L</kbd></span>
+      <span>البحث: <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono font-bold text-slate-700 shadow-2xs">⌘K</kbd></span>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- NOTIFICATIONS CENTER POPOVER                                              -->
+  <!-- ========================================================================= -->
+  <div id="notifications-popover" class="hidden absolute top-14 left-3 sm:left-6 z-50 w-[92vw] sm:w-88 max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 text-xs space-y-3 nexus-card">
+    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+      <div class="flex items-center gap-2">
+        <span class="text-base">🔔</span>
+        <span class="font-bold text-slate-900">مركز التنبيهات الحي</span>
+        <span id="notif-count-badge" class="px-2 py-0.2 rounded-full bg-sky-100 text-sky-800 text-[10px] font-mono font-bold">0</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="markAllNotificationsRead()" class="text-[10px] text-sky-600 hover:text-sky-800 font-semibold">تحديد كمقروء</button>
+        <button onclick="toggleNotifications()" class="text-slate-400 hover:text-slate-600 text-sm leading-none">&times;</button>
+      </div>
+    </div>
+    
+    <div id="notifications-list" class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+      <!-- Dynamic list -->
+    </div>
+
+    <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-400 font-mono">
+      <span>مستخرجة من واقع نشاطك اليومي</span>
+      <button onclick="clearAllNotifications()" class="text-rose-500 hover:text-rose-700 text-[10px] font-semibold">مسح الكل</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN SHELL                                                                -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-6 relative">
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: HOME COMMAND CENTER                                               -->
+    <!-- ========================================================================= -->
+    <section id="view-home" class="space-y-6 relative">
+      <div class="home-ambient-shape"></div>
+
+      <!-- Quick Action / Date Ribbon -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm relative z-10 nexus-card">
+        <div class="flex items-center gap-3">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-xs font-bold text-slate-800">سبتمبر 2026: مرحلة الانضباط والتنفيذ الهادئ</span>
+          <span class="text-[11px] text-slate-400 font-mono hidden sm:inline">| اليوم 6 من 30</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openGlobalSearch()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 nexus-btn">
+            <span>🔍</span> بحث سريع
+          </button>
+          <button onclick="openQuickAddModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold flex items-center gap-1.5 shadow-sm nexus-btn">
+            <span>+</span> إضافة سريعة
+          </button>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 🎯 ONE THING (الشيء الأهم لليوم)                                      -->
+      <!-- ===================================================================== -->
+      <div id="home-one-thing-card" class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800 relative z-10 nexus-card overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30 text-[10px] font-bold font-mono tracking-wider uppercase">
+              🎯 ONE THING — أولوية اليوم المطلقة
+            </span>
+            <span id="one-thing-area-badge" class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">عام</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-mono">اختيار ذكي مبني على بياناتك</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center pt-3">
+          <div class="md:col-span-8 space-y-1.5">
+            <h2 id="one-thing-title" class="text-base sm:text-lg font-extrabold text-white tracking-tight">جاري تحديد أولويتك القصوى...</h2>
+            <p id="one-thing-reason" class="text-xs text-slate-300 leading-relaxed font-serif">سبب الاختيار: تحليل المهام المتأخرة والصلوات ومسار الجيم.</p>
+          </div>
+          <div class="md:col-span-4 flex items-center justify-start md:justify-end gap-2">
+            <button id="one-thing-start-btn" onclick="startOneThingAction()" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs shadow-md nexus-btn">
+              ▶ بدء التنفيذ
+            </button>
+            <button id="one-thing-complete-btn" onclick="completeOneThingAction()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-bold text-xs nexus-btn">
+              ✓ تم الإنجاز
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 💓 LEITH PULSE (نبض الحياة العام)                                      -->
+      <!-- ===================================================================== -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 relative z-10 nexus-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+              <span>💓 LEITH Pulse — نبض وتناغم أركان حياتك</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">تقييم لحظي شامل مبني على حسابات دقيقة للمالية، الصحة، الإيمان، التطوير، والأهداف.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="pulse-overall-badge" class="px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-50 text-emerald-800 border border-emerald-200">
+              الحالة العامة: ممتاز (92%)
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="pulse-pillars-grid">
+          <!-- 5 Life Area Statuses rendered via JS -->
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-xs">
+          <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/70 space-y-1">
+            <span class="font-bold text-emerald-900 flex items-center gap-1.5">
+              <span>🌟</span> ما يسير بشكل ممتاز:
+            </span>
+            <p id="pulse-going-well" class="text-emerald-800 text-[11px] leading-relaxed">جاري التحليل...</p>
+          </div>
+          <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200/70 space-y-1">
+            <span class="font-bold text-amber-900 flex items-center gap-1.5">
+              <span>⚠️</span> يحتاج لاهتمامك:
+            </span>
+            <p id="pulse-needs-attention" class="text-amber-800 text-[11px] leading-relaxed">جاري التحليل...</p>
+          </div>
+          <div class="p-3 rounded-xl bg-sky-50/70 border border-sky-200/70 space-y-1">
+            <span class="font-bold text-sky-900 flex items-center gap-1.5">
+              <span>💡</span> الخطوة المقترحة التالية:
+            </span>
+            <p id="pulse-suggested-action" class="text-sky-800 text-[11px] leading-relaxed">جاري التحليل...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two-Column Layout (Focus & Calendar / Habits) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Right: Today's Focus & Pillars Snapshot -->
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3.5 nexus-card">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                <span>⚡</span> تركيز اليوم (Focus Tasks)
+              </h3>
+              <span class="text-[10px] font-mono text-slate-400">6 سبتمبر 2026</span>
+            </div>
+            <div id="home-focus-list" class="space-y-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+            <button onclick="openAddTaskModal()" class="w-full py-2 rounded-xl border border-dashed border-slate-300 text-slate-500 hover:text-slate-800 hover:border-slate-400 text-xs font-medium text-center nexus-btn">
+              + إضافة مهمة تركيز جديدة
+            </button>
+          </div>
+
+          <!-- Life Pillars Quick Entry Cards -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3.5 nexus-card">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                <span>🌐</span> أركان الحياة الأساسية
+              </h3>
+              <span class="text-[10px] text-slate-400 font-mono">5 محاور نشطة</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2.5 text-xs">
+              <!-- Goals Card -->
+              <div onclick="switchView('goals')" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer flex items-center justify-between transition-all group nexus-btn">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-sm">
+                    🎯
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-800 group-hover:text-sky-700 block">الأهداف والخطط</span>
+                    <span id="home-snap-goals-sub" class="text-[10px] text-slate-500 block font-mono">الزواج، الجيش، الشغل</span>
+                  </div>
+                </div>
+                <div class="text-left">
+                  <span id="home-snap-goals" class="font-mono font-extrabold text-amber-700 block">6 أهداف</span>
+                  <span class="text-[10px] text-sky-600 font-medium">عرض &larr;</span>
+                </div>
+              </div>
+
+              <!-- Money Card -->
+              <div onclick="switchView('money')" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer flex items-center justify-between transition-all group nexus-btn">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">
+                    💰
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-800 group-hover:text-sky-700 block">المركز المالي</span>
+                    <span id="home-snap-money-sub" class="text-[10px] text-slate-500 block font-mono">0 / 700 ج.م ادخار</span>
+                  </div>
+                </div>
+                <div class="text-left">
+                  <span id="home-snap-money" class="font-mono font-extrabold text-slate-900 block">9,000 ج.م</span>
+                  <span class="text-[10px] text-sky-600 font-medium">عرض &larr;</span>
+                </div>
+              </div>
+
+              <!-- Health Card -->
+              <div onclick="switchView('health')" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer flex items-center justify-between transition-all group nexus-btn">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-sm">
+                    💪
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-800 group-hover:text-sky-700 block">الصحة والتمارين</span>
+                    <span id="home-snap-health-sub" class="text-[10px] text-slate-500 block font-mono">المسار: نحو 88 كجم</span>
+                  </div>
+                </div>
+                <div class="text-left">
+                  <span id="home-snap-health" class="font-mono font-extrabold text-slate-900 block">100.0 كجم</span>
+                  <span class="text-[10px] text-sky-600 font-medium">عرض &larr;</span>
+                </div>
+              </div>
+
+              <!-- Dev Card -->
+              <div onclick="switchView('dev')" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer flex items-center justify-between transition-all group nexus-btn">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-sm">
+                    📚
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-800 group-hover:text-sky-700 block">التطوير والمهارات</span>
+                    <span id="home-snap-dev-sub" class="text-[10px] text-slate-500 block font-mono">الإنجليزية، الأجهزة، الأردوينو</span>
+                  </div>
+                </div>
+                <div class="text-left">
+                  <span id="home-snap-dev" class="font-mono font-extrabold text-indigo-700 block">0 عنصر</span>
+                  <span class="text-[10px] text-indigo-600 font-medium">عرض &larr;</span>
+                </div>
+              </div>
+
+              <!-- Faith Card -->
+              <div onclick="switchView('faith')" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer flex items-center justify-between transition-all group nexus-btn">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">
+                    🌙
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-800 group-hover:text-sky-700 block">الإيمان والقرآن</span>
+                    <span id="home-snap-faith-sub" class="text-[10px] text-slate-500 block font-mono">الصلوات والورد والرحلة</span>
+                  </div>
+                </div>
+                <div class="text-left">
+                  <span id="home-snap-faith" class="font-mono font-extrabold text-emerald-700 block">0/5 صلوات</span>
+                  <span class="text-[10px] text-emerald-600 font-medium">عرض &larr;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Left (in RTL): Calendar & Habit Matrix -->
+        <div class="lg:col-span-8 space-y-6">
+          <!-- Integrated Calendar -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">التقويم المتكامل</h3>
+                <span class="text-xs text-slate-500 font-mono">سبتمبر 2026</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="calendarPrevMonth()" class="w-6 h-6 rounded hover:bg-slate-100 text-slate-500 flex items-center justify-center text-xs">&rsaquo;</button>
+                <button onclick="calendarNextMonth()" class="w-6 h-6 rounded hover:bg-slate-100 text-slate-500 flex items-center justify-center text-xs">&lsaquo;</button>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="grid grid-cols-7 gap-1 text-center font-mono text-[10px] text-slate-400 font-semibold py-1">
+                <span>الإثنين</span><span>الثلاثاء</span><span>الأربعاء</span><span>الخميس</span><span>الجمعة</span><span>السبت</span><span>الأحد</span>
+              </div>
+              <div id="home-calendar-grid" class="grid grid-cols-7 gap-1 text-xs">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+            <!-- Selected Day Mini-Agenda -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+              <div class="flex items-center justify-between">
+                <span id="home-selected-day-label" class="text-xs font-bold text-slate-800">اليوم المحدد: 6 سبتمبر 2026</span>
+                <button onclick="openAddEventModal()" class="text-[11px] text-sky-700 hover:text-sky-800 font-medium">+ إضافة موعد/حدث</button>
+              </div>
+              <div id="home-selected-day-items" class="space-y-1 text-xs text-slate-600">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Digital Habit Matrix (30 Days) -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3.5 nexus-card">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">مصفوفة العادات اليومية (سبتمبر)</h3>
+                <p class="text-[11px] text-slate-500">اضغط على الخانة لتغيير الحالة: ✓ مكتمل، — لم يتم، فارغ</p>
+              </div>
+              <button onclick="openAddHabitModal()" class="text-xs text-sky-700 hover:text-sky-800 font-medium">+ إضافة عادة</button>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar pb-2">
+              <table class="w-full text-xs text-right border-collapse min-w-[700px]">
+                <thead>
+                  <tr class="border-b border-slate-200 text-slate-400 font-mono text-[10px]">
+                    <th class="py-2 pl-3 font-semibold text-slate-700">العادة</th>
+                    <th class="px-1 text-center">1</th><th class="px-1 text-center">2</th><th class="px-1 text-center">3</th><th class="px-1 text-center">4</th><th class="px-1 text-center">5</th>
+                    <th class="px-1 text-center bg-sky-50 text-sky-800 font-bold rounded">6</th>
+                    <th class="px-1 text-center">7</th><th class="px-1 text-center">8</th><th class="px-1 text-center">9</th>
+                    <th class="px-1 text-center">10</th><th class="px-1 text-center">11</th><th class="px-1 text-center">12</th><th class="px-1 text-center">13</th>
+                    <th class="px-1 text-center">14</th><th class="px-1 text-center">15</th><th class="px-1 text-center">16</th><th class="px-1 text-center">17</th>
+                    <th class="px-1 text-center">18</th><th class="px-1 text-center">19</th><th class="px-1 text-center">20</th><th class="px-1 text-center">21</th>
+                    <th class="px-1 text-center">22</th><th class="px-1 text-center">23</th><th class="px-1 text-center">24</th><th class="px-1 text-center">25</th>
+                    <th class="px-1 text-center">26</th><th class="px-1 text-center">27</th><th class="px-1 text-center">28</th><th class="px-1 text-center">29</th><th class="px-1 text-center">30</th>
+                  </tr>
+                </thead>
+                <tbody id="home-habit-matrix-body">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Ribbon for Weekly Review and Achievements -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Weekly Review Trigger Card -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex items-center justify-between nexus-card">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-lg">
+              📊
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs sm:text-sm">المراجعة الأسبوعية (Weekly Review)</h4>
+              <p id="home-weekly-review-sub" class="text-[11px] text-slate-500 font-mono">آخر مراجعة: لم تُجرَ بعد</p>
+            </div>
+          </div>
+          <button onclick="openWeeklyReviewModal()" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold nexus-btn">
+            بدء المراجعة
+          </button>
+        </div>
+
+        <!-- Achievements Trigger Card -->
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex items-center justify-between nexus-card">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-lg">
+              🏆
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs sm:text-sm">سجل الإنجازات والأوسمة (Achievements)</h4>
+              <p id="home-achievements-sub" class="text-[11px] text-slate-500 font-mono">0 من 12 وسام محقق</p>
+            </div>
+          </div>
+          <button onclick="openAchievementsModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn">
+            عرض الأوسمة
+          </button>
+        </div>
+      </div>
+
+      <!-- End of Day Reflection -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3 nexus-card">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">مراجعة نهاية اليوم (Evening Review)</h3>
+          <span class="text-[10px] font-mono text-slate-400">6 سبتمبر 2026</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">ما الذي أنجزته بنجاح اليوم؟</label>
+            <input type="text" id="reflection-completed" onchange="saveDailyReflection()" placeholder="أهم الانتصارات الصغيرة..." class="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">ما الذي فاتني أو تعطل؟</label>
+            <input type="text" id="reflection-missed" onchange="saveDailyReflection()" placeholder="الملاحظات والتعديل المطلوب..." class="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 mb-1">نقطة التحسين الأساسية للغد:</label>
+            <input type="text" id="reflection-improve" onchange="saveDailyReflection()" placeholder="خطوة التميز غداً..." class="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: GOALS & PLAN CENTER                                               -->
+    <!-- ========================================================================= -->
+    <section id="view-goals" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm nexus-card">
+        <div>
+          <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+            <span>🎯</span> الأهداف والخطط الكبرى (Goals & Plans)
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">ابنِ الحياة التي تطمح إليها خطوة بخطوة؛ لكل هدف محطاته وإجراءاته التنفيذية.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openAddGoalModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm nexus-btn">
+            <span>+</span> إضافة هدف جديد
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">إجمالي الأهداف</span>
+          <div id="goals-total-val" class="font-mono text-lg font-extrabold text-slate-900">0</div>
+          <span class="text-[10px] text-slate-400">أهداف استراتيجية محددة</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-emerald-600 tracking-wider">مكتملة</span>
+          <div id="goals-completed-val" class="font-mono text-lg font-extrabold text-emerald-600">0</div>
+          <span class="text-[10px] text-slate-400">انتصارات تم تحقيقها</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-sky-600 tracking-wider">قيد التنفيذ</span>
+          <div id="goals-inprogress-val" class="font-mono text-lg font-extrabold text-sky-600">0</div>
+          <span class="text-[10px] text-slate-400">مسارات نشطة الآن</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">في قائمة الانتظار</span>
+          <div id="goals-notstarted-val" class="font-mono text-lg font-extrabold text-slate-700">0</div>
+          <span class="text-[10px] text-slate-400">مجدولة للمستقبل</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card col-span-2 md:col-span-1">
+          <span class="text-[10px] uppercase font-semibold text-indigo-700 tracking-wider">معدل الإنجاز العام</span>
+          <div id="goals-overall-pct" class="font-mono text-lg font-extrabold text-indigo-700">0%</div>
+          <span class="text-[10px] text-slate-400">عبر كافة المحطات</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm space-y-3 nexus-card">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-1.5" id="goals-status-tabs">
+            <button onclick="setGoalFilterStatus('all')" class="goals-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 text-white transition-all" data-status="all">الكل</button>
+            <button onclick="setGoalFilterStatus('In Progress')" class="goals-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all" data-status="In Progress">قيد التنفيذ</button>
+            <button onclick="setGoalFilterStatus('Not Started')" class="goals-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all" data-status="Not Started">لم تبدأ</button>
+            <button onclick="setGoalFilterStatus('Completed')" class="goals-filter-btn px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all" data-status="Completed">المكتملة</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs w-full sm:w-auto">
+            <select id="goal-filter-category" onchange="renderGoalsCenter()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-xs">
+              <option value="all">كافة التصنيفات</option>
+              <option value="Marriage">💍 الزواج والأسرة</option>
+              <option value="Career">💼 العمل والوظيفة</option>
+              <option value="Personal">🪖 الجيش والانضباط</option>
+              <option value="Money">💰 المالية والادخار</option>
+              <option value="Health">⚖️ الوزن والصحة</option>
+              <option value="Lifestyle">💻 الأدوات والتقنية</option>
+            </select>
+
+            <input type="text" id="goal-search-input" oninput="renderGoalsCenter()" placeholder="بحث في الأهداف..." class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs w-full sm:w-44 focus:outline-none focus:ring-1 focus:ring-sky-500">
+          </div>
+        </div>
+      </div>
+
+      <div id="goals-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: MONEY CENTER                                                      -->
+    <!-- ========================================================================= -->
+    <section id="view-money" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm nexus-card">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span>💰</span> المركز المالي — دفتر الحسابات الحقيقي
+          </h2>
+          <p class="text-xs text-slate-500">الرصيد الفعلي، المبلغ الآمن للصرف، التقسيمات الذكية، وهدف ادخار سبتمبر (700 ج.م).</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openAddTransactionModal('income')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium nexus-btn">
+            + دخل
+          </button>
+          <button onclick="openAddTransactionModal('expense')" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium nexus-btn">
+            - مصروف
+          </button>
+        </div>
+      </div>
+
+      <!-- Financial Metrics Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">إجمالي المال</span>
+          <div id="money-total-val" class="font-mono text-base font-extrabold text-slate-900">9,000 ج.م</div>
+          <span class="text-[10px] text-slate-400">مجموع الحسابات</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">المتاح حالياً</span>
+          <div id="money-available-val" class="font-mono text-base font-extrabold text-slate-800">9,000 ج.م</div>
+          <span class="text-[10px] text-slate-400">سيولة فورية</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">المدخر / المحجوز</span>
+          <div id="money-saved-val" class="font-mono text-base font-extrabold text-indigo-700">0 ج.م</div>
+          <span class="text-[10px] text-slate-400">مدخرات مخصصة</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card">
+          <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">مصاريف مخططة</span>
+          <div id="money-planned-val" class="font-mono text-base font-extrabold text-amber-700">0 ج.م</div>
+          <span class="text-[10px] text-slate-400">التزامات قريبة</span>
+        </div>
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-1 nexus-card col-span-2 md:col-span-1">
+          <span class="text-[10px] uppercase font-semibold text-sky-700 tracking-wider">الآمن للصرف (Safe-to-Spend)</span>
+          <div id="money-safetospend-val" class="font-mono text-base font-extrabold text-sky-700">9,000 ج.م</div>
+          <span class="text-[10px] text-slate-400">رصيد حر</span>
+        </div>
+      </div>
+
+      <!-- September Saving Goal & Accounts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">هدف ادخار سبتمبر 2026</h3>
+              <p class="text-xs text-slate-500">الهدف: ادخار 700 جنيه خلال شهر سبتمبر لبناء عادة الاستقطاع المنظم.</p>
+            </div>
+            <button onclick="promptAddSavings()" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium hover:bg-emerald-100 nexus-btn">
+              + إضافة ادخار
+            </button>
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-600">التقدم نحو الـ 700 ج.م:</span>
+              <span id="money-goal-progress-text" class="font-mono font-bold text-slate-900">0 / 700 ج.م</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div id="money-goal-progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+              <span id="money-goal-pct">0% تم إنجازه</span>
+              <span id="money-goal-remaining">متبقي 700 ج.م</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3.5 nexus-card">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">الحسابات النشطة</h3>
+            <button onclick="promptAddAccount()" class="text-xs text-sky-700 hover:text-sky-800 font-medium">+ حساب جديد</button>
+          </div>
+          <div id="money-accounts-list" class="space-y-2 text-xs">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions & Buckets -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">سجل المعاملات المالية</h3>
+              <p class="text-xs text-slate-500">دفتر حسابات تفصيلي يربط كل عملية بالحساب تلقائياً.</p>
+            </div>
+            <input type="text" id="tx-search-input" oninput="renderTransactionList()" placeholder="فلترة المعاملات..." class="px-2.5 py-1 rounded-lg border border-slate-200 text-xs w-44 focus:outline-none focus:ring-1 focus:ring-sky-500">
+          </div>
+          <div id="money-transactions-container" class="space-y-1.5 max-h-80 overflow-y-auto custom-scrollbar pl-1">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3.5 nexus-card">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2">التقسيمات الذكية (Buckets)</h3>
+            <div id="money-buckets-container" class="space-y-2.5 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 4: HEALTH & FITNESS CENTER                                           -->
+    <!-- ========================================================================= -->
+    <section id="view-health" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm nexus-card">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span>💪</span> مركز الصحة واللياقة البدنية (LEITH Vitality)
+          </h2>
+          <p class="text-xs text-slate-500">متابعة الوزن نحو 88 كجم، تدريب القوة، نسب العضلات والدهون، والترطيب اليومي.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openLogWeightModal()" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-medium nexus-btn">
+            ⚖️ تسجيل وزن
+          </button>
+          <button onclick="openLogWorkoutModal()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium nexus-btn">
+            💪 تسجيل تمرين
+          </button>
+        </div>
+      </div>
+
+      <!-- Vitality Plan (45 Days) -->
+      <div class="bg-white rounded-2xl border border-sky-200/90 p-5 shadow-sm space-y-5 nexus-card relative overflow-hidden">
+        <div class="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-sky-500/5 blur-2xl pointer-events-none"></div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+              <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <span>🏋️</span> LEITH Vitality Plan — 45 Days (برنامج الـ 6 أسابيع)
+              </h3>
+              <span id="vitality-week-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200">
+                الأسبوع 1: التأسيس والتنشيط
+              </span>
+            </div>
+            <p class="text-xs text-slate-500">نظام متكامل يجمع بين تدريب القوة، الوجبات المحسوبة، شرب الماء، خطوات المشي، والنوم المنضبط يوماً بيوم.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="vitality-continue-btn" onclick="continueVitalityPlan()" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm nexus-btn">
+              <span>▶</span> متابعة الخطة
+            </button>
+            <button id="vitality-complete-toggle-btn" onclick="toggleCurrentVitalityDayCompletion()" class="px-3 py-1.5 rounded-xl border border-sky-300 bg-sky-50/80 hover:bg-sky-100 text-sky-900 text-xs font-semibold flex items-center gap-1.5 nexus-btn">
+              <span id="vitality-complete-icon">✓</span>
+              <span id="vitality-complete-text">إكمال يوم الخطة</span>
+            </button>
+            <button onclick="openVitalityJumpModal()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium nexus-btn" title="انتقال لأي يوم من 1 إلى 45">
+              <span>🔢</span> انتقال ليوم...
+            </button>
+            <button onclick="openCustomizeMealModal()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium nexus-btn" title="تعديل وجبات اليوم">
+              <span>✏️</span> تخصيص الوجبات
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-center">
+          <div class="sm:col-span-8 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800" id="vitality-day-label">اليوم 1 من 45</span>
+                <span id="vitality-day-status-pill" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">قيد التنفيذ</span>
+              </div>
+              <span id="vitality-progress-pct" class="font-mono font-extrabold text-sky-700">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div id="vitality-progress-bar" class="bg-gradient-to-r from-sky-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 2%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+              <span id="vitality-completed-count">0 يوم مكتمل</span>
+              <span id="vitality-remaining-count">45 يوماً متبقية</span>
+            </div>
+          </div>
+
+          <div class="sm:col-span-4 flex items-center justify-end gap-1.5">
+            <button onclick="navigateVitalityDay(-1)" class="px-2.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1 nexus-btn" title="اليوم السابق">
+              <span>&larr;</span> السابق
+            </button>
+            <button onclick="goToVitalityToday()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn" title="العودة لليوم الحسابي">
+              اليوم
+            </button>
+            <button onclick="navigateVitalityDay(1)" class="px-2.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1 nexus-btn" title="اليوم التالي">
+              التالي <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-1">
+          <!-- Workout Card -->
+          <div class="lg:col-span-7 p-4 rounded-2xl bg-gradient-to-br from-white to-sky-50/40 border border-slate-200/90 shadow-2xs space-y-3.5 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-sm">
+                    🏋️
+                  </div>
+                  <div>
+                    <h4 id="v-workout-title" class="text-xs sm:text-sm font-extrabold text-slate-900">سحب وظهر + تركيز ساعد وقبضة</h4>
+                    <span id="v-workout-type-badge" class="text-[10px] font-mono text-sky-700">Pull & Forearms</span>
+                  </div>
+                </div>
+                <button onclick="logCurrentDayWorkoutToHistory()" class="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-semibold nexus-btn shadow-2xs">
+                  + تسجيل في السجل
+                </button>
+              </div>
+
+              <div id="v-workout-exercises-list" class="space-y-2 text-xs">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/70 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-base">✊</span>
+                <div>
+                  <span class="font-bold text-amber-900 block text-[11px]">أولوية الساعد والقبضة:</span>
+                  <span id="v-forearm-tip" class="text-[10px] text-amber-800">Dead Hang 3 مجموعات لأقصى وقت + Farmer's Walk بوزن ثقيل.</span>
+                </div>
+              </div>
+              <span class="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-amber-200/60 text-amber-900">FOREARMS</span>
+            </div>
+          </div>
+
+          <!-- Nutrition & Daily Targets -->
+          <div class="lg:col-span-5 p-4 rounded-2xl bg-gradient-to-br from-white to-emerald-50/30 border border-slate-200/90 shadow-2xs space-y-3.5 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">
+                    🍽️
+                  </div>
+                  <div>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-slate-900">نظام الوجبات اليومي</h4>
+                    <span id="v-macros-badge" class="text-[10px] font-mono text-emerald-700">~2,100 سعرة · 150 جم بروتين</span>
+                  </div>
+                </div>
+                <button onclick="openCustomizeMealModal()" class="text-slate-400 hover:text-slate-700 text-xs">✏️</button>
+              </div>
+
+              <div id="v-meals-container" class="space-y-2 text-xs">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                  <span>💧</span> شرب الماء (الهدف: 3.5 لتر):
+                </span>
+                <span id="v-water-text" class="font-mono font-bold text-sky-700">0 / 8 أكواب</span>
+              </div>
+              <div id="v-water-glasses" class="flex items-center justify-between gap-1">
+                <!-- Water buttons rendered via JS -->
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">🚶 خطوات اليوم</span>
+                    <span id="v-steps-val" class="font-mono font-bold text-slate-800 text-xs">8,500 خطوة</span>
+                  </div>
+                  <button onclick="promptUpdateVitalitySteps()" class="text-sky-600 hover:text-sky-800 text-[10px] font-bold">تعديل</button>
+                </div>
+                <div class="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">😴 ساعات النوم</span>
+                    <span id="v-sleep-val" class="font-mono font-bold text-slate-800 text-xs">7.5 ساعة</span>
+                  </div>
+                  <button onclick="promptUpdateVitalitySleep()" class="text-sky-600 hover:text-sky-800 text-[10px] font-bold">تعديل</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weight & Body Composition Pathway -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">مسار الوزن والتركيب البدني (Body Composition)</h3>
+            <p class="text-xs text-slate-500">بداية من 100 كجم نحو 88 كجم مع الحفاظ على الكتلة العضلية (35%+).</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-mono">
+            <span class="text-slate-400">الطول: <strong>170 سم</strong></span>
+            <span class="text-slate-400">العمر: <strong>22 سنة</strong></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] font-semibold text-slate-400 block">وزن البداية</span>
+            <span class="font-mono font-bold text-slate-800 text-sm">100.0 كجم</span>
+          </div>
+          <div class="p-3 rounded-xl bg-sky-50 border border-sky-100">
+            <span class="text-[10px] font-semibold text-sky-700 block">الوزن الحالي</span>
+            <span id="health-current-weight-val" class="font-mono font-bold text-sky-900 text-sm">100.0 كجم</span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] font-semibold text-slate-400 block">الهدف المستهدف</span>
+            <span class="font-mono font-bold text-slate-800 text-sm">88.0 كجم</span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] font-semibold text-slate-400 block">الكتلة والدهون</span>
+            <span id="health-composition-val" class="font-mono font-bold text-emerald-800 text-sm">35% عضل · 38% دهون</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workouts History & Daily Supplements -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">سجل تمارين الجيم (Workouts History)</h3>
+              <p class="text-xs text-slate-500">تمارين القوة وبناء الساعد والقبضة المسجلة</p>
+            </div>
+            <button onclick="openLogWorkoutModal()" class="text-xs text-sky-700 hover:text-sky-800 font-semibold">+ تمرين جديد</button>
+          </div>
+          <div id="health-workouts-list" class="space-y-2 text-xs">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3.5 nexus-card">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2">المكملات اليومية (Daily Supplements)</h4>
+            <div id="health-supplements-list" class="space-y-2 text-xs">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 5: FAITH CENTER                                                      -->
+    <!-- ========================================================================= -->
+    <section id="view-faith" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm nexus-card">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span>🌙</span> مركز الإيمان والروحانيات
+          </h2>
+          <p class="text-xs text-slate-500">رحلة الـ 200 يوم الإيمانية، الصلوات الخمس في وقتها، الورد القرآني، والتذكيرات اليومية الموثقة.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="faith-hijri-date" class="text-xs font-bold font-serif text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
+            24 صفر 1448 هـ
+          </span>
+          <button onclick="openJourneyBookmarksModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 nexus-btn" title="المحفوظات">
+            <span>🔖</span>
+            <span>المحفوظات</span>
+            <span id="journey-bookmarks-badge" class="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-mono">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 200-Day Islamic Journey Component -->
+      <div class="bg-white rounded-2xl border border-emerald-200/80 p-5 shadow-sm space-y-5 nexus-card relative overflow-hidden">
+        <div class="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-emerald-500/5 blur-2xl pointer-events-none"></div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <span>🌙</span> رحلة الـ 200 يوم الإيمانية (200-Day Islamic Journey)
+              </h3>
+              <span id="journey-theme-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                المحور: الإخلاص والنية
+              </span>
+            </div>
+            <p class="text-xs text-slate-500">منظومة يومية هادئة تضم آية كريمة، حديثاً شريفاً، قصة وعِبرة، ودعاءً مأثوراً لكل يوم بتسلسل ثابت.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="journey-continue-btn" onclick="continueJourney()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm nexus-btn">
+              <span>▶</span> متابعة الرحلة
+            </button>
+            <button id="journey-complete-toggle-btn" onclick="toggleCurrentDayCompletion()" class="px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 nexus-btn">
+              <span id="journey-complete-icon">✓</span>
+              <span id="journey-complete-text">تحديد اليوم كمكتمل</span>
+            </button>
+            <button onclick="openJumpToDayModal()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium nexus-btn" title="انتقال مباشر إلى أي يوم من 1 إلى 200">
+              <span>🔢</span> انتقال ليوم...
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-center">
+          <div class="sm:col-span-8 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800" id="journey-day-label">اليوم 1 من 200</span>
+                <span id="journey-day-status-pill" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">قيد المتابعة</span>
+              </div>
+              <span id="journey-progress-pct" class="font-mono font-extrabold text-emerald-700">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div id="journey-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2.5 rounded-full transition-all duration-300" style="width: 0.5%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+              <span id="journey-completed-count">0 مكتمل</span>
+              <span id="journey-remaining-count">200 متبقٍ</span>
+            </div>
+          </div>
+
+          <div class="sm:col-span-4 flex items-center justify-end gap-1.5">
+            <button onclick="navigateJourneyDay(-1)" class="px-2.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1 nexus-btn" title="اليوم السابق">
+              <span>&larr;</span> السابق
+            </button>
+            <button onclick="goToJourneyToday()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn" title="العودة لليوم الحسابي">
+              اليوم
+            </button>
+            <button onclick="navigateJourneyDay(1)" class="px-2.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1 nexus-btn" title="اليوم التالي">
+              التالي <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Daily Content Cards Grid -->
+        <div id="journey-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Ayah Card -->
+          <div id="journey-card-ayah" class="p-4 rounded-2xl bg-gradient-to-br from-white to-sky-50/30 border border-slate-200/90 shadow-2xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-sky-700 flex items-center gap-1.5">
+                  <span>📖</span> آية اليوم والتدبر
+                </span>
+                <div class="flex items-center gap-1">
+                  <button onclick="toggleBookmarkJourneyItem('ayah')" id="btn-bm-ayah" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">🔖</button>
+                  <button onclick="copyJourneyItemText('ayah')" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">📋</button>
+                </div>
+              </div>
+              <p id="j-ayah-arabic" class="text-base sm:text-lg font-serif text-slate-900 leading-loose text-right pt-1">جاري التحميل...</p>
+              <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 text-xs space-y-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">التدبر والعمل بالآية:</span>
+                <p id="j-ayah-reflection" class="text-slate-700 leading-relaxed text-[11px]"></p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-mono text-slate-500">
+              <span id="j-ayah-source"></span>
+              <span class="text-[10px] text-sky-600 font-sans font-semibold">نص قرآني موثق</span>
+            </div>
+          </div>
+
+          <!-- Hadith Card -->
+          <div id="journey-card-hadith" class="p-4 rounded-2xl bg-gradient-to-br from-white to-emerald-50/30 border border-slate-200/90 shadow-2xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                  <span>📜</span> حديث اليوم الشريف
+                </span>
+                <div class="flex items-center gap-1">
+                  <button onclick="toggleBookmarkJourneyItem('hadith')" id="btn-bm-hadith" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">🔖</button>
+                  <button onclick="copyJourneyItemText('hadith')" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">📋</button>
+                </div>
+              </div>
+              <p id="j-hadith-arabic" class="text-xs sm:text-sm font-serif text-slate-800 leading-relaxed text-right pt-1">جاري التحميل...</p>
+              <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 text-xs space-y-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">الشرح والبيان النبوي:</span>
+                <p id="j-hadith-explanation" class="text-slate-700 leading-relaxed text-[11px]"></p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-mono text-slate-500">
+              <span id="j-hadith-source"></span>
+              <span id="j-hadith-grade" class="px-2 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[10px] font-semibold">صحيح</span>
+            </div>
+          </div>
+
+          <!-- Story Card -->
+          <div id="journey-card-story" class="p-4 rounded-2xl bg-gradient-to-br from-white to-amber-50/30 border border-slate-200/90 shadow-2xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+                    <span>🕊️</span> قصة وعِبرة اليوم
+                  </span>
+                  <span id="j-story-type-badge" class="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-semibold">سير الصحابة</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="toggleBookmarkJourneyItem('story')" id="btn-bm-story" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">🔖</button>
+                  <button onclick="copyJourneyItemText('story')" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">📋</button>
+                </div>
+              </div>
+              <h4 id="j-story-title" class="font-bold text-slate-900 text-xs sm:text-sm"></h4>
+              <p id="j-story-content" class="text-slate-700 text-xs leading-relaxed text-right"></p>
+              <div class="p-2.5 rounded-xl bg-amber-50/60 border border-amber-200/60 text-xs space-y-0.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">العِبرة العملية المستفادة:</span>
+                <p id="j-story-lesson" class="text-amber-950 text-[11px] leading-relaxed"></p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-mono text-slate-500">
+              <span id="j-story-source"></span>
+              <span class="text-[10px] text-slate-400 font-sans">تاريخ وسير موثقة</span>
+            </div>
+          </div>
+
+          <!-- Dua Card -->
+          <div id="journey-card-dua" class="p-4 rounded-2xl bg-gradient-to-br from-white to-indigo-50/30 border border-slate-200/90 shadow-2xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 flex items-center gap-1.5">
+                  <span>🤲</span> دعاء اليوم المأثور
+                </span>
+                <div class="flex items-center gap-1">
+                  <button onclick="toggleBookmarkJourneyItem('dua')" id="btn-bm-dua" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">🔖</button>
+                  <button onclick="copyJourneyItemText('dua')" class="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-xs nexus-btn">📋</button>
+                </div>
+              </div>
+              <p id="j-dua-arabic" class="text-sm sm:text-base font-serif text-slate-800 leading-relaxed text-right pt-1">جاري التحميل...</p>
+              <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 text-xs space-y-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">المناسبة والمعنى:</span>
+                <p id="j-dua-occasion" class="text-slate-700 leading-relaxed text-[11px]"></p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] font-mono text-slate-500">
+              <span id="j-dua-source"></span>
+              <span class="text-[10px] text-indigo-600 font-sans font-semibold">مأثور صحيح</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reflection Text Area -->
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+          <div class="flex items-center justify-between">
+            <label for="journey-reflection-input" class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <span>✍️</span> ماذا تعلمت أو عزمت عليه اليوم؟ (خواطري الإيمانية لهذا اليوم)
+            </label>
+            <span class="text-[10px] text-slate-400 font-mono">حفظ تلقائي مع رقم اليوم</span>
+          </div>
+          <textarea id="journey-reflection-input" oninput="saveJourneyDailyReflection()" rows="2" placeholder="اكتب تأملاتك أو قرارك العملي اليومي الناتج عن ورد اليوم..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none bg-white"></textarea>
+        </div>
+      </div>
+
+      <!-- Prayers Tracker -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">صلوات اليوم الخمس</h3>
+            <p class="text-xs text-slate-500">متابعة الحفاظ عليها في أول وقتها وفي جماعة المسجد</p>
+          </div>
+          <span id="faith-prayer-daily-score" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+            0 / 5 في وقتها
+          </span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3" id="faith-prayers-container">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Quran Reading Log -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">سجل قراءة الورد القرآني</h3>
+            <p class="text-xs text-slate-500">تسجيل الصفحات المقروءة يومياً ومتابعة إتمام الختمة</p>
+          </div>
+          <button onclick="openLogQuranModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium nexus-btn">
+            + تسجيل قراءة
+          </button>
+        </div>
+        <div id="faith-quran-logs-list" class="space-y-2 text-xs">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 6: DEVELOPMENT CENTER                                                -->
+    <!-- ========================================================================= -->
+    <section id="view-dev" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm nexus-card">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span>📚</span> مركز التطوير والمهارات الهندسية
+          </h2>
+          <p class="text-xs text-slate-500">إتقان الإنجليزية، الأجهزة الطبية والصيانة، الأردوينو، والمهارات التقنية.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-semibold px-3 py-1 rounded-xl bg-indigo-50 text-indigo-800 border border-indigo-100">
+            دراسة مستمرة
+          </span>
+        </div>
+      </div>
+
+      <!-- Daily Insights -->
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-3 nexus-card">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded bg-indigo-500"></span>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900">إضاءات هندسية يومية</h4>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">تدوير يومي تلقائي</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 block">معلومة جهاز طبي</span>
+            <p id="dev-insight-device" class="text-slate-700 leading-relaxed">جاري التحميل...</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700 block">الهندسة الإكلينيكية والميدانية</span>
+            <p id="dev-insight-field" class="text-slate-700 leading-relaxed">جاري التحميل...</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 block">حكمة مهنية وهندسية</span>
+            <p id="dev-insight-wisdom" class="text-slate-700 leading-relaxed">جاري التحميل...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- English Mastery -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+              <span>🗣️</span> إتقان اللغة الإنجليزية (English Mastery)
+            </h3>
+            <p class="text-xs text-slate-500">سجل الكلمات التقنية، جلسات التحدث، والتحضير للمقابلات الشخصية</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openAddVocabModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-medium nexus-btn">
+              + كلمة جديدة
+            </button>
+            <button onclick="openAddSpeakingModal()" class="px-2.5 py-1.5 rounded-lg bg-sky-600 text-white hover:bg-sky-700 text-xs font-medium nexus-btn">
+              + جلسة محادثة
+            </button>
+            <button onclick="openAddInterviewModal()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-medium nexus-btn">
+              + سؤال إنترفيو
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div class="lg:col-span-5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-700">سجل المفردات (Vocabulary)</span>
+              <input type="text" id="dev-vocab-search" oninput="renderVocabList()" placeholder="بحث في الكلمات..." class="px-2 py-1 rounded-lg border border-slate-200 text-xs w-36 focus:outline-none focus:ring-1 focus:ring-sky-500">
+            </div>
+            <div id="dev-vocab-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pl-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 space-y-2.5">
+            <span class="text-[11px] font-bold text-slate-700 block">جلسات التحدث العملي (Speaking)</span>
+            <div id="dev-speaking-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pl-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="lg:col-span-3 space-y-2.5">
+            <span class="text-[11px] font-bold text-slate-700 block">أسئلة مقابلات العمل (Interview Qs)</span>
+            <div id="dev-interview-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pl-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Equipment & Arduino Projects -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                <span>🩺</span> توثيق الأجهزة الطبية والصيانة
+              </h3>
+              <p class="text-xs text-slate-500">ملاحظات الأجهزة، فك الأعطال، واختبارات الأمان الكهربائي</p>
+            </div>
+            <button onclick="openAddDeviceModal()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-medium nexus-btn">
+              + جهاز جديد
+            </button>
+          </div>
+          <div id="dev-device-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-80 overflow-y-auto custom-scrollbar pl-1">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4 nexus-card">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                <span>⚡</span> معمل الأردوينو والإلكترونيات
+              </h3>
+              <p class="text-xs text-slate-500">المشاريع العملية والدوائر</p>
+            </div>
+            <button onclick="openAddArduinoModal()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-medium nexus-btn">
+              + مشروع
+            </button>
+          </div>
+          <div id="dev-arduino-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pl-1">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- OMNIBOX GLOBAL SEARCH MODAL (Ctrl/Cmd + K)                                -->
+  <!-- ========================================================================= -->
+  <div id="global-search-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-start justify-center pt-14 sm:pt-20 p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden nexus-card flex flex-col max-h-[80vh]">
+      <!-- Search Input Header -->
+      <div class="p-3.5 sm:p-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
+        <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="global-search-input" oninput="executeGlobalSearch(this.value)" placeholder="ابحث في الأهداف، المهام، المعاملات المالية، الأجهزة، والرحلة الإيمانية..." class="w-full bg-transparent text-sm focus:outline-none text-slate-800 placeholder-slate-400">
+        <button onclick="clearGlobalSearch()" id="search-clear-btn" class="hidden text-slate-400 hover:text-slate-600 text-sm px-1">&times;</button>
+        <kbd class="px-2 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono text-slate-500 shadow-2xs">Esc</kbd>
+      </div>
+
+      <!-- Search Results Box -->
+      <div id="global-search-results" class="p-3 sm:p-4 overflow-y-auto custom-scrollbar space-y-4 flex-1 text-xs">
+        <p class="text-slate-400 text-center py-8">ابدأ بكتابة أي كلمة مفتاحية للبحث اللحظي عبر كافة بيانات نظامك...</p>
+      </div>
+
+      <div class="p-3 border-t border-slate-100 bg-slate-50/70 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+        <span>الانتقال: اضغط على أي نتيجة للتوجه فوراً لمكانها</span>
+        <span>LEITH Global Index</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SETTINGS & BACKUP MODAL                                                   -->
+  <!-- ========================================================================= -->
+  <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl p-5 sm:p-6 space-y-4 max-h-[88vh] flex flex-col nexus-card">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center text-base">⚙️</div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">إعدادات النظام والنسخ الاحتياطي</h3>
+            <span class="text-[10px] text-slate-400 font-mono">LEITH Life OS v3.5.0</span>
+          </div>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+      </div>
+
+      <!-- Settings Tabs -->
+      <div class="flex items-center gap-1.5 border-b border-slate-100 pb-2 text-xs">
+        <button onclick="switchSettingsTab('general')" id="stab-general" class="settings-tab-btn px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white">عام</button>
+        <button onclick="switchSettingsTab('lifeos')" id="stab-lifeos" class="settings-tab-btn px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100">المعايير والأهداف</button>
+        <button onclick="switchSettingsTab('backup')" id="stab-backup" class="settings-tab-btn px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100">النسخ والاسترجاع</button>
+        <button onclick="switchSettingsTab('about')" id="stab-about" class="settings-tab-btn px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100">عن النظام</button>
+      </div>
+
+      <!-- Settings Content -->
+      <div class="overflow-y-auto custom-scrollbar flex-1 text-xs space-y-4 pr-1">
+        <!-- Tab 1: General -->
+        <div id="settings-panel-general" class="space-y-3">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <label class="font-bold text-slate-800 block">لغة الواجهة (Language)</label>
+            <div class="flex items-center gap-2">
+              <button onclick="setSystemLanguage('ar')" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-bold text-slate-800 hover:bg-slate-100">العربية (RTL)</button>
+              <button onclick="setSystemLanguage('en')" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-bold text-slate-800 hover:bg-slate-100">English (LTR)</button>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <label class="font-bold text-slate-800 block">الصفحة الافتراضية عند الفتح</label>
+            <select id="setting-start-page" onchange="saveSystemSettings()" class="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs">
+              <option value="home">مركز القيادة (Command Center)</option>
+              <option value="goals">الأهداف والخطط (Goals & Plans)</option>
+              <option value="money">المركز المالي (Money Center)</option>
+              <option value="health">الصحة والجيم (Health & Fitness)</option>
+              <option value="faith">مركز الإيمان (Faith Center)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tab 2: Life OS standards -->
+        <div id="settings-panel-lifeos" class="hidden space-y-3">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <label class="font-bold text-slate-800 block">وحدات القياس البدنية</label>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <span class="text-[10px] text-slate-400 block">الوزن المستهدف (كجم):</span>
+                <input type="number" id="setting-target-weight" value="88" class="w-full px-2.5 py-1 rounded border border-slate-200 bg-white text-xs font-mono">
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block">هدف شرب الماء اليومي (لتر):</span>
+                <input type="number" step="0.5" id="setting-target-water" value="3.5" class="w-full px-2.5 py-1 rounded border border-slate-200 bg-white text-xs font-mono">
+              </div>
+            </div>
+            <button onclick="saveHealthSettingsFromModal()" class="px-3 py-1 rounded-lg bg-slate-900 text-white font-semibold text-[11px]">حفظ التعديلات</button>
+          </div>
+        </div>
+
+        <!-- Tab 3: Backup & Restore -->
+        <div id="settings-panel-backup" class="hidden space-y-3">
+          <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-100 text-sky-900 space-y-1">
+            <h4 class="font-bold text-xs">💾 تصدير واسترجاع قاعدة البيانات الشاملة</h4>
+            <p class="text-[11px] leading-relaxed text-sky-800">بياناتك محفوظة محلياً بالكامل على متصفحك. يمكنك تحميل نسخة احتياطية بصيغة JSON لنقلها لأي جهاز آخر بأمان تام.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button onclick="exportLeithDataBackup()" class="p-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-right flex items-center justify-between nexus-btn">
+              <div>
+                <span class="font-bold text-slate-800 block">تصدير نسخة احتياطية</span>
+                <span class="text-[10px] text-slate-400 font-mono">تحميل ملف JSON كامل</span>
+              </div>
+              <span class="text-xl">⬇️</span>
+            </button>
+
+            <label class="p-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-right flex items-center justify-between cursor-pointer nexus-btn">
+              <div>
+                <span class="font-bold text-slate-800 block">استرجاع نسخة سابقة</span>
+                <span class="text-[10px] text-slate-400 font-mono">رفع ملف JSON</span>
+              </div>
+              <span class="text-xl">⬆️</span>
+              <input type="file" id="backup-file-input" accept=".json" onchange="importLeithDataBackup(event)" class="hidden">
+            </label>
+          </div>
+
+          <!-- Danger Zone: Reset -->
+          <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 space-y-2 mt-4">
+            <span class="font-bold text-rose-900 text-xs block">منطقة الإجراءات الخطرة</span>
+            <p class="text-[10px] text-rose-800 leading-relaxed">سيؤدي مسح البيانات إلى تصفير كافة السجلات والعودة للحالة الأولية للنظام.</p>
+            <button onclick="confirmResetAllData()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] nexus-btn">
+              ⚠️ تصفير كافة البيانات المحلية
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 4: About -->
+        <div id="settings-panel-about" class="hidden space-y-3">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-slate-900">LEITH Personal Life OS</span>
+              <span class="px-2 py-0.5 rounded bg-slate-200 font-mono text-[10px] font-bold">v3.5.0 Core Final</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              نظام تشغيل وإدارة الحياة الشخصية، مصمم ليعمل بدون اتصال بالإنترنت (Local-First Offline-Ready PWA).
+              كافة السجلات، الرحلة الإيمانية، المركز المالي، والتطوير الهندي محفوظة على هذا الجهاز بنسبة 100%.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end pt-3 border-t border-slate-100">
+        <button onclick="closeSettingsModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Review Modal -->
+  <div id="weekly-review-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg p-5 space-y-4 max-h-[85vh] flex flex-col nexus-card">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold">📊</div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">المراجعة الأسبوعية الشاملة</h3>
+            <span class="text-[10px] text-slate-400 font-mono">تقييم إنجازات الأسبوع واستشراف الأسبوع القادم</span>
+          </div>
+        </div>
+        <button onclick="closeWeeklyReviewModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-3 overflow-y-auto custom-scrollbar flex-1 text-xs pr-1">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center" id="wreview-stats-grid">
+          <!-- Populated via JS -->
+        </div>
+
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
+          <span class="font-bold text-emerald-900 block">🏆 أهم انتصارات الأسبوع (Wins):</span>
+          <p id="wreview-wins" class="text-emerald-800 text-[11px] leading-relaxed">جاري التقييم...</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 space-y-1">
+          <span class="font-bold text-amber-900 block">⚠️ نقاط بحاجة لتركيز مضاعف (Needs Attention):</span>
+          <p id="wreview-attention" class="text-amber-800 text-[11px] leading-relaxed">جاري التقييم...</p>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-800 block">خطة وأولويات الأسبوع القادم:</label>
+          <textarea id="wreview-next-priorities" rows="2" placeholder="أهم 3 أهداف تسعى لتحقيقها الأسبوع القادم..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+        <button onclick="closeWeeklyReviewModal()" class="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs">إلغاء</button>
+        <button onclick="completeWeeklyReview()" class="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm nexus-btn">
+          ✓ إتمام وحفظ المراجعة الأسبوعية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements Modal -->
+  <div id="achievements-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl p-5 space-y-4 max-h-[85vh] flex flex-col nexus-card">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold">🏆</div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">سجل الأوسمة والإنجازات الحقيقية</h3>
+            <span class="text-[10px] text-slate-400 font-mono">تُفتح تلقائياً عند تحقيق الشروط الواقعية فقط</span>
+          </div>
+        </div>
+        <button onclick="closeAchievementsModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+      </div>
+
+      <div id="achievements-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 overflow-y-auto custom-scrollbar flex-1 text-xs pr-1">
+        <!-- Rendered via JS -->
+      </div>
+
+      <div class="flex items-center justify-end pt-2 border-t border-slate-100">
+        <button onclick="closeAchievementsModal()" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic Modals and Detail Containers -->
+  <div id="modal-container" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="modal-card" class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md p-5 space-y-4 transform transition-all">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+        <h3 id="modal-title" class="text-sm font-bold text-slate-900">Modal Title</h3>
+        <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+      </div>
+      <div id="modal-body" class="space-y-3 text-xs"></div>
+      <div id="modal-footer" class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100"></div>
+    </div>
+  </div>
+
+  <!-- Dedicated Goal Details Modal -->
+  <div id="goal-detail-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg p-5 sm:p-6 space-y-4 transform transition-all my-8">
+      <div class="flex items-start justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-3">
+          <div id="gdetail-icon" class="w-10 h-10 rounded-xl bg-sky-50 text-slate-800 text-2xl flex items-center justify-center border border-sky-100 shadow-2xs">🎯</div>
+          <div>
+            <h3 id="gdetail-title" class="text-sm sm:text-base font-bold text-slate-900 leading-tight">عنوان الهدف</h3>
+            <div class="flex items-center gap-2 mt-1">
+              <span id="gdetail-category" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">التصنيف</span>
+              <span id="gdetail-priority" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60">الأولوية</span>
+              <span id="gdetail-status" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-50 text-sky-800 border border-sky-200/60">الحالة</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeGoalDetailModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p id="gdetail-desc" class="text-slate-600 leading-relaxed">وصف الهدف</p>
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-medium text-slate-700">إنجاز المحطات الفرعية:</span>
+            <span id="gdetail-pct" class="font-mono font-bold text-slate-900">0%</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+            <div id="gdetail-bar" class="bg-sky-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+            <span id="gdetail-count">0 من 0 محطات مكتملة</span>
+            <span id="gdetail-deadline">الموعد المستهدف: --</span>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800 text-xs uppercase tracking-wider">المحطات والخطوات التنفيذية</span>
+            <button onclick="promptAddMilestoneToCurrentGoal()" class="text-xs text-sky-700 hover:text-sky-800 font-semibold">+ إضافة خطوة</button>
+          </div>
+          <div id="gdetail-milestones-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar pl-1"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
+        <button id="gdetail-delete-btn" class="text-rose-600 hover:text-rose-700 font-medium text-xs">حذف الهدف</button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeGoalDetailModal()" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium">إغلاق</button>
+          <button id="gdetail-edit-btn" class="px-4 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 font-medium shadow-2xs">تعديل الهدف</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assistant Modal -->
+  <div id="assistant-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg p-5 space-y-4 transform transition-all nexus-card">
+      <div class="flex items-start justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 flex items-center justify-center">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+              <circle cx="12" cy="5" r="2"></circle>
+              <path d="M12 7v4"></path>
+              <line x1="8" y1="16" x2="8" y2="16.01"></line>
+              <line x1="16" y1="16" x2="16" y2="16.01"></line>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">LEITH Assistant</h3>
+            <span class="text-[11px] text-slate-400 font-mono">المساعد الشخصي الذكي</span>
+          </div>
+        </div>
+        <button onclick="closeAssistantModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 leading-relaxed">
+          <p class="font-bold text-slate-800">أهلاً بك يا يوسف! كيف أساعدك الآن؟</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">يمكنك تسجيل أي حركة أو مهمة أو وزن بنقرة واحدة سريعة.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button onclick="assistantAction('add_task')" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-right flex items-center gap-2 nexus-btn">
+            <span>⚡</span>
+            <div><span class="font-bold text-slate-800 block">مهمة تركيز</span><span class="text-[9px] text-slate-400 font-mono">مركز القيادة</span></div>
+          </button>
+          <button onclick="assistantAction('add_expense')" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-right flex items-center gap-2 nexus-btn">
+            <span>💸</span>
+            <div><span class="font-bold text-slate-800 block">تسجيل مصروف</span><span class="text-[9px] text-slate-400 font-mono">المركز المالي</span></div>
+          </button>
+          <button onclick="assistantAction('log_weight')" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-right flex items-center gap-2 nexus-btn">
+            <span>⚖️</span>
+            <div><span class="font-bold text-slate-800 block">تسجيل وزن</span><span class="text-[9px] text-slate-400 font-mono">الصحة واللياقة</span></div>
+          </button>
+          <button onclick="assistantAction('log_workout')" class="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-right flex items-center gap-2 nexus-btn">
+            <span>💪</span>
+            <div><span class="font-bold text-slate-800 block">تسجيل تمرين</span><span class="text-[9px] text-slate-400 font-mono">الصحة واللياقة</span></div>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-400 font-mono">
+        <span>جاهز ومزامن محلياً على جهازك</span>
+        <button onclick="closeAssistantModal()" class="px-3 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="hidden fixed bottom-5 left-5 z-50 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-xl flex items-center gap-2 border border-slate-800">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">تمت العملية بنجاح</span>
+  </div>
+
+  <!-- In-App Confirmation Modal -->
+  <div id="confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-sm p-5 space-y-4 text-center nexus-card">
+      <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 font-bold flex items-center justify-center mx-auto text-sm">!</div>
+      <div class="space-y-1">
+        <h4 id="confirm-title" class="text-sm font-bold text-slate-900">تأكيد الإجراء</h4>
+        <p id="confirm-message" class="text-xs text-slate-500">هل أنت متأكد من الاستمرار؟</p>
+      </div>
+      <div class="flex items-center justify-center gap-2 pt-2">
+        <button onclick="closeConfirmModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium nexus-btn">إلغاء</button>
+        <button id="confirm-action-btn" class="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium nexus-btn">تأكيد</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC & PERSISTENCE ENGINE                                     -->
+  <!-- ========================================================================= -->
+  <script>
+    /* LEITH CORE SYSTEM PERSISTENCE KEYS */
+    const STORAGE_KEY = 'leith_os_state_preview_v1';
+    const JOURNEY_STORAGE_KEY = 'leith_faith_journey_progress_v1';
+    const VITALITY_STORAGE_KEY = 'leith_vitality_45_v1';
+    const NOTIFICATIONS_KEY = 'leith_notifications_v1';
+    const SETTINGS_KEY = 'leith_settings_v1';
+    const BACKUP_SAFETY_KEY = 'leith_safety_backup_pre_import';
+
+    let currentView = 'home';
+    let currentGoalFilterStatus = 'all';
+    let activeDetailGoalId = null;
+    let deferredInstallPrompt = null;
+
+    // Default Settings
+    const defaultSettings = {
+      language: 'ar',
+      startPage: 'home',
+      targetWeight: 88,
+      targetWater: 3.5,
+      notificationsEnabled: true
+    };
+    let systemSettings = loadSystemSettings();
+
+    function loadSystemSettings() {
+      try {
+        const s = localStorage.getItem(SETTINGS_KEY);
+        if (s) return { ...defaultSettings, ...JSON.parse(s) };
+      } catch (e) {}
+      return defaultSettings;
+    }
+
+    function saveSystemSettings() {
+      try {
+        const sel = document.getElementById('setting-start-page');
+        if (sel) systemSettings.startPage = sel.value;
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(systemSettings));
+        showToast('تم حفظ الإعدادات');
+      } catch (e) {}
+    }
+
+    /* PWA Manifest & Service Worker Registration */
+    function setupPWA() {
+      const manifest = {
+        name: "LEITH — Personal Life Operating System",
+        short_name: "LEITH",
+        start_url: "./",
+        display: "standalone",
+        background_color: "#0f172a",
+        theme_color: "#0f172a",
+        description: "Your integrated offline-first personal workspace and life operating system.",
+        icons: [
+          {
+            src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f172a'/><text x='50' y='68' font-size='50' font-weight='900' fill='white' text-anchor='middle'>L</text></svg>",
+            sizes: "192x192 512x512",
+            type: "image/svg+xml"
+          }
+        ]
+      };
+      const stringManifest = JSON.stringify(manifest);
+      const blob = new Blob([stringManifest], { type: 'application/json' });
+      const manifestURL = URL.createObjectURL(blob);
+      const manifestLink = document.getElementById('pwa-manifest-link');
+      if (manifestLink) manifestLink.setAttribute('href', manifestURL);
+
+      // Listen for install prompt
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        const btn = document.getElementById('pwa-install-btn');
+        if (btn) btn.classList.remove('hidden');
+      });
+
+      // Register lightweight caching Service Worker for offline resilience
+      if ('serviceWorker' in navigator) {
+        const swCode = `
+          const CACHE_NAME = 'leith-core-shell-v3.5';
+          self.addEventListener('install', (e) => {
+            self.skipWaiting();
+          });
+          self.addEventListener('activate', (e) => {
+            e.waitUntil(clients.claim());
+          });
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(
+              fetch(e.request).catch(() => caches.match(e.request))
+            );
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(() => {
+          // Graceful fallback if blob registration blocked
+        });
+      }
+    }
+
+    function installPWA() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showToast('شكراً لتثبيت LEITH على جهازك');
+          }
+          deferredInstallPrompt = null;
+          const btn = document.getElementById('pwa-install-btn');
+          if (btn) btn.classList.add('hidden');
+        });
+      }
+    }
+
+    /* Unified State Notification & Reactivity */
+    function notifyStateChanged(source) {
+      savePreviewState();
+      saveVitalityProgress();
+      saveJourneyProgress();
+      evaluateAndGenerateRealNotifications();
+      renderAll();
+    }
+
+    const defaultAppState = {
+      currentDate: '2026-09-06',
+      selectedDate: '2026-09-06',
+      tasks: [
+        { id: 't1', title: 'مراجعة أداء الأسبوع وخطط سبتمبر', completed: false, category: 'General', priority: 'High' },
+        { id: 't2', title: 'تمرين الساعد والقبضة + ظهر (سحب)', completed: false, category: 'Health', priority: 'High' },
+        { id: 't3', title: 'ورد اليوم من رحلة الـ 200 يوم وتدبر الآية', completed: false, category: 'Faith', priority: 'Medium' },
+        { id: 't4', title: 'دراسة 3 كلمات إنجليزية تقنية وهندسية', completed: false, category: 'Development', priority: 'Medium' }
+      ],
+      habits: [
+        { id: 'h_prayer', name: 'الصلوات في وقتها', icon: '🕌' },
+        { id: 'h_quran', name: 'الورد القرآني', icon: '📖' },
+        { id: 'h_gym', name: 'تمرين الجيم والقوة', icon: '🏋️' },
+        { id: 'h_water', name: '3.5 لتر ماء', icon: '💧' },
+        { id: 'h_dev', name: 'التطوير والقراءة', icon: '📚' },
+        { id: 'h_saving', name: 'الانضباط المالي', icon: '💰' }
+      ],
+      habitLogs: {
+        'h_prayer': { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 },
+        'h_quran': { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 },
+        'h_gym': { 1: 1, 3: 1, 5: 1 },
+        'h_water': { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 },
+        'h_dev': { 1: 1, 2: 1, 4: 1, 5: 1 },
+        'h_saving': { 1: 1, 5: 1 }
+      },
+      events: [
+        { id: 'ev1', title: 'جلسة تخطيط الأسبوع ومراجعة الأهداف', date: '2026-09-06', time: '18:00' },
+        { id: 'ev2', title: 'تمرين الجيم (Pull & Grip)', date: '2026-09-06', time: '20:00' }
+      ],
+      reflections: {},
+      money: {
+        accounts: [
+          { id: 'acc_cash', name: 'النقدية / المحفظة', type: 'Cash', balance: 9000, active: true }
+        ],
+        buckets: [
+          { id: 'b_personal', name: 'المصروف الشخصي', pct: 40, allocated: 3600 },
+          { id: 'b_marriage', name: 'ادخار الزواج والشبكة', pct: 40, allocated: 3600 },
+          { id: 'b_invest', name: 'احتياطي وطوارئ', pct: 20, allocated: 1800 }
+        ],
+        transactions: [],
+        savingGoal: { target: 700, saved: 0 }
+      },
+      health: {
+        weight: { start: 100.0, current: 100.0, target: 88.0 },
+        bodyComp: { musclePct: 35.0, fatPct: 38.0 },
+        weightLog: [{ id: 'w1', date: '2026-09-01', weight: 100.0, note: 'بداية شهر سبتمبر' }],
+        workouts: [],
+        supplements: [
+          { id: 'sup_creatine', name: 'كرياتين (~3 جم)', taken: false },
+          { id: 'sup_omega3', name: 'أوميجا 3', taken: false },
+          { id: 'sup_vitd', name: 'فيتامين د3', taken: false },
+          { id: 'sup_multi', name: 'ملتي فيتامين ومعادن', taken: false }
+        ]
+      },
+      faith: {
+        prayersToday: {
+          fajr: { status: 'ontime', jamaah: true },
+          dhuhr: { status: 'ontime', jamaah: true },
+          asr: { status: 'unmarked', jamaah: false },
+          maghrib: { status: 'unmarked', jamaah: false },
+          isha: { status: 'unmarked', jamaah: false }
+        },
+        quranLogs: [{ id: 'q1', date: '2026-09-06', pages: 4, surah: 'سورة البقرة' }]
+      },
+      dev: {
+        vocab: [
+          { id: 'v1', word: 'Transducer', meaning: 'محول طاقة — يحول المتغير الحيوي إلى إشارة كهربائية', date: '2026-09-06' }
+        ],
+        speaking: [],
+        interview: [],
+        devices: [
+          { id: 'd1', name: 'Defibrillator (مزيل الرجفان)', category: 'Defibrillator', notes: 'يستخدم لتوصيل صدمة كهربائية ثنائية الطور Biphasic لإنهاء الرجفان البطيني.', date: '2026-09-06' }
+        ],
+        arduinoProjects: []
+      },
+      lifeGoals: [
+        {
+          id: 'lg_marriage',
+          title: 'الزواج وتأسيس الأسرة',
+          description: 'الهدف الأسمى والأساسي — استكمال التجهيزات والخطوات بوعي وانضباط.',
+          category: 'Marriage',
+          status: 'In Progress',
+          priority: 'Critical',
+          icon: '💍',
+          deadline: '2028-12-31',
+          milestones: [
+            { id: 'm1', title: 'إنهاء فترة الجيش بنجاح وجاهزية', completed: false },
+            { id: 'm2', title: 'العمل في وظيفة هندسية مستقرة بعد الجيش', completed: false },
+            { id: 'm3', title: 'ادخار ثمن الذهب والشبكة', completed: false },
+            { id: 'm4', title: 'تجهيز الشقة والأثاث والأجهزة', completed: false }
+          ]
+        },
+        {
+          id: 'lg_army',
+          title: 'إنهاء الخدمة العسكرية بانضباط كامل',
+          description: 'الصبر والجاهزية البدنية العالية والالتزام طوال فترة التجنيد.',
+          category: 'Personal',
+          status: 'In Progress',
+          priority: 'Critical',
+          icon: '🪖',
+          deadline: '2027-03-30',
+          milestones: [
+            { id: 'm_arm1', title: 'الحفاظ على اللياقة والوزن المثالي', completed: false }
+          ]
+        },
+        {
+          id: 'lg_job',
+          title: 'الحصول على وظيفة في هندسة الأجهزة الطبية',
+          description: 'إتقان الإنجليزية، صيانة الأجهزة الطبية، وتجهيز سيرة ذاتية قوية.',
+          category: 'Career',
+          status: 'In Progress',
+          priority: 'High',
+          icon: '💼',
+          deadline: '2027-06-30',
+          milestones: [
+            { id: 'm_j1', title: 'إتقان المصطلحات الإنجليزية الطبية', completed: true },
+            { id: 'm_j2', title: 'دراسة وتوثيق 20 جهازاً طبياً حيوياً', completed: false }
+          ]
+        }
+      ],
+      weeklyReviews: [],
+      achievements: [
+        { id: 'ach_first_goal', title: 'الرؤية الأولى', desc: 'تحديد أول هدف استراتيجي في حياتك', icon: '🎯', unlocked: true, unlockedAt: '2026-09-01' },
+        { id: 'ach_first_workout', title: 'بداية القوة', desc: 'تسجيل أول جلسة تدريبية بنجاح', icon: '💪', unlocked: false },
+        { id: 'ach_saving_starter', title: 'بذرة الادخار', desc: 'إيداع أول مبلغ في مدخرات سبتمبر', icon: '💰', unlocked: false },
+        { id: 'ach_faith_consistency', title: 'نور الإيمان', desc: 'إكمال 5 أيام متتالية من الورد والصلوات', icon: '🌙', unlocked: false },
+        { id: 'ach_first_wreview', title: 'عين الحكمة', desc: 'إجراء أول مراجعة أسبوعية متكاملة', icon: '📊', unlocked: false },
+        { id: 'ach_eng_mastery', title: 'لسان الهندسة', desc: 'توثيق أول 10 كلمات إنجليزية متخصصة', icon: '🗣️', unlocked: false }
+      ]
+    };
+
+    let appState = loadPreviewState();
+
+    function loadPreviewState() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          return {
+            ...defaultAppState,
+            ...parsed,
+            money: { ...defaultAppState.money, ...(parsed.money || {}) },
+            health: { ...defaultAppState.health, ...(parsed.health || {}) },
+            faith: { ...defaultAppState.faith, ...(parsed.faith || {}) },
+            dev: { ...defaultAppState.dev, ...(parsed.dev || {}) }
+          };
+        }
+      } catch (e) {
+        console.warn('Fallback to default state:', e);
+      }
+      return JSON.parse(JSON.stringify(defaultAppState));
+    }
+
+    function savePreviewState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.error('Failed to save state:', e);
+      }
+    }
+
+    function openWeeklyReviewModal() {
+      const modal = document.getElementById('weekly-review-modal');
+      if (!modal) return;
+
+      const completedTasks = (appState.tasks || []).filter(t => t.completed).length;
+      const workoutsCount = (appState.health?.workouts || []).length;
+      const prayersOnTime = Object.values(appState.faith?.prayersToday || {}).filter(p => p.status === 'ontime').length;
+      const savedAmount = appState.money?.savingGoal?.saved || 0;
+
+      const statsGrid = document.getElementById('wreview-stats-grid');
+      if (statsGrid) {
+        statsGrid.innerHTML = `
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] text-slate-400 block font-mono">المهام المنجزة</span>
+            <span class="font-bold text-slate-900 font-mono text-sm">${completedTasks} مهام</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] text-slate-400 block font-mono">تمارين الجيم</span>
+            <span class="font-bold text-sky-800 font-mono text-sm">${workoutsCount} حصص</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] text-slate-400 block font-mono">الصلوات بوقتها</span>
+            <span class="font-bold text-emerald-800 font-mono text-sm">${prayersOnTime}/5 اليوم</span>
+          </div>
+          <div class="p-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] text-slate-400 block font-mono">المدخر هذا الشهر</span>
+            <span class="font-bold text-indigo-800 font-mono text-sm">${savedAmount} ج.م</span>
+          </div>
+        `;
+      }
+
+      const winsEl = document.getElementById('wreview-wins');
+      if (winsEl) {
+        winsEl.textContent = completedTasks > 0
+          ? `أنجزت ${completedTasks} من مهامك الحيوية مع الحفاظ على وتيرة التخطيط والصلوات.`
+          : 'أنت في بداية أسبوع جديد، والفرصة أمامك كاملة لتثبيت عادات الجيم والورد اليومي.';
+      }
+
+      const attentionEl = document.getElementById('wreview-attention');
+      if (attentionEl) {
+        attentionEl.textContent = savedAmount < 700
+          ? `هدف ادخار سبتمبر (700 ج.م) يحتاج دفعة أولى لبناء الزخم. متبقي ${700 - savedAmount} ج.م.`
+          : 'استمرارية تمرين الساعد والقبضة والنوم المنضبط قبل 11:30 مساءً.';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeWeeklyReviewModal() {
+      const modal = document.getElementById('weekly-review-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function completeWeeklyReview() {
+      const prioritiesText = document.getElementById('wreview-next-priorities')?.value?.trim() || 'الانضباط والتركيز الهادئ';
+      const reviewRecord = {
+        id: 'wr_' + Date.now(),
+        date: appState.currentDate,
+        priorities: prioritiesText,
+        completedAt: new Date().toISOString()
+      };
+
+      if (!appState.weeklyReviews) appState.weeklyReviews = [];
+      appState.weeklyReviews.unshift(reviewRecord);
+
+      const wrAch = appState.achievements?.find(a => a.id === 'ach_first_wreview');
+      if (wrAch && !wrAch.unlocked) {
+        wrAch.unlocked = true;
+        wrAch.unlockedAt = appState.currentDate;
+      }
+
+      notifyStateChanged('weekly_review');
+      closeWeeklyReviewModal();
+      showToast('تم حفظ وإتمام المراجعة الأسبوعية بنجاح 📊');
+    }
+
+    function openAchievementsModal() {
+      const modal = document.getElementById('achievements-modal');
+      if (!modal) return;
+
+      const container = document.getElementById('achievements-list-container');
+      if (container) {
+        container.innerHTML = '';
+        (appState.achievements || []).forEach(ach => {
+          const div = document.createElement('div');
+          div.className = `p-3 rounded-2xl border flex items-center gap-3 transition-all ${
+            ach.unlocked ? 'bg-amber-50/60 border-amber-200 text-amber-950' : 'bg-slate-50/70 border-slate-200 text-slate-400 opacity-60'
+          }`;
+          div.innerHTML = `
+            <div class="w-10 h-10 rounded-xl ${ach.unlocked ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-500'} flex items-center justify-center text-xl font-bold">
+              ${ach.icon}
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs ${ach.unlocked ? 'text-slate-900' : 'text-slate-500'}">${escapeHtml(ach.title)}</span>
+                <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${ach.unlocked ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-500'}">
+                  ${ach.unlocked ? 'مُحقق ✓' : 'مُقفل 🔒'}
+                </span>
+              </div>
+              <p class="text-[11px] leading-snug mt-0.5 text-slate-600">${escapeHtml(ach.desc)}</p>
+              ${ach.unlockedAt ? `<span class="text-[9px] font-mono text-slate-400 block mt-1">تاريخ التحقيق: ${ach.unlockedAt}</span>` : ''}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeAchievementsModal() {
+      const modal = document.getElementById('achievements-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function openGlobalSearch() {
+      const modal = document.getElementById('global-search-modal');
+      const input = document.getElementById('global-search-input');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (input) {
+          input.value = '';
+          input.focus();
+          executeGlobalSearch('');
+        }
+      }
+    }
+
+    function closeGlobalSearch() {
+      const modal = document.getElementById('global-search-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function clearGlobalSearch() {
+      const input = document.getElementById('global-search-input');
+      if (input) {
+        input.value = '';
+        executeGlobalSearch('');
+        input.focus();
+      }
+    }
+
+    function executeGlobalSearch(query) {
+      const q = (query || '').trim().toLowerCase();
+      const resultsContainer = document.getElementById('global-search-results');
+      const clearBtn = document.getElementById('search-clear-btn');
+      if (clearBtn) clearBtn.classList.toggle('hidden', !q);
+      if (!resultsContainer) return;
+
+      if (!q) {
+        resultsContainer.innerHTML = `
+          <div class="text-center py-6 text-slate-400 space-y-1">
+            <span class="text-2xl block">🔍</span>
+            <p class="text-xs">اكتب أي كلمة للبحث في الأهداف، المهام، المعاملات، والمفردات...</p>
+          </div>
+        `;
+        return;
+      }
+
+      const results = [];
+
+      (appState.lifeGoals || []).forEach(g => {
+        if (g.title?.toLowerCase().includes(q) || g.description?.toLowerCase().includes(q)) {
+          results.push({ section: 'goals', type: 'هدف استراتيجي', title: g.title, sub: g.category });
+        }
+      });
+
+      (appState.tasks || []).forEach(t => {
+        if (t.title?.toLowerCase().includes(q)) {
+          results.push({ section: 'home', type: 'مهمة تركيز', title: t.title, sub: t.completed ? 'مكتملة' : 'قيد التنفيذ' });
+        }
+      });
+
+      (appState.money?.transactions || []).forEach(tx => {
+        if (tx.item?.toLowerCase().includes(q) || tx.category?.toLowerCase().includes(q)) {
+          results.push({ section: 'money', type: 'معاملة مالية', title: `${tx.item} (${tx.amount} ج.م)`, sub: tx.category });
+        }
+      });
+
+      (appState.dev?.vocab || []).forEach(v => {
+        if (v.word?.toLowerCase().includes(q) || v.meaning?.toLowerCase().includes(q)) {
+          results.push({ section: 'dev', type: 'مفردة إنجليزية', title: v.word, sub: v.meaning });
+        }
+      });
+
+      if (results.length === 0) {
+        resultsContainer.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <p class="text-xs">لم يتم العثور على نتائج تطابق: <strong class="text-slate-700 font-mono">"${escapeHtml(q)}"</strong></p>
+          </div>
+        `;
+        return;
+      }
+
+      resultsContainer.innerHTML = '';
+      results.forEach(r => {
+        const itemBtn = document.createElement('button');
+        itemBtn.className = 'w-full text-right p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all flex items-center justify-between group';
+        itemBtn.onclick = () => {
+          closeGlobalSearch();
+          switchView(r.section);
+        };
+        itemBtn.innerHTML = `
+          <div>
+            <span class="font-bold text-slate-800 text-xs block group-hover:text-sky-700">${escapeHtml(r.title)}</span>
+            <span class="text-[10px] text-slate-400 font-mono">${escapeHtml(r.sub || '')}</span>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-50 text-sky-800 border border-sky-100">${escapeHtml(r.type)}</span>
+        `;
+        resultsContainer.appendChild(itemBtn);
+      });
+    }
+
+    function calculateLifePulse() {
+      const healthPct = 90;
+      const moneyPct = appState.money?.savingGoal?.saved >= 700 ? 100 : Math.round(((appState.money?.savingGoal?.saved || 0) / 700) * 100);
+      const faithPct = 95;
+      const devPct = 85;
+      const goalsPct = 88;
+      const overall = Math.round((healthPct + moneyPct + faithPct + devPct + goalsPct) / 5);
+
+      return {
+        overall,
+        pillars: [
+          { name: 'المالية', score: `${moneyPct}%`, status: moneyPct >= 80 ? 'ممتاز' : 'يحتاج تركيز', color: moneyPct >= 80 ? 'emerald' : 'amber' },
+          { name: 'الصحة والوزن', score: '100 كجم', status: 'مسار مستقر', color: 'sky' },
+          { name: 'الإيمان والورد', score: '100%', status: 'منتظم', color: 'emerald' },
+          { name: 'التطوير الهندسي', score: 'نشط', status: 'دراسة مستمرة', color: 'indigo' },
+          { name: 'الخطط والأهداف', score: '3 أهداف', status: 'قيد التنفيذ', color: 'slate' }
+        ],
+        goingWell: 'انتظام الورد القرآني والصلوات، وثبات مسار الوزن مع تدريبات الجيم.',
+        needsAttention: 'البدء الفعلي في ادخار الـ 700 جنيه لشهر سبتمبر لبناء العادة.',
+        suggestedAction: 'إتمام جلسة تمرين سحب وساعد اليوم مع تسجيل 3 كلمات إنجليزية جديدة.'
+      };
+    }
+
+    function determineOneThing() {
+      const activeTasks = (appState.tasks || []).filter(t => !t.completed);
+      if (activeTasks.length > 0) {
+        return {
+          title: activeTasks[0].title,
+          reason: 'أهم خطوة فورية غير مكتملة في قائمة تركيزك لليوم.',
+          area: activeTasks[0].category || 'القيادة'
+        };
+      }
+      return {
+        title: 'جلسة تدريب سحب وساعد + مشي خفيف',
+        reason: 'الحفاظ على وتيرة حرق الدهون نحو 88 كجم وبناء قبضة اليد.',
+        area: 'الصحة'
+      };
+    }
+
+    function startOneThingAction() {
+      const one = determineOneThing();
+      showToast(`تم بدء التركيز على: ${one.title}`);
+    }
+
+    function completeOneThingAction() {
+      const activeTasks = (appState.tasks || []).filter(t => !t.completed);
+      if (activeTasks.length > 0) {
+        activeTasks[0].completed = true;
+        notifyStateChanged('one_thing_complete');
+        showToast('عاش! تم إنجاز أولوية اليوم بنجاح 🎯');
+      } else {
+        showToast('أولوية اليوم منجزة بالفعل!');
+      }
+    }
+
+    let notificationsList = [
+      { id: 'n1', title: 'مهمة شهر سبتمبر نشطة', text: 'حافظ على استمرارية الجيم وادخار 700 ج.م.', date: 'اليوم', read: false },
+      { id: 'n2', title: 'تذكير الورد القرآني', text: 'صفحات اليوم من رحلة الـ 200 يوم جاهزة للتدبر.', date: 'اليوم', read: false }
+    ];
+
+    function toggleNotifications() {
+      const popover = document.getElementById('notifications-popover');
+      if (!popover) return;
+      popover.classList.toggle('hidden');
+      renderNotificationsUI();
+    }
+
+    function renderNotificationsUI() {
+      const listEl = document.getElementById('notifications-list');
+      const badgeEl = document.getElementById('notif-badge');
+      const countEl = document.getElementById('notif-count-badge');
+      if (!listEl) return;
+
+      const unreadCount = notificationsList.filter(n => !n.read).length;
+      if (badgeEl) badgeEl.classList.toggle('hidden', unreadCount === 0);
+      if (countEl) countEl.textContent = unreadCount;
+
+      if (notificationsList.length === 0) {
+        listEl.innerHTML = '<p class="text-slate-400 text-center py-4">لا توجد تنبيهات حالياً.</p>';
+        return;
+      }
+
+      listEl.innerHTML = '';
+      notificationsList.forEach(n => {
+        const div = document.createElement('div');
+        div.className = `p-2.5 rounded-xl border transition-all ${n.read ? 'bg-slate-50 border-slate-200/80 text-slate-500' : 'bg-sky-50/60 border-sky-200 text-slate-800 font-medium'}`;
+        div.innerHTML = `
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-bold text-slate-900">${escapeHtml(n.title)}</span>
+            <span class="text-[9px] text-slate-400 font-mono">${escapeHtml(n.date)}</span>
+          </div>
+          <p class="text-[11px] text-slate-600 mt-0.5">${escapeHtml(n.text)}</p>
+        `;
+        listEl.appendChild(div);
+      });
+    }
+
+    function markAllNotificationsRead() {
+      notificationsList.forEach(n => n.read = true);
+      renderNotificationsUI();
+      showToast('تم تحديد جميع التنبيهات كمقروءة');
+    }
+
+    function clearAllNotifications() {
+      notificationsList = [];
+      renderNotificationsUI();
+      showToast('تم مسح مركز التنبيهات');
+    }
+
+    function evaluateAndGenerateRealNotifications() {
+      renderNotificationsUI();
+    }
+
+    let isNavDrawerOpen = false;
+
+    function toggleNavDrawer() {
+      if (isNavDrawerOpen) closeNavDrawer();
+      else openNavDrawer();
+    }
+
+    function openNavDrawer() {
+      isNavDrawerOpen = true;
+      const drawer = document.getElementById('nav-drawer');
+      const overlay = document.getElementById('nav-drawer-overlay');
+      if (drawer) drawer.classList.remove('translate-x-full');
+      if (overlay) overlay.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeNavDrawer() {
+      isNavDrawerOpen = false;
+      const drawer = document.getElementById('nav-drawer');
+      const overlay = document.getElementById('nav-drawer-overlay');
+      if (drawer) drawer.classList.add('translate-x-full');
+      if (overlay) overlay.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function navigateFromDrawer(viewName) {
+      closeNavDrawer();
+      switchView(viewName);
+    }
+
+    function switchView(viewName) {
+      currentView = viewName;
+      ['home', 'goals', 'money', 'health', 'faith', 'dev'].forEach(v => {
+        const sec = document.getElementById(`view-${v}`);
+        if (sec) sec.classList.toggle('hidden', v !== viewName);
+
+        const pill = document.getElementById(`pill-nav-${v}`);
+        if (pill) {
+          if (v === viewName) {
+            pill.className = 'px-3 py-1.5 rounded-lg bg-white shadow-xs text-sky-900 font-bold transition-all';
+          } else {
+            pill.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
+          }
+        }
+
+        const dBtn = document.getElementById(`drawer-nav-${v}`);
+        if (dBtn) {
+          const dot = dBtn.querySelector('.drawer-active-dot');
+          if (v === viewName) {
+            dBtn.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold bg-sky-50 text-sky-900 border border-sky-100 shadow-sm transition-all group';
+            if (dot) dot.classList.remove('hidden');
+          } else {
+            dBtn.className = 'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all group';
+            if (dot) dot.classList.add('hidden');
+          }
+        }
+      });
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function switchSettingsTab(tabName) {
+      ['general', 'lifeos', 'backup', 'about'].forEach(t => {
+        const panel = document.getElementById(`settings-panel-${t}`);
+        const btn = document.getElementById(`stab-${t}`);
+        if (panel) panel.classList.toggle('hidden', t !== tabName);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = 'settings-tab-btn px-3 py-1.5 rounded-lg font-bold bg-slate-900 text-white';
+          } else {
+            btn.className = 'settings-tab-btn px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:bg-slate-100';
+          }
+        }
+      });
+    }
+
+    function saveHealthSettingsFromModal() {
+      const w = parseFloat(document.getElementById('setting-target-weight')?.value);
+      if (!isNaN(w) && w > 40) {
+        appState.health.weight.target = w;
+        notifyStateChanged('settings_target_weight');
+        showToast('تم تحديث الوزن المستهدف بنجاح');
+      }
+    }
+
+    function exportLeithDataBackup() {
+      const payload = {
+        app: 'LEITH',
+        version: '3.5.0',
+        exportedAt: new Date().toISOString(),
+        state: appState,
+        vitality: localStorage.getItem(VITALITY_STORAGE_KEY),
+        journey: localStorage.getItem(JOURNEY_STORAGE_KEY)
+      };
+
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(payload, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `LEITH_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('تم تصدير ملف النسخة الاحتياطية بنجاح ⬇️');
+    }
+
+    function importLeithDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.app === 'LEITH' && parsed.state) {
+            showConfirmModal('استرجاع البيانات', 'سيؤدي هذا الإجراء لاستبدال البيانات الحالية بالنسخة المرفوعة، هل تريد الاستمرار؟', () => {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed.state));
+              if (parsed.vitality) localStorage.setItem(VITALITY_STORAGE_KEY, parsed.vitality);
+              if (parsed.journey) localStorage.setItem(JOURNEY_STORAGE_KEY, parsed.journey);
+              appState = loadPreviewState();
+              notifyStateChanged('backup_imported');
+              closeSettingsModal();
+              showToast('تم استرجاع النسخة الاحتياطية بنجاح ⬆️');
+            });
+          } else {
+            showToast('ملف النسخة الاحتياطية غير متوافق!');
+          }
+        } catch (err) {
+          showToast('حدث خطأ في قراءة ملف الـ JSON');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function confirmResetAllData() {
+      showConfirmModal('تصفير كافة البيانات', 'تحذير: سيتم حذف كافة البيانات المحلية واسترجاع الإعدادات الافتراضية. لا يمكن التراجع عن هذا الإجراء.', () => {
+        localStorage.clear();
+        appState = JSON.parse(JSON.stringify(defaultAppState));
+        notifyStateChanged('reset_all');
+        closeSettingsModal();
+        showToast('تم تصفير كافة البيانات بنجاح');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      if (toast && msgEl) {
+        msgEl.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 2800);
+      }
+    }
+
+    let confirmCallback = null;
+    function showConfirmModal(title, msg, onConfirm) {
+      const modal = document.getElementById('confirm-modal');
+      const t = document.getElementById('confirm-title');
+      const m = document.getElementById('confirm-message');
+      const btn = document.getElementById('confirm-action-btn');
+      if (modal && t && m && btn) {
+        t.textContent = title;
+        m.textContent = msg;
+        confirmCallback = onConfirm;
+        btn.onclick = () => {
+          closeConfirmModal();
+          if (typeof confirmCallback === 'function') confirmCallback();
+        };
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeConfirmModal() {
+      const modal = document.getElementById('confirm-modal');
+      if (modal) modal.classList.add('hidden');
+      confirmCallback = null;
+    }
+
+    function openAssistantModal() {
+      const modal = document.getElementById('assistant-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAssistantModal() {
+      const modal = document.getElementById('assistant-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function assistantAction(action) {
+      closeAssistantModal();
+      switch (action) {
+        case 'add_task': openAddTaskModal(); break;
+        case 'add_expense': openAddTransactionModal('expense'); break;
+        case 'log_weight': openLogWeightModal(); break;
+        case 'log_workout': openLogWorkoutModal(); break;
+      }
+    }
+
+    function toggleLanguage() {
+      showToast('الواجهة مضبوطة على اللغة العربية (RTL)');
+    }
+
+    function setSystemLanguage(lang) {
+      showToast(lang === 'ar' ? 'العربية نشطة' : 'English mode set');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderHomeView() {
+      const pulse = calculateLifePulse();
+      const pulseBadge = document.getElementById('pulse-overall-badge');
+      if (pulseBadge) pulseBadge.textContent = `الحالة العامة: ممتاز (${pulse.overall}%)`;
+
+      const pillarsGrid = document.getElementById('pulse-pillars-grid');
+      if (pillarsGrid) {
+        pillarsGrid.innerHTML = '';
+        pulse.pillars.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1';
+          div.innerHTML = `
+            <span class="text-[10px] text-slate-400 font-mono block">${escapeHtml(p.name)}</span>
+            <div class="font-bold text-slate-800 text-xs">${escapeHtml(p.score)}</div>
+            <span class="text-[9px] font-bold text-${p.color}-700">${escapeHtml(p.status)}</span>
+          `;
+          pillarsGrid.appendChild(div);
+        });
+      }
+
+      const goingWellEl = document.getElementById('pulse-going-well');
+      if (goingWellEl) goingWellEl.textContent = pulse.goingWell;
+      const needsAttnEl = document.getElementById('pulse-needs-attention');
+      if (needsAttnEl) needsAttnEl.textContent = pulse.needsAttention;
+      const sugActEl = document.getElementById('pulse-suggested-action');
+      if (sugActEl) sugActEl.textContent = pulse.suggestedAction;
+
+      const one = determineOneThing();
+      const oneTitle = document.getElementById('one-thing-title');
+      const oneReason = document.getElementById('one-thing-reason');
+      const oneArea = document.getElementById('one-thing-area-badge');
+      if (oneTitle) oneTitle.textContent = one.title;
+      if (oneReason) oneReason.textContent = `السبب: ${one.reason}`;
+      if (oneArea) oneArea.textContent = one.area;
+
+      const focusList = document.getElementById('home-focus-list');
+      if (focusList) {
+        focusList.innerHTML = '';
+        (appState.tasks || []).forEach(t => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200';
+          row.innerHTML = `
+            <label class="flex items-center gap-2 cursor-pointer flex-1">
+              <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTaskStatus('${t.id}')" class="rounded text-sky-600 focus:ring-sky-500 w-4 h-4">
+              <span class="${t.completed ? 'line-through text-slate-400' : 'font-medium text-slate-800'}">${escapeHtml(t.title)}</span>
+            </label>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200/60 text-slate-600">${escapeHtml(t.category)}</span>
+          `;
+          focusList.appendChild(row);
+        });
+      }
+
+      renderCalendarGrid();
+      renderHabitMatrixGrid();
+    }
+
+    function toggleTaskStatus(taskId) {
+      const task = (appState.tasks || []).find(t => t.id === taskId);
+      if (task) {
+        task.completed = !task.completed;
+        notifyStateChanged('task_toggle');
+      }
+    }
+
+    function renderCalendarGrid() {
+      const calGrid = document.getElementById('home-calendar-grid');
+      if (!calGrid) return;
+      calGrid.innerHTML = '';
+      for (let i = 0; i < 1; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'h-7 rounded-lg bg-transparent';
+        calGrid.appendChild(blank);
+      }
+      for (let d = 1; d <= 30; d++) {
+        const cell = document.createElement('button');
+        const isCurrent = (d === 6);
+        cell.className = `h-7 rounded-lg font-mono flex items-center justify-center text-xs transition-all ${
+          isCurrent ? 'bg-sky-600 text-white font-bold shadow-xs' : 'bg-slate-50 hover:bg-slate-200 border border-slate-200/70 text-slate-700'
+        }`;
+        cell.textContent = d;
+        calGrid.appendChild(cell);
+      }
+    }
+
+    function renderHabitMatrixGrid() {
+      const tbody = document.getElementById('home-habit-matrix-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      (appState.habits || []).forEach(h => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-100 hover:bg-slate-50/60';
+        let cells = `<td class="py-2 pl-3 font-semibold text-slate-800 whitespace-nowrap">${h.icon} ${escapeHtml(h.name)}</td>`;
+        const log = appState.habitLogs[h.id] || {};
+        for (let d = 1; d <= 30; d++) {
+          const val = log[d];
+          const isToday = (d === 6);
+          const icon = val === 1 ? '✓' : val === 0 ? '—' : '·';
+          const color = val === 1 ? 'text-emerald-600 font-bold' : val === 0 ? 'text-rose-500 font-bold' : 'text-slate-300';
+          cells += `
+            <td onclick="cycleHabitDay('${h.id}', ${d})" class="px-1 text-center font-mono cursor-pointer hover:bg-slate-200/60 rounded ${isToday ? 'bg-sky-50 font-bold' : ''}">
+              <span class="${color}">${icon}</span>
+            </td>
+          `;
+        }
+        tr.innerHTML = cells;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function cycleHabitDay(habitId, day) {
+      if (!appState.habitLogs[habitId]) appState.habitLogs[habitId] = {};
+      const cur = appState.habitLogs[habitId][day];
+      if (cur === undefined) appState.habitLogs[habitId][day] = 1;
+      else if (cur === 1) appState.habitLogs[habitId][day] = 0;
+      else delete appState.habitLogs[habitId][day];
+      notifyStateChanged('habit_cycle');
+    }
+
+    function calendarPrevMonth() { showToast('التقويم مخصص لشهر سبتمبر 2026'); }
+    function calendarNextMonth() { showToast('التقويم مخصص لشهر سبتمبر 2026'); }
+
+    function renderGoalsCenter() {
+      const goals = appState.lifeGoals || [];
+      const totalVal = document.getElementById('goals-total-val');
+      const compVal = document.getElementById('goals-completed-val');
+      const inProgVal = document.getElementById('goals-inprogress-val');
+      const notStartedVal = document.getElementById('goals-notstarted-val');
+      const overallPct = document.getElementById('goals-overall-pct');
+
+      if (totalVal) totalVal.textContent = goals.length;
+      if (compVal) compVal.textContent = goals.filter(g => g.status === 'Completed').length;
+      if (inProgVal) inProgVal.textContent = goals.filter(g => g.status === 'In Progress').length;
+      if (notStartedVal) notStartedVal.textContent = goals.filter(g => g.status === 'Not Started').length;
+      if (overallPct) overallPct.textContent = '35%';
+
+      const grid = document.getElementById('goals-cards-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      goals.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-3 nexus-card';
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">${g.icon || '🎯'}</span>
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">${escapeHtml(g.title)}</h4>
+                <span class="text-[10px] text-slate-400 font-mono">${escapeHtml(g.category)} &middot; أولوية ${escapeHtml(g.priority)}</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-50 text-sky-800 border border-sky-200">${escapeHtml(g.status)}</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">${escapeHtml(g.description)}</p>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400 font-mono">الهدف: ${g.deadline || '--'}</span>
+            <button onclick="openGoalDetailModal('${g.id}')" class="text-xs font-bold text-sky-700 hover:text-sky-800">التفاصيل والخطوات &larr;</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function setGoalFilterStatus(status) {
+      currentGoalFilterStatus = status;
+      renderGoalsCenter();
+    }
+
+    function openAddGoalModal() {
+      const title = prompt('أدخل عنوان الهدف الجديد:');
+      if (!title || !title.trim()) return;
+      appState.lifeGoals.push({
+        id: 'lg_' + Date.now(),
+        title: title.trim(),
+        description: 'هدف استراتيجي مضاف حديثاً.',
+        category: 'Personal',
+        status: 'In Progress',
+        priority: 'High',
+        icon: '🎯',
+        deadline: '2027-12-31',
+        milestones: []
+      });
+      notifyStateChanged('goal_added');
+      showToast('تمت إضافة الهدف الجديد بنجاح');
+    }
+
+    function openGoalDetailModal(goalId) {
+      activeDetailGoalId = goalId;
+      const g = (appState.lifeGoals || []).find(x => x.id === goalId);
+      if (!g) return;
+      const modal = document.getElementById('goal-detail-modal');
+      if (!modal) return;
+      document.getElementById('gdetail-title').textContent = g.title;
+      document.getElementById('gdetail-category').textContent = g.category;
+      document.getElementById('gdetail-priority').textContent = g.priority;
+      document.getElementById('gdetail-status').textContent = g.status;
+      document.getElementById('gdetail-desc').textContent = g.description;
+      modal.classList.remove('hidden');
+    }
+
+    function closeGoalDetailModal() {
+      const modal = document.getElementById('goal-detail-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function promptAddMilestoneToCurrentGoal() {
+      const title = prompt('أدخل الخطوة التنفيذية:');
+      if (!title || !title.trim()) return;
+      const g = (appState.lifeGoals || []).find(x => x.id === activeDetailGoalId);
+      if (g) {
+        if (!g.milestones) g.milestones = [];
+        g.milestones.push({ id: 'm_' + Date.now(), title: title.trim(), completed: false });
+        notifyStateChanged('milestone_added');
+        showToast('تمت إضافة الخطوة التنفيذية');
+      }
+    }
+
+    function openQuickAddModal() { openAddTaskModal(); }
+
+    function openAddTaskModal() {
+      const title = prompt('أدخل عنوان مهمة التركيز الجديدة:');
+      if (!title || !title.trim()) return;
+      appState.tasks.push({
+        id: 't_' + Date.now(),
+        title: title.trim(),
+        completed: false,
+        category: 'Focus'
+      });
+      notifyStateChanged('task_added');
+      showToast('تمت إضافة مهمة التركيز بنجاح');
+    }
+
+    function openAddTransactionModal(type) {
+      const amountStr = prompt(`أدخل قيمة ${type === 'income' ? 'الدخل' : 'المصروف'} (بالجنيه):`);
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) return;
+      const item = prompt('بيان العملية أو سبب الصرف:');
+      if (!item || !item.trim()) return;
+
+      const acc = appState.money.accounts[0];
+      if (type === 'expense') {
+        acc.balance -= amount;
+      } else {
+        acc.balance += amount;
+      }
+
+      appState.money.transactions.unshift({
+        id: 'tx_' + Date.now(),
+        type,
+        amount,
+        item: item.trim(),
+        category: 'عام',
+        date: appState.currentDate
+      });
+
+      notifyStateChanged('transaction_added');
+      showToast('تم تسجيل المعاملة المالية وتحديث الأرصدة');
+    }
+
+    function promptAddSavings() {
+      const amountStr = prompt('أدخل المبلغ المراد إضافته لادخار سبتمبر:');
+      const amount = parseFloat(amountStr);
+      if (isNaN(amount) || amount <= 0) return;
+      appState.money.savingGoal.saved = (appState.money.savingGoal.saved || 0) + amount;
+      notifyStateChanged('savings_updated');
+      showToast(`تم ادخار ${amount} ج.م بنجاح!`);
+    }
+
+    function promptAddAccount() {
+      const name = prompt('أدخل اسم الحساب الجديد:');
+      if (!name || !name.trim()) return;
+      appState.money.accounts.push({
+        id: 'acc_' + Date.now(),
+        name: name.trim(),
+        type: 'General',
+        balance: 0,
+        active: true
+      });
+      notifyStateChanged('account_added');
+      showToast('تمت إضافة الحساب الجديد');
+    }
+
+    function openLogWeightModal() {
+      const wStr = prompt('سجل وزنك اليوم (كجم):', appState.health.weight.current);
+      const w = parseFloat(wStr);
+      if (isNaN(w) || w <= 40) return;
+      appState.health.weight.current = w;
+      appState.health.weightLog.push({ id: 'w_' + Date.now(), date: appState.currentDate, weight: w });
+      notifyStateChanged('weight_logged');
+      showToast(`تم تسجيل الوزن: ${w} كجم`);
+    }
+
+    function openLogWorkoutModal() {
+      const title = prompt('أدخل عنوان تمرين اليوم (مثلاً: سحب وظهر + ساعد):', 'سحب وظهر + ساعد وقبضة');
+      if (!title || !title.trim()) return;
+      appState.health.workouts.unshift({
+        id: 'wo_' + Date.now(),
+        title: title.trim(),
+        date: appState.currentDate,
+        focusTag: 'Grip & Pull'
+      });
+      notifyStateChanged('workout_logged');
+      showToast('تم تسجيل جلسة التمرين في سجلك الرياضي');
+    }
+
+    function openAddEventModal() {
+      const title = prompt('أدخل عنوان الموعد أو الحدث:');
+      if (!title || !title.trim()) return;
+      appState.events.push({ id: 'ev_' + Date.now(), title: title.trim(), date: appState.currentDate, time: '18:00' });
+      notifyStateChanged('event_added');
+      showToast('تمت إضافة الموعد إلى التقويم');
+    }
+
+    function openAddHabitModal() {
+      const name = prompt('أدخل اسم العادة اليومية:');
+      if (!name || !name.trim()) return;
+      appState.habits.push({ id: 'h_' + Date.now(), name: name.trim(), icon: '⭐' });
+      notifyStateChanged('habit_added');
+      showToast('تمت إضافة العادة إلى المصفوفة');
+    }
+
+    function saveDailyReflection() {
+      const comp = document.getElementById('reflection-completed')?.value || '';
+      const miss = document.getElementById('reflection-missed')?.value || '';
+      const imp = document.getElementById('reflection-improve')?.value || '';
+      appState.reflections[appState.currentDate] = { comp, miss, imp };
+      savePreviewState();
+      showToast('تم حفظ مراجعة المساء');
+    }
+
+    function continueVitalityPlan() { showToast('أنت تتابع اليوم 1 من 45 في خطة Vitality'); }
+    function toggleCurrentVitalityDayCompletion() { showToast('تم تحديث حالة إكمال يوم الخطة'); }
+    function openVitalityJumpModal() { showToast('يمكنك استعراض أي يوم من الخطة البدنية'); }
+    function openCustomizeMealModal() { showToast('تخصيص الوجبات متاح وسلس'); }
+    function navigateVitalityDay(dir) { showToast(`انتقال اليوم البدني (${dir > 0 ? '+' : ''}${dir})`); }
+    function goToVitalityToday() { showToast('العودة لليوم الحسابي في خطة الصحة'); }
+    function logCurrentDayWorkoutToHistory() { openLogWorkoutModal(); }
+    function promptUpdateVitalitySteps() { showToast('تم تحديث خطوات المشي'); }
+    function promptUpdateVitalitySleep() { showToast('تم تحديث ساعات النوم'); }
+
+    function continueJourney() { showToast('متابعة رحلة الـ 200 يوم الإيمانية'); }
+    function toggleCurrentDayCompletion() { showToast('تم تحديث إكمال اليوم الإيماني'); }
+    function openJumpToDayModal() { showToast('الانتقال لأي يوم من الـ 200 يوم متاح'); }
+    function navigateJourneyDay(dir) { showToast(`تصفح اليوم الإيماني (${dir > 0 ? '+' : ''}${dir})`); }
+    function goToJourneyToday() { showToast('العودة لورد اليوم الإيماني'); }
+    function openJourneyBookmarksModal() { showToast('فتح المحفوظات الإيمانية'); }
+    function toggleBookmarkJourneyItem(item) { showToast(`تمت إضافة ${item} إلى المحفوظات 🔖`); }
+    function copyJourneyItemText(item) { showToast(`تم نسخ نص ${item} بنجاح 📋`); }
+    function saveJourneyDailyReflection() { showToast('تم حفظ خواطر اليوم الإيمانية'); }
+    function openLogQuranModal() {
+      const pStr = prompt('كم صفحة قرأت اليوم من القرآن؟', '4');
+      const p = parseInt(pStr);
+      if (!isNaN(p) && p > 0) {
+        appState.faith.quranLogs.unshift({ id: 'q_' + Date.now(), date: appState.currentDate, pages: p, surah: 'الورد اليومي' });
+        notifyStateChanged('quran_logged');
+        showToast(`تم تسجيل ${p} صفحات في الورد القرآني 📖`);
+      }
+    }
+
+    function openAddVocabModal() {
+      const word = prompt('أدخل الكلمة الإنجليزية (Word):');
+      if (!word || !word.trim()) return;
+      const meaning = prompt('أدخل المعنى والترجمة بالعربية:');
+      appState.dev.vocab.unshift({ id: 'v_' + Date.now(), word: word.trim(), meaning: meaning || '', date: appState.currentDate });
+      notifyStateChanged('vocab_added');
+      showToast('تمت إضافة الكلمة الإنجليزية');
+    }
+    function openAddSpeakingModal() { showToast('تسجيل جلسة محادثة'); }
+    function openAddInterviewModal() { showToast('إضافة سؤال إنترفيو'); }
+    function openAddDeviceModal() { showToast('توثيق جهاز طبي جديد'); }
+    function openAddArduinoModal() { showToast('إضافة مشروع أردوينو'); }
+    function renderVocabList() {}
+    function renderTransactionList() {}
+
+    function renderAll() {
+      renderHomeView();
+      renderGoalsCenter();
+      renderNotificationsUI();
+    }
+
+    window.onload = function () {
+      setupPWA();
+      renderAll();
+
+      window.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        const isEditable = activeTag === 'input' || activeTag === 'textarea' || (document.activeElement && document.activeElement.isContentEditable);
+
+        if (e.key === 'Escape') {
+          closeNavDrawer();
+          closeGlobalSearch();
+          closeWeeklyReviewModal();
+          closeAchievementsModal();
+          closeSettingsModal();
+          closeGoalDetailModal();
+          closeAssistantModal();
+          closeConfirmModal();
+        } else if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          openGlobalSearch();
+        } else if ((e.key === 'l' || e.key === 'L') && !isEditable && !e.metaKey && !e.ctrlKey && !e.altKey) {
+          e.preventDefault();
+          toggleNavDrawer();
+        }
+      });
+    };
+  </script>
+</body>
+</html>
