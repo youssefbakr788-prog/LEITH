@@ -52,15 +52,33 @@
       background-color: inherit;
     }
     .nexus-btn {
-      transition: all 0.15s ease;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nexus-btn:active {
       transform: scale(0.97);
     }
     .progress-ring-circle {
-      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       transform: rotate(-90deg);
       transform-origin: 50% 50%;
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .animate-subtle {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
+    .gym-set-row:hover {
+      background-color: #f8fafc;
+    }
+    .gym-input-num::-webkit-inner-spin-button,
+    .gym-input-num::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .gym-input-num {
+      -moz-appearance: textfield;
     }
   </style>
 </head>
@@ -107,7 +125,7 @@
           <span>+</span>
           <span class="hidden sm:inline">عادة جديدة</span>
         </button>
-        <button onclick="openSettingsModal()" class="w-8 h-8 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center text-sm nexus-btn" title="النسخ الاحتياطي وإعادة الضبط">
+        <button onclick="openSettingsModal()" class="w-8 h-8 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 flex items-center justify-center text-sm nexus-btn" title="النسخ الاحتياطي والإعدادات">
           ⚙️
         </button>
       </div>
@@ -116,12 +134,10 @@
 
   <main class="w-full max-w-5xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-12 sm:space-y-16">
 
-    <!-- ========================================================================= -->
-    <!-- 1. MONTH SUCCESS CIRCLE (HERO ELEMENT)                                    -->
-    <!-- ========================================================================= -->
+    <!-- 1. MONTH SUCCESS CIRCLE (HERO ELEMENT) -->
     <section id="section-hero" class="flex flex-col items-center justify-center text-center pt-2 pb-6 relative">
       <div class="space-y-2 mb-6">
-        <span class="inline-block px-3 py-1 rounded-full bg-slate-900 text-white text-[10px] font-mono tracking-wider font-bold">
+        <span class="inline-block px-3 py-1 rounded-full bg-slate-900 text-white text-[10px] font-mono tracking-wider font-bold shadow-xs">
           رحلة سبتمبر 2026
         </span>
         <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
@@ -158,9 +174,7 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 2. TODAY SECTION                                                          -->
-    <!-- ========================================================================= -->
+    <!-- 2. TODAY SECTION -->
     <section id="section-today" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
@@ -189,7 +203,7 @@
             <span id="today-habits-pct" class="font-mono text-xs font-bold text-sky-600">(0%)</span>
           </div>
           <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden mt-1">
-            <div id="today-habits-bar" class="bg-sky-500 h-1.5 rounded-full transition-all" style="width: 0%"></div>
+            <div id="today-habits-bar" class="bg-sky-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
         </div>
 
@@ -209,34 +223,38 @@
         </div>
 
         <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block font-mono">الجيم واللياقة</span>
-          <div id="today-gym-status" class="text-sm font-extrabold text-slate-800 pt-0.5">لم يُسجل تمرين</div>
-          <span id="today-gym-sub" class="text-[10px] text-slate-400 block font-mono">الوزن: لم يُسجل بعد</span>
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block font-mono">برنامج الجيم (38 يوم)</span>
+            <span id="today-gym-badge" class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">اليوم 1</span>
+          </div>
+          <div id="today-gym-status" class="text-sm font-extrabold text-slate-800 pt-0.5">ANTERIOR — صدر / كتف / باي</div>
+          <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span id="today-gym-sub">لم يبدأ بعد</span>
+            <span id="today-gym-water" class="text-sky-600 font-bold">💧 0 / 2500 مل</span>
+          </div>
         </div>
       </div>
 
       <!-- Quick Action Priority -->
-      <div id="today-onething-container" class="p-4 rounded-2xl bg-gradient-to-r from-sky-50/70 to-indigo-50/70 border border-sky-100 flex flex-wrap items-center justify-between gap-3">
+      <div id="today-onething-container" class="p-4 rounded-2xl bg-gradient-to-r from-sky-50/80 to-indigo-50/80 border border-sky-100 flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-0.5">
           <span class="text-[10px] font-mono uppercase font-bold text-sky-700 block">🎯 الشيء الأهم لليوم (One Thing)</span>
           <h3 id="today-onething-title" class="text-sm font-bold text-slate-900">حدد خطوتك الأولى لتبدأ يومك بقوة</h3>
         </div>
-        <button id="today-onething-action-btn" onclick="completeTodayPriority()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn">
+        <button id="today-onething-action-btn" onclick="completeTodayPriority()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn shadow-xs">
           ✓ إنجاز هذه الخطوة
         </button>
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 3. MY HABITS (THE CORE OF LEITH)                                         -->
-    <!-- ========================================================================= -->
+    <!-- 3. MY HABITS (THE CORE OF LEITH) -->
     <section id="section-habits" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
             <span>✨</span> عاداتي اليومية والشهرية (My Habits)
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">النواة الأساسية للنظام. كل تحديد يحفظ فورياً ويعيد حساب مؤشرات النجاح والسلاسل بدقة.</p>
+          <p class="text-xs text-slate-500 mt-0.5">النواة الأساسية للنظام. كل تحديد يحفظ فورياً ويعيد حساب مؤشرات النجاح بدقة.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="openQuickAddHabitModal()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn">
@@ -323,9 +341,7 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 4. MOOD TRACKING                                                          -->
-    <!-- ========================================================================= -->
+    <!-- 4. MOOD TRACKING -->
     <section id="section-mood" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
@@ -402,9 +418,8 @@
         <div class="md:col-span-5 p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 flex flex-col justify-between space-y-3 text-xs">
           <div class="space-y-2.5">
             <span class="font-bold text-slate-800 block">📊 تحليل المزاج الحقيقي (Mood Insights):</span>
-            
             <div id="mood-insights-container" class="space-y-2">
-              <p class="text-slate-400 text-center py-4">سجل حالتك اليوم لتفعيل التحليلات الإحصائية الدقيقة لسبتمبر.</p>
+              <!-- Dynamically populated -->
             </div>
           </div>
 
@@ -415,9 +430,7 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 5. CALENDAR (CENTRAL INTEGRATED VIEW)                                     -->
-    <!-- ========================================================================= -->
+    <!-- 5. CALENDAR (CENTRAL INTEGRATED VIEW) -->
     <section id="section-calendar" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
@@ -486,17 +499,22 @@
 
             <!-- Gym in Day -->
             <div class="p-2.5 rounded-xl bg-white border border-slate-200/80">
-              <span class="font-bold text-slate-800 block mb-0.5">🏋️ الجيم:</span>
-              <p id="cal-inspector-gym" class="text-slate-600 text-[11px]">لم يُسجل تمرين في هذا اليوم.</p>
+              <div class="flex items-center justify-between mb-0.5">
+                <span class="font-bold text-slate-800 block">🏋️ الجيم واللياقة:</span>
+                <span id="cal-inspector-gym-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">--</span>
+              </div>
+              <p id="cal-inspector-gym" class="text-slate-600 text-[11px]">جاري فحص البرنامج...</p>
+              <div id="cal-inspector-gym-extra" class="text-[10px] text-slate-400 font-mono mt-1 pt-1 border-t border-slate-100 flex justify-between">
+                <span id="cal-inspector-gym-water">💧 ماء: --</span>
+                <span id="cal-inspector-gym-weight">⚖️ وزن: --</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 6. FAITH SECTION                                                         -->
-    <!-- ========================================================================= -->
+    <!-- 6. FAITH SECTION -->
     <section id="section-faith" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
@@ -621,75 +639,387 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 7. GYM & FITNESS TRACKER                                                 -->
-    <!-- ========================================================================= -->
-    <section id="section-gym" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+    <!-- 7. GYM & FITNESS TRACKER (UPGRADED 38-DAY SCIENTIFIC SYSTEM) -->
+    <section id="section-gym" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-7">
+      
+      <!-- Gym Header & Core Program Milestone -->
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
-          <h2 class="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <span>🏋️</span> مركز الجيم واللياقة البدنية (Gym & Fitness)
-          </h2>
-          <p class="text-xs text-slate-500 mt-0.5">سجل التمارين، الأوزان، الحجم التدريبي، ومتابعة قياسات الجسم الحقيقية.</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="openLogWorkoutModal()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn">
-            + تسجيل تمرين
-          </button>
-          <button onclick="openLogMeasurementModal()" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold nexus-btn">
-            ⚖️ قياس جسم
-          </button>
-        </div>
-      </div>
-
-      <!-- Real Gym Metrics Tiles -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block font-mono">تمارين سبتمبر</span>
-          <div id="gym-stat-month" class="font-mono text-xl font-black text-slate-900">0 حصة</div>
-          <span class="text-[10px] text-slate-400 font-mono">في دورة التتبع</span>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block font-mono">تمارين هذا الأسبوع</span>
-          <div id="gym-stat-week" class="font-mono text-xl font-black text-sky-700">0 حصة</div>
-          <span class="text-[10px] text-slate-400 font-mono">الأسبوع الجاري</span>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block font-mono">سلسلة الالتزام</span>
-          <div id="gym-stat-streak" class="font-mono text-xl font-black text-amber-600">🔥 0 يوم</div>
-          <span class="text-[10px] text-slate-400 font-mono">تمرين مستمر</span>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block font-mono">آخر وزن مسجل</span>
-          <div id="gym-stat-weight" class="font-mono text-xl font-black text-emerald-700">-- كجم</div>
-          <span class="text-[10px] text-slate-400 font-mono">الهدف: 88 كجم</span>
-        </div>
-      </div>
-
-      <!-- Workout History & Body Measurements Logs -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-7 space-y-3">
-          <span class="text-xs font-bold text-slate-900 block">سجل التمارين المسجلة:</span>
-          <div id="gym-workouts-list" class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar text-xs">
-            <!-- Rendered by JS -->
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm">🏋️</span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-base sm:text-lg font-black text-slate-900">نظام الجيم المتقدم — برنامج الـ 38 يوماً</h2>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">ANTERIOR / POSTERIOR</span>
+              </div>
+              <p class="text-xs text-slate-500 font-mono mt-0.5">8 سبتمبر 2026 ← 15 أكتوبر 2026 (دورة انضباط متكاملة بدون تزييف)</p>
+            </div>
           </div>
         </div>
 
-        <div class="lg:col-span-5 space-y-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="startActiveWorkoutSession()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black shadow-xs nexus-btn flex items-center gap-2">
+            <span>⚡</span>
+            <span id="gym-start-btn-label">بدء تمرين اليوم</span>
+          </button>
+          <button onclick="openBodyMeasurementModal()" class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold nexus-btn">
+            ⚖️ قياس ذكي
+          </button>
+          <button onclick="openProgramCustomizerModal()" class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold nexus-btn" title="تعديل التمارين والمجموعات">
+            ⚙️ البرنامج
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 15: GYM DASHBOARD (38-Day KPIs) -->
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
+          
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">يوم البرنامج</span>
+            <div id="gym-kpi-day" class="font-mono text-base sm:text-lg font-black text-slate-900">Day 1 / 38</div>
+            <span id="gym-kpi-type" class="text-[10px] font-bold text-sky-700 block truncate">ANTERIOR</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">نسبة الإنجاز</span>
+            <div id="gym-kpi-progress" class="font-mono text-base sm:text-lg font-black text-slate-900">0%</div>
+            <span id="gym-kpi-completed-ratio" class="text-[10px] text-slate-500 font-mono block">0 من 38 مكتمل</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">سلسلة الالتزام</span>
+            <div id="gym-kpi-streak" class="font-mono text-base sm:text-lg font-black text-amber-600">🔥 0 يوم</div>
+            <span class="text-[10px] text-slate-400 font-mono block">تمرين متواصل</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">آخر وزن مسجل</span>
+            <div id="gym-kpi-weight" class="font-mono text-base sm:text-lg font-black text-slate-900">--</div>
+            <span id="gym-kpi-fat" class="text-[10px] text-slate-500 font-mono block">دهون: --</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">الكتلة العضلية</span>
+            <div id="gym-kpi-muscle" class="font-mono text-base sm:text-lg font-black text-emerald-700">--</div>
+            <span id="gym-kpi-muscle-pct" class="text-[10px] text-slate-500 font-mono block">النسبة: --</span>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 block">شرب الماء اليوم</span>
+            <div id="gym-kpi-water" class="font-mono text-base sm:text-lg font-black text-sky-700">0 ml</div>
+            <span id="gym-kpi-water-target" class="text-[10px] text-sky-600 font-mono block">الهدف: 2500 ml</span>
+          </div>
+
+        </div>
+
+        <!-- Today Program Bar & Today / Next / Prev Route -->
+        <div class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-50 via-sky-50/40 to-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-3">
+            <span class="font-mono font-bold text-slate-700">خارطة التدريب:</span>
+            <span id="gym-route-prev" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-500 font-mono text-[11px]">السابق: --</span>
+            <span class="text-slate-300">←</span>
+            <span id="gym-route-current" class="px-2.5 py-1 rounded-lg bg-slate-900 text-white font-mono font-black text-xs shadow-xs">اليوم: ANTERIOR (يوم 1)</span>
+            <span class="text-slate-300">←</span>
+            <span id="gym-route-next" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 font-mono text-[11px]">التالي: POSTERIOR (يوم 2)</span>
+          </div>
+          <div class="flex items-center gap-2 font-mono text-[11px] text-slate-600">
+            <span>المتبقي:</span>
+            <strong id="gym-route-remaining" class="text-slate-900 font-bold">38 يوماً</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 7 & 8: WORKOUT SESSION & TODAY'S EXACT EXERCISES -->
+      <div class="space-y-3 pt-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <h3 id="gym-schedule-heading" class="text-sm font-black text-slate-900">قائمة تمارين اليوم المجدولة</h3>
+            <span id="gym-today-status-chip" class="text-[10px] font-mono px-2 py-0.5 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200">في انتظار التنفيذ</span>
+          </div>
+
+          <!-- Anterior / Posterior View Toggles -->
+          <div class="flex items-center gap-1 text-xs font-mono">
+            <button onclick="switchProgramViewTab('ANTERIOR')" id="gym-tab-anterior" class="px-3 py-1.5 rounded-xl font-bold bg-slate-900 text-white">ANTERIOR (صدر/كتف/باي)</button>
+            <button onclick="switchProgramViewTab('POSTERIOR')" id="gym-tab-posterior" class="px-3 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100">POSTERIOR (ظهر/رجل/باي)</button>
+          </div>
+        </div>
+
+        <!-- Exercises List Cards Container -->
+        <div id="gym-exercises-routine-list" class="space-y-3">
+          <!-- Rendered dynamically by JS with complete progression & set inputs -->
+        </div>
+
+        <!-- Session Controls Bottom Strip -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="space-y-0.5">
+            <span class="font-bold text-slate-800 block">جاهز لإنهاء التمرين وحفظ الحجم التدريبي؟</span>
+            <span class="text-[11px] text-slate-500 font-mono">سيتم حساب إجمالي الحجم (Weight × Reps) ومقارنة الأرقام القياسية PR تلقائياً.</span>
+          </div>
+          <button onclick="finishActiveWorkoutSession()" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black shadow-xs nexus-btn flex items-center gap-2">
+            <span>✓</span>
+            <span>FINISH WORKOUT (حفظ التمرين)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 11 & 14: WATER TRACKER & DAILY RECOVERY -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-3 border-t border-slate-100">
+        
+        <!-- 11. Water Tracker Card -->
+        <div class="lg:col-span-7 p-4 sm:p-5 rounded-2xl bg-sky-50/50 border border-sky-100 space-y-4 text-xs">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-900">سجل قياسات الجسم:</span>
-            <button onclick="openLogMeasurementModal()" class="text-xs font-bold text-sky-600 hover:text-sky-800">+ جديد</button>
+            <div class="flex items-center gap-2">
+              <span class="text-base">💧</span>
+              <div>
+                <h4 class="font-black text-slate-900">متتبع شرب الماء اليومي (Water Tracker)</h4>
+                <span class="text-[10px] text-slate-500 font-mono">يتجدد يومياً مع الاحتفاظ بكافة السجلات السابقة</span>
+              </div>
+            </div>
+            <button onclick="openCustomWaterModal()" class="text-sky-700 font-bold hover:underline font-mono text-[11px]">تعديل الهدف ⚙️</button>
           </div>
-          <div id="gym-measurements-list" class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar text-xs">
-            <!-- Rendered by JS -->
+
+          <div class="space-y-2">
+            <div class="flex items-baseline justify-between">
+              <div class="flex items-baseline gap-1.5 font-mono">
+                <span id="water-current-text" class="text-2xl font-black text-sky-900">0</span>
+                <span class="text-slate-400">/</span>
+                <span id="water-target-text" class="text-sm font-bold text-slate-600">2500 ml</span>
+              </div>
+              <span id="water-weekly-avg-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white border border-sky-200 text-sky-800">متوسط الأسبوع: 0 ml</span>
+            </div>
+
+            <div class="w-full bg-slate-200/80 rounded-full h-2.5 overflow-hidden">
+              <div id="water-progress-bar" class="bg-sky-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Quick Water Buttons -->
+          <div class="grid grid-cols-4 gap-2 pt-1 font-mono">
+            <button onclick="quickAddWater(250)" class="p-2 rounded-xl bg-white border border-sky-200 hover:bg-sky-100/70 text-sky-900 font-bold text-center nexus-btn">+250 ml</button>
+            <button onclick="quickAddWater(500)" class="p-2 rounded-xl bg-white border border-sky-200 hover:bg-sky-100/70 text-sky-900 font-bold text-center nexus-btn">+500 ml</button>
+            <button onclick="quickAddWater(750)" class="p-2 rounded-xl bg-white border border-sky-200 hover:bg-sky-100/70 text-sky-900 font-bold text-center nexus-btn">+750 ml</button>
+            <button onclick="quickAddWater(1000)" class="p-2 rounded-xl bg-white border border-sky-200 hover:bg-sky-100/70 text-sky-900 font-bold text-center nexus-btn">+1000 ml</button>
+          </div>
+        </div>
+
+        <!-- 14. Recovery & Daily Health Card -->
+        <div class="lg:col-span-5 p-4 sm:p-5 rounded-2xl bg-slate-50/90 border border-slate-200 space-y-3 text-xs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-base">🧘</span>
+              <h4 class="font-black text-slate-900">مؤشر الاستشفاء والجاهزية (Recovery)</h4>
+            </div>
+            <span id="recovery-score-badge" class="px-2.5 py-0.5 rounded-full font-mono font-black text-[10px] bg-slate-200 text-slate-700">لم يحدد</span>
+          </div>
+
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            محسوب حصرياً بناءً على ساعات نومك، ومستويات طاقتك، والإجهاد العضلي المسجل دون تشخيصات طبية.
+          </p>
+
+          <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1">😴 ساعات النوم:</label>
+              <input type="number" step="0.5" id="health-sleep-input" onchange="saveHealthCheckin()" placeholder="مثلاً: 7.5" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white font-mono text-center">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1">⚡ مستوى الطاقة (1-5):</label>
+              <select id="health-energy-select" onchange="saveHealthCheckin()" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 bg-white text-[11px]">
+                <option value="0">لم يحدد</option>
+                <option value="1">1 — مرهق</option>
+                <option value="2">2 — منخفض</option>
+                <option value="3">3 — معتدل</option>
+                <option value="4">4 — جيد</option>
+                <option value="5">5 — طاقة قصوى</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1">🔥 الإجهاد العضلي (1-5):</label>
+              <select id="health-soreness-select" onchange="saveHealthCheckin()" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 bg-white text-[11px]">
+                <option value="0">لم يحدد</option>
+                <option value="1">1 — لا يوجد ألم</option>
+                <option value="2">2 — خفيف جداً</option>
+                <option value="3">3 — معتدل طبيعي</option>
+                <option value="4">4 — شد عضلي ملحوظ</option>
+                <option value="5">5 — إجهاد عالي</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 mb-1">🧠 التوتر والضغط (1-5):</label>
+              <select id="health-stress-select" onchange="saveHealthCheckin()" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 bg-white text-[11px]">
+                <option value="0">لم يحدد</option>
+                <option value="1">1 — هادئ تماماً</option>
+                <option value="2">2 — خفيف</option>
+                <option value="3">3 — متوسط</option>
+                <option value="4">4 — مرتفع</option>
+                <option value="5">5 — شديد</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Section 6: PERSONAL RECORDS (PRs) BOARD -->
+      <div class="space-y-3 pt-3 border-t border-slate-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span>🏆</span> لوحة الأرقام القياسية الشخصية (Personal Records — PR)
+            </h3>
+            <p class="text-[11px] text-slate-500">لا يُسجل أي رقم قياسي إلا من واقع أوزان وتكرارات وثقتها بنفسك.</p>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400">حسابات حقيقية 100%</span>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-2xl bg-white">
+          <table class="w-full text-xs text-right border-collapse min-w-[620px]">
+            <thead class="bg-slate-50/90 text-slate-500 font-mono border-b border-slate-200">
+              <tr>
+                <th class="py-2.5 px-3 font-bold text-slate-800">التمرين (Exercise)</th>
+                <th class="px-2 text-center">القسم</th>
+                <th class="px-3 text-center">أعلى وزن (kg)</th>
+                <th class="px-3 text-center">أعلى تكرار</th>
+                <th class="px-3 text-center">أعلى حجم تدريبي</th>
+                <th class="px-3 text-center">تاريخ التحقيق</th>
+              </tr>
+            </thead>
+            <tbody id="gym-prs-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 10: BODY TRACKING (SMART SCALE & MEASUREMENTS) -->
+      <div class="space-y-3 pt-3 border-t border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <span>⚖️</span> متتبع قياسات الجسم والميزان الذكي (Smart Scale & Body Tracking)
+            </h3>
+            <p class="text-[11px] text-slate-500">سجل الوزن ونسب الدهون والعضلات ومحيط الخصر مع مقارنة التغير والاتجاه.</p>
+          </div>
+          <button onclick="openBodyMeasurementModal()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold nexus-btn">
+            + تسجيل قياس جديد
+          </button>
+        </div>
+
+        <!-- Body Measurements Comparison Bar -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-0.5">
+            <span class="text-[10px] text-slate-400 font-mono block">الوزن الأولي</span>
+            <div id="body-start-weight" class="font-mono font-bold text-slate-800">--</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-0.5">
+            <span class="text-[10px] text-slate-400 font-mono block">الوزن الحالي</span>
+            <div id="body-latest-weight" class="font-mono font-bold text-slate-900">--</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-0.5">
+            <span class="text-[10px] text-slate-400 font-mono block">التغير الصافي</span>
+            <div id="body-weight-diff" class="font-mono font-bold text-slate-800">--</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-0.5">
+            <span class="text-[10px] text-slate-400 font-mono block">تغير نسبة الدهون</span>
+            <div id="body-fat-diff" class="font-mono font-bold text-slate-800">--</div>
+          </div>
+        </div>
+
+        <!-- Measurements History List -->
+        <div id="body-measurements-container" class="space-y-2">
+          <!-- Rendered dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- Section 12: AFFORDABLE EGYPTIAN FITNESS NUTRITION GUIDE & LOGGER -->
+      <div class="p-5 rounded-2xl bg-amber-50/40 border border-amber-200/80 space-y-4 text-xs">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/60 pb-3">
+          <div>
+            <h3 class="text-xs font-black uppercase tracking-wider text-amber-950 flex items-center gap-2">
+              <span>🥗</span> دليل التغذية الرياضية الاقتصادي (Affordable Egyptian Fitness Nutrition)
+            </h3>
+            <p class="text-[11px] text-amber-800 mt-0.5">أطعمة مصرية في المتناول تدعم البناء العضلي والشبع دون ميزانيات مبالغ فيها.</p>
+          </div>
+          <button onclick="openLogNutritionModal()" class="px-3 py-1.5 rounded-xl bg-amber-900 hover:bg-amber-950 text-white font-bold text-xs nexus-btn">
+            + تسجيل وجبة اليوم
+          </button>
+        </div>
+
+        <!-- Mandatory Medical Disclaimer -->
+        <div class="p-3 rounded-xl bg-white/90 border border-amber-300/80 text-[11px] text-amber-900 leading-relaxed space-y-1">
+          <strong class="font-bold flex items-center gap-1.5 text-amber-950">
+            <span>⚠️</span> إخلاء مسؤولية طبي وتعليمي:
+          </strong>
+          <p>
+            "This is general educational nutrition guidance and is not a medical treatment plan. If you have diagnosed insulin resistance, diabetes, or take glucose-lowering medication, consult a qualified healthcare professional for individualized advice."
+          </p>
+        </div>
+
+        <!-- Affordable Egyptian Staples Chips -->
+        <div class="space-y-1.5">
+          <span class="text-[11px] font-bold text-slate-700 block">أمثلة على الأطعمة المقترحة في البرنامج:</span>
+          <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🥚 بيض مسلوق/أومليت</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🍲 فول بزيت خفيف وليمون</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🥣 عدس أصفر وبني</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🧀 جبنة قريش</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🍗 صدور دجاج</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🐟 تونة مصفاة</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🥛 زبادي بلدي/يوناني</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🌾 شوفان بالحليب</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🥔 بطاطس مسلوقة أو مشوية</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🥗 سلطة خضراء غنية بالألياف</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-amber-200 text-slate-800">🥜 فول سوداني (كمية محددة)</span>
+          </div>
+        </div>
+
+        <!-- Today Logged Meals List -->
+        <div id="nutrition-today-list" class="space-y-1.5 pt-1">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Section 9: REAL WORKOUT HISTORY -->
+      <div class="space-y-3 pt-3 border-t border-slate-100">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-black uppercase tracking-wider text-slate-900">سجل التمارين الموثقة (Workout History)</h3>
+          <span id="gym-history-count" class="text-xs font-mono font-bold text-slate-500">0 جلسة مسجلة</span>
+        </div>
+
+        <div id="gym-history-list" class="space-y-2 text-xs">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Section 16 & 17: WEEKLY & 38-DAY ANALYTICS & REVIEW -->
+      <div class="space-y-4 pt-3 border-t border-slate-100">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-black uppercase tracking-wider text-slate-900">تحليلات الأداء ومراجعة الـ 38 يوماً</h3>
+          <span class="text-[10px] font-mono text-slate-400">تحديث فوري من قاعدة البيانات الموحدة</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <!-- Weekly Analytics -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span class="font-bold text-slate-800 block">📊 الأداء الأسبوعي الحالي:</span>
+            <div id="gym-weekly-analytics-content" class="space-y-1 text-slate-600 font-mono text-[11px]">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- 38-Day Cumulative Review & Biggest Improvement -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span class="font-bold text-slate-800 block">🌟 ملخص الدورة وأبرز تطور (Biggest Improvement):</span>
+            <div id="gym-program-review-content" class="space-y-1 text-slate-600 font-mono text-[11px]">
+              <!-- Rendered by JS -->
+            </div>
           </div>
         </div>
       </div>
+
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 8. MONTHLY ANALYTICS (REAL DATA ONLY)                                    -->
-    <!-- ========================================================================= -->
+    <!-- 8. MONTHLY ANALYTICS (REAL DATA ONLY) -->
     <section id="section-analytics" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
@@ -727,9 +1057,7 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 9. MONTHLY REVIEW & REFLECTION                                           -->
-    <!-- ========================================================================= -->
+    <!-- 9. MONTHLY REVIEW & REFLECTION -->
     <section id="section-review" class="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-7 shadow-xs space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
@@ -761,9 +1089,7 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 10. FOOTER                                                                -->
-    <!-- ========================================================================= -->
+    <!-- 10. FOOTER -->
     <footer class="pt-6 pb-12 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
       <div class="flex items-center gap-3">
         <div class="w-6 h-6 rounded-lg bg-slate-900 text-white font-black text-xs flex items-center justify-center">L</div>
@@ -803,7 +1129,7 @@
         </div>
 
         <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed font-mono">
-          💡 المعادلة المعتمدة: العادات (50%) + الإيمان (20%) + الجيم (20%) + المزاج (10%). تُحسب فقط الأركان التي بدأت بتسجيلها حتى لا تُظلم بنسب وهمية.
+          💡 المعادلة المعتمدة: العادات (50%) + الإيمان (20%) + الجيم (20%) + المزاج (10%).
         </div>
       </div>
 
@@ -866,70 +1192,216 @@
     </div>
   </div>
 
-  <!-- MODAL 4: Workout Logger Modal -->
-  <div id="workout-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-        <h3 class="text-sm font-bold text-slate-900">تسجيل تمرين جيم جديد</h3>
-        <button onclick="closeWorkoutModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
-      </div>
-      <div class="space-y-3 text-xs">
+  <!-- MODAL 4: UPGRADED ACTIVE WORKOUT RUNNER & REST TIMER MODAL -->
+  <div id="workout-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden my-auto">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">نوع الحصة أو التمارين:</label>
-          <input type="text" id="workout-form-type" placeholder="مثلاً: سحب وظهر + ساعد، دفع وصدر..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          <div class="flex items-center gap-2">
+            <span id="active-workout-type-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-slate-900 text-white">ANTERIOR</span>
+            <h3 id="active-workout-title" class="text-sm sm:text-base font-black text-slate-900">جلسة التمرين الحالية</h3>
+          </div>
+          <span id="active-workout-subtitle" class="text-[11px] text-slate-500 font-mono">8 تمارين مجدولة بالترتيب العلمي المعتمد</span>
         </div>
+        <button onclick="closeWorkoutModal()" class="w-8 h-8 rounded-xl border border-slate-200 text-slate-400 hover:text-slate-800 flex items-center justify-center text-lg">&times;</button>
+      </div>
+
+      <!-- Rest Timer Floating / Top Bar Component -->
+      <div id="active-rest-timer-bar" class="bg-slate-900 text-white px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <span class="text-base">⏱️</span>
+          <div>
+            <span class="text-[10px] text-slate-400 font-mono uppercase block">مؤقت الراحة بين المجموعات</span>
+            <span id="timer-display-digits" class="font-mono text-xl sm:text-2xl font-black tracking-widest text-sky-400">00:00</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button onclick="setAndStartRestTimer(30)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-mono">30s</button>
+          <button onclick="setAndStartRestTimer(60)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-mono">60s</button>
+          <button onclick="setAndStartRestTimer(90)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-mono">90s</button>
+          <button onclick="setAndStartRestTimer(120)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-mono">120s</button>
+          <button onclick="setAndStartRestTimer(180)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-mono">180s</button>
+          <button onclick="stopRestTimer()" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-mono font-bold">إيقاف</button>
+        </div>
+      </div>
+
+      <!-- Modal Body (List of Exercises with Sets, Weight & Reps Inputs) -->
+      <div id="active-workout-exercises-container" class="p-4 sm:p-5 overflow-y-auto custom-scrollbar flex-1 space-y-6 text-xs">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-100 flex items-center justify-between gap-3 bg-slate-50/80">
+        <span id="active-workout-live-volume" class="font-mono text-xs font-bold text-slate-700">إجمالي الحجم: 0 kg</span>
+        <div class="flex items-center gap-2">
+          <button onclick="closeWorkoutModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-100">إلغاء</button>
+          <button onclick="finishActiveWorkoutSession()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black nexus-btn">✓ إنهاء وحفظ التمرين</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 5: Body Measurement Modal (Smart Scale) -->
+  <div id="measurement-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md p-6 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900">تسجيل قياس ذكي للجسم (Smart Scale)</h3>
+          <span class="text-[10px] text-slate-400 font-mono">يدعم كافة قياسات الميزان الذكي دون أرقام مزيفة</span>
+        </div>
+        <button onclick="closeMeasurementModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+      
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">الوزن (kg): *</label>
+            <input type="number" step="0.1" id="m-form-weight" placeholder="مثلاً: 94.5" class="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">نسبة الدهون Body Fat %:</label>
+            <input type="number" step="0.1" id="m-form-fat" placeholder="مثلاً: 32.5" class="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          </div>
+        </div>
+
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">المجموعات (Sets):</label>
-            <input type="number" id="workout-form-sets" value="4" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            <label class="block font-semibold text-slate-700 mb-1">نسبة العضل %:</label>
+            <input type="number" step="0.1" id="m-form-muscle-pct" placeholder="33.0" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">التكرارات (Reps):</label>
-            <input type="number" id="workout-form-reps" value="10" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            <label class="block font-semibold text-slate-700 mb-1">كتلة العضل (kg):</label>
+            <input type="number" step="0.1" id="m-form-muscle-kg" placeholder="31.2" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">الوزن (كجم):</label>
-            <input type="number" id="workout-form-weight" placeholder="اختياري" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            <label class="block font-semibold text-slate-700 mb-1">مؤشر BMI:</label>
+            <input type="number" step="0.1" id="m-form-bmi" placeholder="28.5" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
           </div>
         </div>
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">ملاحظات التمرين:</label>
-          <input type="text" id="workout-form-notes" placeholder="أوزان جديدة، شعور العضلة..." class="w-full px-3 py-2 rounded-xl border border-slate-200">
+
+        <div class="pt-2 border-t border-slate-100">
+          <span class="font-bold text-slate-700 block mb-2">محيطات الجسم بالسنتيمتر (اختياري):</span>
+          <div class="grid grid-cols-4 gap-2">
+            <div>
+              <label class="block text-[10px] text-slate-500 mb-1">الخصر (cm):</label>
+              <input type="number" step="0.5" id="m-form-waist" placeholder="95" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-500 mb-1">الصدر (cm):</label>
+              <input type="number" step="0.5" id="m-form-chest" placeholder="105" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-500 mb-1">الذراع (cm):</label>
+              <input type="number" step="0.5" id="m-form-arm" placeholder="38" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-500 mb-1">الفخذ (cm):</label>
+              <input type="number" step="0.5" id="m-form-thigh" placeholder="60" class="w-full px-2 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+            </div>
+          </div>
         </div>
       </div>
+
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeWorkoutModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50">إلغاء</button>
-        <button onclick="submitWorkoutForm()" class="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs">حفظ التمرين</button>
+        <button onclick="closeMeasurementModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50">إلغاء</button>
+        <button onclick="submitMeasurementForm()" class="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs">حفظ القياس</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL 5: Body Measurement Modal -->
-  <div id="measurement-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-        <h3 class="text-sm font-bold text-slate-900">تسجيل قياس جسم جديد</h3>
-        <button onclick="closeMeasurementModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+  <!-- MODAL: Custom Water Goal Modal -->
+  <div id="water-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-sm p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-sm font-bold text-slate-900">تعديل هدف شرب الماء</h3>
+        <button onclick="closeCustomWaterModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
       </div>
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">الوزن (كجم): *</label>
-          <input type="number" step="0.1" id="m-form-weight" placeholder="100.0" class="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono focus:ring-1 focus:ring-sky-500 focus:outline-none">
+          <label class="block font-semibold text-slate-700 mb-1">الهدف اليومي (مل):</label>
+          <input type="number" id="water-goal-input" value="2500" step="100" class="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-sky-500">
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">نسبة الدهون % (اختياري):</label>
-            <input type="number" step="0.1" id="m-form-fat" placeholder="38.0" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">محيط الخصر سم (اختياري):</label>
-            <input type="number" step="0.5" id="m-form-waist" placeholder="95" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono">
-          </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">إجمالي ما تم شربه اليوم يدوياً (مل):</label>
+          <input type="number" id="water-manual-today-input" step="50" class="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono focus:outline-none focus:ring-1 focus:ring-sky-500">
         </div>
       </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeMeasurementModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50">إلغاء</button>
-        <button onclick="submitMeasurementForm()" class="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs">حفظ القياس</button>
+        <button onclick="closeCustomWaterModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">إلغاء</button>
+        <button onclick="submitWaterGoalForm()" class="px-4 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Nutrition Logger Modal -->
+  <div id="nutrition-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-sm font-bold text-slate-900">تسجيل وجبة في نظام التغذية</h3>
+        <button onclick="closeLogNutritionModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">الوجبة:</label>
+            <select id="nutri-form-meal" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white">
+              <option value="Breakfast">إفطار (Breakfast)</option>
+              <option value="Lunch">غداء (Lunch)</option>
+              <option value="Dinner">عشاء (Dinner)</option>
+              <option value="Snacks">سناك خفيف (Snacks)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">الصنف أو الطعام:</label>
+            <input type="text" id="nutri-form-food" placeholder="مثلاً: 3 بيضات + رغيف بلدي" class="w-full px-3 py-2 rounded-xl border border-slate-200">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">الكمية:</label>
+            <input type="text" id="nutri-form-qty" placeholder="مثلاً: 1 طبق" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">سعرات (اختياري):</label>
+            <input type="number" id="nutri-form-cal" placeholder="kcal" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">بروتين g (اختياري):</label>
+            <input type="number" id="nutri-form-protein" placeholder="g" class="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 font-mono text-center">
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">ملاحظات:</label>
+          <input type="text" id="nutri-form-notes" placeholder="ملاحظات الطهي أو الشعور بالشبع..." class="w-full px-3 py-2 rounded-xl border border-slate-200">
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeLogNutritionModal()" class="px-4 py-1.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">إلغاء</button>
+        <button onclick="submitNutritionForm()" class="px-4 py-1.5 rounded-xl bg-amber-900 hover:bg-amber-950 text-white text-xs font-bold">حفظ الوجبة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Program Customizer (Sets/Reps Range) -->
+  <div id="program-customizer-modal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-lg p-6 space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900">تخصيص تمارين البرنامج الـ 38 يوماً</h3>
+          <span class="text-[10px] text-slate-400 font-mono">يمكن تعديل عدد المجموعات ونطاق التكرارات وفترات الراحة</span>
+        </div>
+        <button onclick="closeProgramCustomizerModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+      <div id="program-customizer-list" class="space-y-3 overflow-y-auto custom-scrollbar flex-1 text-xs pr-1">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+        <button onclick="resetProgramToScientificDefaults()" class="text-rose-600 hover:text-rose-800 text-xs font-bold">استعادة التمارين الافتراضية</button>
+        <button onclick="closeProgramCustomizerModal()" class="px-4 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold">تم</button>
       </div>
     </div>
   </div>
@@ -1004,7 +1476,7 @@
   </div>
 
   <!-- Toast Notification Container -->
-  <div id="toast" class="hidden fixed bottom-5 left-5 z-50 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-xl flex items-center gap-2 border border-slate-800">
+  <div id="toast" class="hidden fixed bottom-5 left-5 z-50 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-xl flex items-center gap-2 border border-slate-800 transition-all duration-300">
     <span id="toast-icon">✓</span>
     <span id="toast-msg">تمت العملية بنجاح</span>
   </div>
@@ -1038,14 +1510,13 @@
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       }
     } catch (e) {
-      console.warn('Supabase init failed, continuing with localStorage only:', e);
+      console.warn('Supabase init skipped, running in local-first mode:', e);
     }
 
     let syncDebounceTimer = null;
     let isCurrentlySyncing = false;
 
     function setSyncStatus(state) {
-      // state: 'connecting' | 'synced' | 'saving' | 'offline' | 'error'
       const dot = document.getElementById('sync-status-dot');
       const text = document.getElementById('sync-status-text');
       const settingsText = document.getElementById('settings-sync-status-text');
@@ -1054,7 +1525,7 @@
         connecting: { color: 'bg-slate-400', label: 'جاري الاتصال...' },
         synced:     { color: 'bg-emerald-500', label: 'متصل ✓ محفوظ سحابياً' },
         saving:     { color: 'bg-amber-500', label: 'جاري الحفظ...' },
-        offline:    { color: 'bg-slate-400', label: 'محلي فقط (Supabase غير مفعل)' },
+        offline:    { color: 'bg-slate-400', label: 'محلي فقط (يعمل دون إنترنت)' },
         error:      { color: 'bg-rose-500', label: 'خطأ في الاتصال — يعمل محلياً' }
       };
       const cfg = map[state] || map.connecting;
@@ -1064,7 +1535,6 @@
       if (settingsText) settingsText.textContent = cfg.label;
     }
 
-    // Push the full appData object to Supabase (debounced to avoid spamming requests)
     function queueSupabaseSync() {
       if (!supabaseClient) return;
       if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
@@ -1082,10 +1552,7 @@
         if (error) throw error;
         setSyncStatus('synced');
       } catch (e) {
-        console.error('Supabase sync error message:', e?.message);
-        console.error('Supabase sync error code:', e?.code);
-        console.error('Supabase sync error details:', e?.details);
-        console.error('Supabase sync error hint:', e?.hint);
+        console.warn('Supabase push skipped/offline:', e?.message);
         setSyncStatus('error');
       } finally {
         isCurrentlySyncing = false;
@@ -1103,10 +1570,7 @@
         if (error) throw error;
         return data && data.data && Object.keys(data.data).length ? data.data : null;
       } catch (e) {
-        console.warn('Supabase fetch error message:', e?.message);
-        console.warn('Supabase fetch error code:', e?.code);
-        console.warn('Supabase fetch error details:', e?.details);
-        console.warn('Supabase fetch error hint:', e?.hint);
+        console.warn('Supabase fetch skipped/offline:', e?.message);
         return null;
       }
     }
@@ -1117,7 +1581,6 @@
       showToast('تمت المزامنة السحابية بنجاح ☁️');
     }
 
-    // ===================================================================
     const STORAGE_KEY = 'leith_life_os_v5_singlepage';
 
     let currentHabitCategoryFilter = 'ALL';
@@ -1125,7 +1588,6 @@
     let editingHabitId = null;
     let pendingConfirmAction = null;
 
-    // Default 12 Habits with clean unstarted state
     const defaultHabits = [
       { id: 'h1', name: 'Wake Up Early (الاستيقاظ مبكراً)', icon: '🌅', category: 'DISCIPLINE', archived: false },
       { id: 'h2', name: 'Gym (تمرين الجيم والقوة)', icon: '🏋️', category: 'HEALTH', archived: false },
@@ -1141,7 +1603,6 @@
       { id: 'h12', name: 'Cold Shower (دش بارد)', icon: '🚿', category: 'HEALTH', archived: false }
     ];
 
-    // Verified Authentic Faith Journey Data
     const verifiedFaithDatabase = {
       1: {
         theme: "الإخلاص وحسن النية",
@@ -1164,24 +1625,101 @@
         explanation: "الطير تسعى وتغدو وتروح، وهذا جوهر التوكل بالجمع بين السعي واليقين.",
         dua: "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
         occasion: "يُقال لكفاية هموم الدنيا والآخرة"
+      },
+      3: {
+        theme: "الاستغفار وفتح الأبواب",
+        ayah: "فَقُلْتُ اسْتَغْفِرُوا رَبَّكُمْ إِنَّهُ كَانَ غَفَّارًا يُرْسِلِ السَّمَاءَ عَلَيْكُم مِّدْرَارًا",
+        surah: "سورة نوح : 10-11",
+        reflection: "الاستغفار مفتاح البركات ومطهر القلوب، فاجعل لسانك رطباً به في خلواتك وحركاتك.",
+        hadith: "«مَنْ لَزِمَ الِاسْتِغْفَارَ جَعَلَ اللَّهُ لَهُ مِنْ كُلِّ ضِيقٍ مَخْرَجًا، وَمِنْ كُلِّ هَمٍّ فَرَجًا»",
+        source: "سنن أبي داود (1518)",
+        explanation: "مداومة الاستغفار تورث انشراح الصدر وتيسير الرزق العاجل والآجل.",
+        dua: "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ وَأَتُوبُ إِلَيْهِ",
+        occasion: "تفريج الكرب ومغفرة الذنوب"
       }
     };
 
+    // Scientific 38-Day Rotation Templates
+    const defaultAnteriorRoutine = [
+      { id: 'ant_1', section: 'CHEST', name: 'Bench Press', sets: 4, repsMin: 6, repsMax: 10, restSec: 150, notes: 'راحة 2-3 دقائق، تركيز على النزول المنضبط' },
+      { id: 'ant_2', section: 'CHEST', name: 'Incline Dumbbell Press', sets: 4, repsMin: 8, repsMax: 12, restSec: 105, notes: 'راحة 90-120 ثانية، زاوية 30-45 درجة' },
+      { id: 'ant_3', section: 'CHEST', name: 'Flat Dumbbell Fly', sets: 3, repsMin: 10, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية، إطالة متحكم بها' },
+      { id: 'ant_4', section: 'SHOULDERS', name: 'Barbell or Dumbbell Shoulder Press', sets: 3, repsMin: 8, repsMax: 12, restSec: 105, notes: 'راحة 90-120 ثانية' },
+      { id: 'ant_5', section: 'SHOULDERS', name: 'Dumbbell Lateral Raise', sets: 4, repsMin: 12, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية، تركيز على الكتف الجانبي' },
+      { id: 'ant_6', section: 'BICEPS', name: 'Barbell Curl', sets: 3, repsMin: 8, repsMax: 12, restSec: 75, notes: 'راحة 60-90 ثانية، ثبات الكوعين' },
+      { id: 'ant_7', section: 'BICEPS', name: 'Alternating Dumbbell Curl', sets: 3, repsMin: 10, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية، تحكم كامل' },
+      { id: 'ant_8', section: 'ABS', name: 'Leg Raise OR Crunch', sets: 3, repsMin: 12, repsMax: 20, restSec: 60, notes: 'راحة 45-60 ثانية، عصر عضلات البطن' }
+    ];
+
+    const defaultPosteriorRoutine = [
+      { id: 'post_1', section: 'BACK / HAMSTRINGS', name: 'Romanian Deadlift', sets: 4, repsMin: 6, repsMax: 10, restSec: 150, notes: 'راحة 2-3 دقائق، حركة مفصل الورك واستقامة الظهر' },
+      { id: 'post_2', section: 'BACK', name: 'Lat Pulldown OR Assisted Pull-Up', sets: 4, repsMin: 8, repsMax: 12, restSec: 105, notes: 'راحة 90-120 ثانية، سحب بالمرفقين' },
+      { id: 'post_3', section: 'BACK', name: 'Seated Cable Row', sets: 3, repsMin: 8, repsMax: 12, restSec: 105, notes: 'راحة 90-120 ثانية، ضم لوحي الكتف' },
+      { id: 'post_4', section: 'HAMSTRINGS', name: 'Leg Curl', sets: 3, repsMin: 10, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية' },
+      { id: 'post_5', section: 'REAR DELTS', name: 'Face Pull / Rear Delt Cable', sets: 3, repsMin: 12, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية، لصحة الكتف الخلفي' },
+      { id: 'post_6', section: 'TRAPS', name: 'Dumbbell or Barbell Shrug', sets: 3, repsMin: 10, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية' },
+      { id: 'post_7', section: 'BICEPS', name: 'Hammer Curl', sets: 3, repsMin: 10, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية، لبناء الساعد وعضلة البراكيالس' },
+      { id: 'post_8', section: 'CALVES', name: 'Calf Raise', sets: 4, repsMin: 10, repsMax: 15, restSec: 75, notes: 'راحة 60-90 ثانية، توقف ثانية عند القمة' }
+    ];
+
+    // Generate strict 38-Day Program Mapping (2026-09-08 to 2026-10-15)
+    function generate38DaySchedule() {
+      const schedule = {};
+      const rotation = ['ANTERIOR', 'POSTERIOR', 'REST'];
+      const startDate = new Date(2026, 8, 8); // Sep 8, 2026
+
+      for (let i = 0; i < 38; i++) {
+        const d = new Date(startDate);
+        d.setDate(startDate.getDate() + i);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+        
+        const type = rotation[i % 3];
+        schedule[dateStr] = {
+          dayNumber: i + 1,
+          date: dateStr,
+          type: type, // 'ANTERIOR' | 'POSTERIOR' | 'REST'
+          title: type === 'ANTERIOR' ? 'Anterior (صدر / كتف أمامي / باي / بطن)' :
+                 type === 'POSTERIOR' ? 'Posterior (ظهر / أرجل خلفية / كتف خلفي / ترابيس)' :
+                 'Rest / Recovery (استشفاء وراحة نشطة)'
+        };
+      }
+      return schedule;
+    }
+
+    const PROGRAM_38_DAYS = generate38DaySchedule();
+
     const defaultState = {
       cycleStart: '2026-09-08',
-      cycleEnd: '2026-09-30',
+      cycleEnd: '2026-10-15',
       activeDate: '2026-09-08',
       habits: defaultHabits,
-      habitCompletions: {}, // { habitId: { '2026-09-08': true, ... } }
-      moodEntries: {},      // { '2026-09-08': { mood: 'good', energy: 4, stress: 2, note: '' } }
-      prayerEntries: {},    // { '2026-09-08': { fajr: 'ontime', dhuhr: 'ontime', ... } }
-      quranLogs: [],        // [ { id, date, pages, surah } ]
-      adhkarEntries: {},    // { '2026-09-08': { morning: false, evening: false } }
+      habitCompletions: {},
+      moodEntries: {},
+      prayerEntries: {},
+      quranLogs: [],
+      adhkarEntries: {},
       faithJourney: { day: 1, completedDays: [] },
-      gymWorkouts: [],      // [ { id, date, type, sets, reps, weight, notes } ]
-      bodyMeasurements: [], // [ { id, date, weight, fat, waist } ]
+      // Upgraded Gym State
+      gymSessions: [],          // Completed & in-progress sessions: [ { id, date, type, durationMin, completionPct, totalVolume, exercises: [ { id, name, sets: [ { setNum, weight, reps, rpe, completed } ] } ] } ]
+      gymWorkouts: [],          // Backwards-compatible view
+      bodyMeasurements: [],     // [ { id, date, weight, fat, musclePct, muscleKg, bmi, waist, chest, arm, thigh } ]
+      waterEntries: {},         // { '2026-09-08': { amount: 0, target: 2500 } }
+      nutritionEntries: [],     // [ { id, date, meal, food, qty, cal, protein, notes } ]
+      dailyHealthCheckins: {},  // { '2026-09-08': { sleep: 0, energy: 0, stress: 0, soreness: 0, notes: '' } }
+      gymRoutines: {
+        ANTERIOR: defaultAnteriorRoutine,
+        POSTERIOR: defaultPosteriorRoutine
+      },
       monthlyReview: { well: '', diff: '', change: '' }
     };
+
+    let activeGymTab = 'ANTERIOR';
+    let restTimerInterval = null;
+    let restTimerSecondsLeft = 0;
+    let audioCtxInstance = null;
 
     let appData = loadAppData();
 
@@ -1209,14 +1747,21 @@
     function normalizeAppData(raw) {
       if (!raw) return JSON.parse(JSON.stringify(defaultState));
       return Object.assign({}, defaultState, raw, {
+        cycleStart: '2026-09-08',
+        cycleEnd: '2026-10-15',
         habits: (raw.habits && raw.habits.length) ? raw.habits : defaultHabits,
         habitCompletions: raw.habitCompletions || {},
         moodEntries: raw.moodEntries || {},
         prayerEntries: raw.prayerEntries || {},
         quranLogs: raw.quranLogs || [],
         adhkarEntries: raw.adhkarEntries || {},
+        gymSessions: raw.gymSessions || [],
         gymWorkouts: raw.gymWorkouts || [],
         bodyMeasurements: raw.bodyMeasurements || [],
+        waterEntries: raw.waterEntries || {},
+        nutritionEntries: raw.nutritionEntries || [],
+        dailyHealthCheckins: raw.dailyHealthCheckins || {},
+        gymRoutines: raw.gymRoutines || { ANTERIOR: defaultAnteriorRoutine, POSTERIOR: defaultPosteriorRoutine },
         faithJourney: raw.faithJourney || { day: 1, completedDays: [] },
         monthlyReview: raw.monthlyReview || { well: '', diff: '', change: '' }
       });
@@ -1258,13 +1803,12 @@
 
     function calculateHabitStreak(habitId) {
       let streak = 0;
-      // Start checking from active date back or from Sep 8 forward
       for (let day = 8; day <= 30; day++) {
         const dStr = `2026-09-${day < 10 ? '0' + day : day}`;
         if (appData.habitCompletions[habitId] && appData.habitCompletions[habitId][dStr]) {
           streak++;
         } else {
-          break; // Stop at first missed day in cycle
+          break;
         }
       }
       return streak;
@@ -1281,19 +1825,7 @@
       };
     }
 
-    /*
-      TRANSPARENT CENTRALIZED CALCULATION:
-      - Habits = 50%
-      - Faith = 20%
-      - Gym = 20%
-      - Mood = 10%
-      
-      Uses the "Active Tracked Areas" model:
-      If a section has no tracked data yet, it does not arbitrarily skew with negative bias,
-      while always starting strictly at 0% when no actions have occurred.
-    */
     function calculateMonthlySuccess() {
-      const activeHabits = getActiveHabits();
       const today = appData.activeDate; // '2026-09-08'
       
       // 1. Habits (50%)
@@ -1309,23 +1841,21 @@
       faithScore = Math.min(100, faithScore);
 
       // 3. Gym (20%)
-      const workoutsToday = (appData.gymWorkouts || []).filter(w => w.date === today);
-      const gymScore = workoutsToday.length > 0 ? 100 : 0;
+      const todaySession = getGymSessionForDate(today);
+      const gymScore = (todaySession && todaySession.completionPct) ? todaySession.completionPct : 0;
 
       // 4. Mood (10%)
       const moodToday = appData.moodEntries[today];
       let moodScore = 0;
       if (moodToday && moodToday.mood) {
-        moodScore = 100; // Recorded mood awards the discipline component
+        moodScore = 100;
       }
 
-      // Check which areas have been activated
       const hasHabitsAction = dayHabits.completed > 0;
       const hasFaithAction = onTimePrayers > 0 || quranLogsToday.length > 0;
-      const hasGymAction = workoutsToday.length > 0;
+      const hasGymAction = gymScore > 0;
       const hasMoodAction = (moodToday && moodToday.mood);
 
-      // Strict Zero Check
       if (!hasHabitsAction && !hasFaithAction && !hasGymAction && !hasMoodAction) {
         return {
           overall: 0,
@@ -1336,7 +1866,6 @@
         };
       }
 
-      // Weighted combination
       const totalWeighted = (habitsScore * 0.50) + (faithScore * 0.20) + (gymScore * 0.20) + (moodScore * 0.10);
       const overall = Math.max(0, Math.min(100, Math.round(totalWeighted)));
 
@@ -1420,13 +1949,33 @@
       const qToday = (appData.quranLogs || []).filter(q => q.date === today).reduce((s, q) => s + (Number(q.pages) || 0), 0);
       setElText('today-quran-sub', `الورد: ${qToday} صفحة مقروءة`);
 
-      // Gym status
-      const wToday = (appData.gymWorkouts || []).find(w => w.date === today);
-      setElText('today-gym-status', wToday ? wToday.type : 'لم يُسجل تمرين');
-      const lastM = (appData.bodyMeasurements || [])[0];
-      setElText('today-gym-sub', lastM ? `آخر وزن: ${lastM.weight} كجم` : 'الوزن: لم يُسجل بعد');
+      // Gym & Water status in Today Dashboard
+      const sched = PROGRAM_38_DAYS[today] || { dayNumber: 1, type: 'ANTERIOR', title: 'Anterior' };
+      setElText('today-gym-badge', `اليوم ${sched.dayNumber} من 38`);
+      
+      const todaySession = getGymSessionForDate(today);
+      const sessionDone = todaySession && todaySession.completionPct >= 100;
+      const sessionPartial = todaySession && todaySession.completionPct > 0;
 
-      // ONE THING TODAY priority
+      if (sched.type === 'REST') {
+        setElText('today-gym-status', 'REST — يوم استشفاء وراحة');
+        setElText('today-gym-sub', 'استشفاء عضلي نشط');
+      } else {
+        setElText('today-gym-status', sched.title);
+        if (sessionDone) {
+          setElText('today-gym-sub', `مكتمل 100% ✓ (${todaySession.totalVolume} kg حجم)`);
+        } else if (sessionPartial) {
+          setElText('today-gym-sub', `منجز ${todaySession.completionPct}% (${todaySession.totalVolume} kg)`);
+        } else {
+          setElText('today-gym-sub', 'لم يبدأ بعد — اضغط لبدء التمرين');
+        }
+      }
+
+      const todayWater = (appData.waterEntries && appData.waterEntries[today]) ? appData.waterEntries[today].amount : 0;
+      const targetWater = (appData.waterEntries && appData.waterEntries[today]) ? (appData.waterEntries[today].target || 2500) : 2500;
+      setElText('today-gym-water', `💧 ${todayWater} / ${targetWater} ml`);
+
+      // ONE THING priority
       const active = getActiveHabits();
       const unfinished = active.find(h => !isHabitCompleted(h.id, today));
       const onethingBadge = document.getElementById('today-onething-badge');
@@ -1465,7 +2014,7 @@
       const progress = getDayHabitsProgress(today);
       setElText('habits-today-summary-label', `${progress.completed} / ${progress.total} منجز (${progress.pct}%)`);
 
-      // 1. Checklist Grid
+      // Checklist Grid
       const checklistGrid = document.getElementById('habits-today-checklist-grid');
       if (checklistGrid) {
         checklistGrid.innerHTML = '';
@@ -1484,7 +2033,7 @@
         });
       }
 
-      // 2. Google Sheets Inspired Matrix
+      // Matrix table
       const tbody = document.getElementById('habits-matrix-tbody');
       if (!tbody) return;
       tbody.innerHTML = '';
@@ -1568,7 +2117,6 @@
       if (stressSel) stressSel.value = moodData.stress || '0';
       if (noteInput) noteInput.value = moodData.note || '';
 
-      // Real Mood Insights container
       const container = document.getElementById('mood-insights-container');
       if (container) {
         const recordedDays = Object.keys(appData.moodEntries);
@@ -1630,7 +2178,6 @@
       if (!grid) return;
       grid.innerHTML = '';
 
-      // Blank offset for September 2026 (starts on Tuesday = 1 blank)
       for (let i = 0; i < 1; i++) {
         const b = document.createElement('div');
         b.className = 'h-9 rounded-lg bg-transparent';
@@ -1689,7 +2236,6 @@
         });
       }
 
-      // Mood in inspector
       const mood = appData.moodEntries[selectedCalendarDate];
       const moodText = document.getElementById('cal-inspector-mood');
       if (moodText) {
@@ -1700,7 +2246,6 @@
         }
       }
 
-      // Faith in inspector
       const prayers = appData.prayerEntries[selectedCalendarDate] || {};
       const onTime = Object.values(prayers).filter(s => s === 'ontime').length;
       const faithText = document.getElementById('cal-inspector-faith');
@@ -1708,12 +2253,38 @@
         faithText.textContent = `${onTime} / 5 صلوات في وقتها.`;
       }
 
-      // Gym in inspector
-      const workout = (appData.gymWorkouts || []).find(w => w.date === selectedCalendarDate);
+      // Gym Calendar details
+      const daySchedule = PROGRAM_38_DAYS[selectedCalendarDate];
+      const calSession = getGymSessionForDate(selectedCalendarDate);
+      const gymBadge = document.getElementById('cal-inspector-gym-badge');
       const gymText = document.getElementById('cal-inspector-gym');
-      if (gymText) {
-        gymText.textContent = workout ? `تمرين: ${workout.type} (${workout.sets} مجموعات × ${workout.reps} تكرار)` : 'لم يُسجل تمرين في هذا اليوم.';
+      const gymWater = document.getElementById('cal-inspector-gym-water');
+      const gymWeight = document.getElementById('cal-inspector-gym-weight');
+
+      if (daySchedule) {
+        if (gymBadge) {
+          gymBadge.textContent = `Day ${daySchedule.dayNumber} · ${daySchedule.type}`;
+          gymBadge.className = `text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${daySchedule.type === 'REST' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800'}`;
+        }
+        if (gymText) {
+          if (calSession && calSession.completionPct > 0) {
+            gymText.textContent = `${daySchedule.title} — تم إنجاز ${calSession.completionPct}% بإجمالي حجم ${calSession.totalVolume} kg.`;
+          } else if (daySchedule.type === 'REST') {
+            gymText.textContent = 'يوم راحة واستشفاء مجدول في البرنامج.';
+          } else {
+            gymText.textContent = `${daySchedule.title} — لم يُسجل بعد.`;
+          }
+        }
+      } else {
+        if (gymBadge) gymBadge.textContent = 'خارج الدورة';
+        if (gymText) gymText.textContent = 'هذا التاريخ خارج برنامج الـ 38 يوماً.';
       }
+
+      const wEntry = appData.waterEntries && appData.waterEntries[selectedCalendarDate];
+      if (gymWater) gymWater.textContent = `💧 ماء: ${wEntry ? wEntry.amount + ' ml' : 'لم يسجل'}`;
+
+      const mEntry = (appData.bodyMeasurements || []).find(m => m.date === selectedCalendarDate);
+      if (gymWeight) gymWeight.textContent = `⚖️ وزن: ${mEntry ? mEntry.weight + ' kg' : 'لم يسجل'}`;
     }
 
     function renderFaithSection() {
@@ -1732,10 +2303,18 @@
 
           const btn = document.createElement('button');
           btn.onclick = () => cyclePrayerStatus(key);
-          btn.className = `p-2.5 rounded-2xl border text-center transition-all nexus-btn bg-${color}-50 border-${color}-200`;
+          btn.className = `p-2.5 rounded-2xl border text-center transition-all nexus-btn ${
+            color === 'emerald' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
+            color === 'amber' ? 'bg-amber-50 border-amber-200 text-amber-800' :
+            'bg-slate-50 border-slate-200 text-slate-800'
+          }`;
           btn.innerHTML = `
-            <span class="font-bold text-xs text-${color}-800 block">${names[key]}</span>
-            <span class="text-[10px] text-${color}-600 block mt-0.5">${status === 'ontime' ? 'في وقتها ✓' : status === 'late' ? 'متأخرة' : 'لم تُسجل'}</span>
+            <span class="font-bold text-xs block">${names[key]}</span>
+            <span class="text-[10px] block mt-0.5 ${
+              color === 'emerald' ? 'text-emerald-600' :
+              color === 'amber' ? 'text-amber-600' :
+              'text-slate-500'
+            }">${status === 'ontime' ? 'في وقتها ✓' : status === 'late' ? 'متأخرة' : 'لم تُسجل'}</span>
           `;
           container.appendChild(btn);
         });
@@ -1767,7 +2346,6 @@
       if (mCheck) mCheck.checked = !!adhkarToday.morning;
       if (eCheck) eCheck.checked = !!adhkarToday.evening;
 
-      // 200-Day Journey
       renderFaithJourneyComponent();
     }
 
@@ -1831,67 +2409,1028 @@
       notifyChange();
     }
 
-    function renderGymSection() {
-      const workouts = appData.gymWorkouts || [];
-      const measurements = appData.bodyMeasurements || [];
+    /* ===================================================================
+       GYM ENGINE — SCIENTIFIC 38-DAY PROGRAM WITH PROGRESSIVE OVERLOAD
+       =================================================================== */
 
-      const monthCount = workouts.filter(w => w.date >= '2026-09-08' && w.date <= '2026-09-30').length;
-      setElText('gym-stat-month', `${monthCount} حصة`);
-      setElText('gym-stat-week', `${monthCount} حصة`);
-      setElText('gym-stat-streak', `🔥 ${monthCount} يوم`);
-      setElText('gym-stat-weight', measurements.length ? `${measurements[0].weight} كجم` : '-- كجم');
+    function getGymSessionForDate(dateStr) {
+      return (appData.gymSessions || []).find(s => s.date === dateStr) || null;
+    }
 
-      // Workout List
-      const wList = document.getElementById('gym-workouts-list');
-      if (wList) {
-        wList.innerHTML = '';
-        if (!workouts.length) {
-          wList.innerHTML = '<p class="text-slate-400 text-center py-6">لا توجد تمارين مسجلة بعد. ابدأ أول تمرين الآن!</p>';
-        } else {
-          workouts.forEach(w => {
-            const item = document.createElement('div');
-            item.className = 'p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between';
-            item.innerHTML = `
-              <div>
-                <span class="font-bold text-slate-800 text-xs block">${escapeHtml(w.type)}</span>
-                <span class="text-[10px] text-slate-400 font-mono">${escapeHtml(w.date)} · ${w.sets} مجموعات × ${w.reps} تكرار ${w.weight ? '· ' + w.weight + ' كجم' : ''}</span>
-                ${w.notes ? `<p class="text-[11px] text-slate-600 mt-0.5">${escapeHtml(w.notes)}</p>` : ''}
-              </div>
-              <button onclick="deleteWorkout('${w.id}')" class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold">حذف</button>
-            `;
-            wList.appendChild(item);
-          });
+    function getOrCreateGymSession(dateStr) {
+      let session = getGymSessionForDate(dateStr);
+      if (!session) {
+        const sched = PROGRAM_38_DAYS[dateStr] || { type: 'ANTERIOR' };
+        const routineType = (sched.type === 'REST') ? 'ANTERIOR' : sched.type;
+        const routine = appData.gymRoutines[routineType] || defaultAnteriorRoutine;
+
+        session = {
+          id: 'sess_' + dateStr,
+          date: dateStr,
+          type: sched.type,
+          durationMin: 45,
+          completionPct: 0,
+          totalVolume: 0,
+          exercises: routine.map(ex => ({
+            id: ex.id,
+            name: ex.name,
+            section: ex.section,
+            restSec: ex.restSec,
+            sets: Array.from({ length: ex.sets }, (_, idx) => ({
+              setNum: idx + 1,
+              weight: null,
+              reps: null,
+              rpe: null,
+              completed: false
+            }))
+          }))
+        };
+        if (!appData.gymSessions) appData.gymSessions = [];
+        appData.gymSessions.push(session);
+      }
+      return session;
+    }
+
+    function calculateSessionVolume(session) {
+      if (!session || !session.exercises) return 0;
+      let total = 0;
+      session.exercises.forEach(ex => {
+        (ex.sets || []).forEach(st => {
+          if (st.completed && Number(st.weight) > 0 && Number(st.reps) > 0) {
+            total += Number(st.weight) * Number(st.reps);
+          }
+        });
+      });
+      return Math.round(total);
+    }
+
+    function calculateSessionCompletionPct(session) {
+      if (!session || !session.exercises) return 0;
+      let totalSets = 0;
+      let completedSets = 0;
+      session.exercises.forEach(ex => {
+        (ex.sets || []).forEach(st => {
+          totalSets++;
+          if (st.completed) completedSets++;
+        });
+      });
+      return totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0;
+    }
+
+    // Previous performance finder for progressive overload
+    function getPreviousExercisePerformance(exerciseName, beforeDate) {
+      const pastSessions = (appData.gymSessions || [])
+        .filter(s => s.date < beforeDate && s.exercises)
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+      for (let s of pastSessions) {
+        const found = s.exercises.find(e => e.name === exerciseName);
+        if (found) {
+          const completedSets = (found.sets || []).filter(st => st.completed && Number(st.weight) > 0);
+          if (completedSets.length > 0) {
+            const bestSet = [...completedSets].sort((a, b) => (b.weight * b.reps) - (a.weight * a.reps))[0];
+            const totalVol = completedSets.reduce((acc, st) => acc + (st.weight * st.reps), 0);
+            return {
+              date: s.date,
+              weight: bestSet.weight,
+              reps: bestSet.reps,
+              totalVolume: Math.round(totalVol),
+              setsCount: completedSets.length
+            };
+          }
         }
       }
+      return null;
+    }
 
-      // Measurements List
-      const mList = document.getElementById('gym-measurements-list');
-      if (mList) {
-        mList.innerHTML = '';
-        if (!measurements.length) {
-          mList.innerHTML = '<p class="text-slate-400 text-center py-6">لا توجد قياسات مسجلة بعد.</p>';
-        } else {
-          measurements.forEach(m => {
-            const item = document.createElement('div');
-            item.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between font-mono';
-            item.innerHTML = `
-              <div>
-                <span class="font-bold text-slate-900">${m.weight} كجم</span>
-                <span class="text-[10px] text-slate-400 block">${escapeHtml(m.date)} ${m.fat ? '· دهون ' + m.fat + '%' : ''}</span>
-              </div>
-              <button onclick="deleteMeasurement('${m.id}')" class="text-rose-600 hover:text-rose-800 text-[11px] font-sans">حذف</button>
-            `;
-            mList.appendChild(item);
+    // Calculate PRs strictly from actual user sets
+    function calculateExercisePRs() {
+      const prs = {};
+      (appData.gymSessions || []).forEach(s => {
+        (s.exercises || []).forEach(ex => {
+          if (!prs[ex.name]) {
+            prs[ex.name] = { name: ex.name, section: ex.section, bestWeight: 0, bestReps: 0, bestVolume: 0, date: '--' };
+          }
+          let sessionExVol = 0;
+          (ex.sets || []).forEach(st => {
+            if (st.completed && Number(st.weight) > 0 && Number(st.reps) > 0) {
+              const w = Number(st.weight);
+              const r = Number(st.reps);
+              const vol = w * r;
+              sessionExVol += vol;
+
+              if (w > prs[ex.name].bestWeight) {
+                prs[ex.name].bestWeight = w;
+                prs[ex.name].date = s.date;
+              }
+              if (r > prs[ex.name].bestReps) {
+                prs[ex.name].bestReps = r;
+              }
+            }
           });
+          if (sessionExVol > prs[ex.name].bestVolume) {
+            prs[ex.name].bestVolume = Math.round(sessionExVol);
+            prs[ex.name].date = s.date;
+          }
+        });
+      });
+      return prs;
+    }
+
+    function renderGymSection() {
+      const today = appData.activeDate;
+      const todaySchedule = PROGRAM_38_DAYS[today] || { dayNumber: 1, type: 'ANTERIOR', title: 'Anterior' };
+      const currentSession = getOrCreateGymSession(today);
+
+      // 1. Gym Dashboard Top Stats
+      setElText('gym-kpi-day', `Day ${todaySchedule.dayNumber} / 38`);
+      setElText('gym-kpi-type', todaySchedule.title);
+
+      // Completed workouts in 38 days
+      const completedSessions = (appData.gymSessions || []).filter(s => s.completionPct >= 100);
+      const totalVolumeMonth = (appData.gymSessions || []).reduce((sum, s) => sum + (s.totalVolume || 0), 0);
+      const progressPct = Math.round((completedSessions.length / 38) * 100);
+
+      setElText('gym-kpi-progress', `${progressPct}%`);
+      setElText('gym-kpi-completed-ratio', `${completedSessions.length} من 38 مكتمل`);
+
+      // Streak
+      let streak = 0;
+      const sortedSessions = [...completedSessions].sort((a, b) => b.date.localeCompare(a.date));
+      streak = sortedSessions.length;
+      setElText('gym-kpi-streak', `🔥 ${streak} يوم`);
+
+      // Body Measurements
+      const latestM = (appData.bodyMeasurements || [])[0];
+      setElText('gym-kpi-weight', latestM ? `${latestM.weight} kg` : '--');
+      setElText('gym-kpi-fat', latestM && latestM.fat ? `دهون: ${latestM.fat}%` : 'دهون: --');
+      setElText('gym-kpi-muscle', latestM && latestM.muscleKg ? `${latestM.muscleKg} kg` : '--');
+      setElText('gym-kpi-muscle-pct', latestM && latestM.musclePct ? `النسبة: ${latestM.musclePct}%` : 'النسبة: --');
+
+      // Water KPI
+      const waterObj = (appData.waterEntries && appData.waterEntries[today]) ? appData.waterEntries[today] : { amount: 0, target: 2500 };
+      setElText('gym-kpi-water', `${waterObj.amount} ml`);
+      setElText('gym-kpi-water-target', `الهدف: ${waterObj.target} ml`);
+
+      // Route Prev / Current / Next
+      const prevDate = new Date(2026, 8, 8 + (todaySchedule.dayNumber - 2));
+      const nextDate = new Date(2026, 8, 8 + todaySchedule.dayNumber);
+      const prevKey = prevDate.toISOString().slice(0, 10);
+      const nextKey = nextDate.toISOString().slice(0, 10);
+
+      const prevSched = PROGRAM_38_DAYS[prevKey];
+      const nextSched = PROGRAM_38_DAYS[nextKey];
+
+      setElText('gym-route-prev', prevSched ? `السابق: ${prevSched.type} (يوم ${prevSched.dayNumber})` : 'البداية');
+      setElText('gym-route-current', `اليوم ${todaySchedule.dayNumber}: ${todaySchedule.type}`);
+      setElText('gym-route-next', nextSched ? `التالي: ${nextSched.type} (يوم ${nextSched.dayNumber})` : 'نهاية الدورة');
+      setElText('gym-route-remaining', `${Math.max(0, 38 - todaySchedule.dayNumber)} يوماً`);
+
+      // Status Chip & Button
+      const statusChip = document.getElementById('gym-today-status-chip');
+      const startBtnLabel = document.getElementById('gym-start-btn-label');
+      if (currentSession.completionPct >= 100) {
+        if (statusChip) {
+          statusChip.textContent = 'مكتمل بنجاح ✓';
+          statusChip.className = 'text-[10px] font-mono px-2 py-0.5 rounded-md font-bold bg-emerald-50 text-emerald-800 border border-emerald-200';
+        }
+        if (startBtnLabel) startBtnLabel.textContent = 'مراجعة وتعديل تمرين اليوم';
+      } else if (currentSession.completionPct > 0) {
+        if (statusChip) {
+          statusChip.textContent = `جاري التمرين (${currentSession.completionPct}%)`;
+          statusChip.className = 'text-[10px] font-mono px-2 py-0.5 rounded-md font-bold bg-sky-50 text-sky-800 border border-sky-200';
+        }
+        if (startBtnLabel) startBtnLabel.textContent = 'متابعة تمرين اليوم';
+      } else {
+        if (statusChip) {
+          statusChip.textContent = 'في انتظار التنفيذ';
+          statusChip.className = 'text-[10px] font-mono px-2 py-0.5 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200';
+        }
+        if (startBtnLabel) startBtnLabel.textContent = 'بدء تمرين اليوم';
+      }
+
+      // Render Exercises Routine View Cards
+      renderExercisesRoutineView(currentSession);
+
+      // Render Water & Recovery
+      renderWaterTracker();
+      renderRecoveryHealthCard();
+
+      // Render PRs
+      renderPRsTable();
+
+      // Render Body Measurements
+      renderBodyMeasurements();
+
+      // Render Nutrition List
+      renderNutritionToday();
+
+      // Render Workout History
+      renderWorkoutHistory();
+
+      // Render Analytics
+      renderGymWeeklyAndReviewAnalytics();
+    }
+
+    function switchProgramViewTab(tab) {
+      activeGymTab = tab;
+      const antBtn = document.getElementById('gym-tab-anterior');
+      const postBtn = document.getElementById('gym-tab-posterior');
+      if (tab === 'ANTERIOR') {
+        if (antBtn) antBtn.className = 'px-3 py-1.5 rounded-xl font-bold bg-slate-900 text-white';
+        if (postBtn) postBtn.className = 'px-3 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100';
+      } else {
+        if (antBtn) antBtn.className = 'px-3 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100';
+        if (postBtn) postBtn.className = 'px-3 py-1.5 rounded-xl font-bold bg-slate-900 text-white';
+      }
+      const todaySession = getOrCreateGymSession(appData.activeDate);
+      renderExercisesRoutineView(todaySession);
+    }
+
+    function renderExercisesRoutineView(session) {
+      const container = document.getElementById('gym-exercises-routine-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const routine = appData.gymRoutines[activeGymTab] || defaultAnteriorRoutine;
+
+      routine.forEach((exTemplate, exIdx) => {
+        // Find existing exercise entry in session
+        let exData = (session.exercises || []).find(e => e.name === exTemplate.name);
+        if (!exData) {
+          exData = {
+            id: exTemplate.id,
+            name: exTemplate.name,
+            section: exTemplate.section,
+            restSec: exTemplate.restSec,
+            sets: Array.from({ length: exTemplate.sets }, (_, i) => ({
+              setNum: i + 1,
+              weight: null,
+              reps: null,
+              rpe: null,
+              completed: false
+            }))
+          };
+          session.exercises.push(exData);
+        }
+
+        // Progressive overload lookup
+        const prevPerf = getPreviousExercisePerformance(exTemplate.name, session.date);
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3';
+
+        // Sets calculation for this exercise
+        const completedSets = (exData.sets || []).filter(s => s.completed);
+        const exVolume = completedSets.reduce((sum, s) => sum + (Number(s.weight) * Number(s.reps)), 0);
+
+        let prevBadgeHTML = '';
+        if (prevPerf) {
+          const currentBestWeight = Math.max(0, ...completedSets.map(s => Number(s.weight) || 0));
+          const diff = currentBestWeight > 0 ? (currentBestWeight - prevPerf.weight).toFixed(1) : null;
+          const diffFormatted = diff !== null ? (diff > 0 ? `+${diff} kg 📈` : diff < 0 ? `${diff} kg 📉` : 'نفس الوزن ⚖️') : '';
+
+          prevBadgeHTML = `
+            <div class="flex flex-wrap items-center gap-2 text-[10px] font-mono text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/70">
+              <span>السابق (${prevPerf.date}): <strong>${prevPerf.weight}kg × ${prevPerf.reps}</strong></span>
+              <span>الحجم السابق: <strong>${prevPerf.totalVolume}kg</strong></span>
+              ${diff !== null ? `<span class="font-bold text-sky-800">${diffFormatted}</span>` : ''}
+            </div>
+          `;
+        } else {
+          prevBadgeHTML = `
+            <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-2.5 py-0.5 rounded-md border border-slate-200/60">First recorded session</span>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-black text-xs text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">${exIdx + 1}</span>
+                <h4 class="font-black text-slate-900 text-sm">${escapeHtml(exTemplate.name)}</h4>
+                <span class="text-[10px] font-mono text-slate-400">(${exTemplate.section})</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-mono mt-0.5">الهدف: ${exTemplate.sets} مجموعات × ${exTemplate.repsMin}–${exTemplate.repsMax} تكرار · راحة: ${exTemplate.restSec} ثانية</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="setAndStartRestTimer(${exTemplate.restSec})" class="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 font-mono font-bold text-[11px] nexus-btn flex items-center gap-1">
+                <span>⏱️</span> <span>راحة (${exTemplate.restSec}s)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Progressive overload banner -->
+          ${prevBadgeHTML}
+
+          <!-- Sets Grid Rows -->
+          <div class="space-y-1.5 pt-1">
+            <div class="grid grid-cols-12 gap-2 text-[10px] font-mono font-bold text-slate-400 px-2 py-1">
+              <span class="col-span-2 sm:col-span-2">المجموعة</span>
+              <span class="col-span-3 sm:col-span-3">الوزن (kg)</span>
+              <span class="col-span-3 sm:col-span-3">التكرارات</span>
+              <span class="col-span-2 sm:col-span-2">RPE (1-10)</span>
+              <span class="col-span-2 sm:col-span-2 text-center">إنجاز</span>
+            </div>
+
+            <div class="space-y-1" id="sets-container-${exTemplate.id}">
+              ${(exData.sets || []).map((setObj, setIdx) => `
+                <div class="grid grid-cols-12 gap-2 items-center p-1.5 rounded-xl border gym-set-row ${setObj.completed ? 'bg-sky-50/50 border-sky-200' : 'bg-slate-50/80 border-slate-200'}">
+                  <span class="col-span-2 sm:col-span-2 font-mono font-black text-xs text-slate-700 px-1">Set ${setObj.setNum}</span>
+                  
+                  <div class="col-span-3 sm:col-span-3">
+                    <input type="number" step="0.5" min="0" placeholder="0" value="${setObj.weight !== null ? setObj.weight : ''}"
+                      onchange="updateExerciseSet('${session.date}', '${exData.name}', ${setIdx}, 'weight', this.value)"
+                      class="w-full px-2 py-1 rounded-lg border border-slate-200 font-mono font-bold text-xs text-slate-900 bg-white text-center gym-input-num focus:ring-1 focus:ring-sky-500 focus:outline-none">
+                  </div>
+
+                  <div class="col-span-3 sm:col-span-3">
+                    <input type="number" min="0" max="100" placeholder="0" value="${setObj.reps !== null ? setObj.reps : ''}"
+                      onchange="updateExerciseSet('${session.date}', '${exData.name}', ${setIdx}, 'reps', this.value)"
+                      class="w-full px-2 py-1 rounded-lg border border-slate-200 font-mono font-bold text-xs text-slate-900 bg-white text-center gym-input-num focus:ring-1 focus:ring-sky-500 focus:outline-none">
+                  </div>
+
+                  <div class="col-span-2 sm:col-span-2">
+                    <select onchange="updateExerciseSet('${session.date}', '${exData.name}', ${setIdx}, 'rpe', this.value)"
+                      class="w-full px-1 py-1 rounded-lg border border-slate-200 font-mono text-[11px] text-slate-700 bg-white text-center focus:ring-1 focus:ring-sky-500 focus:outline-none">
+                      <option value="">--</option>
+                      <option value="6" ${setObj.rpe == 6 ? 'selected' : ''}>6</option>
+                      <option value="7" ${setObj.rpe == 7 ? 'selected' : ''}>7</option>
+                      <option value="8" ${setObj.rpe == 8 ? 'selected' : ''}>8</option>
+                      <option value="8.5" ${setObj.rpe == 8.5 ? 'selected' : ''}>8.5</option>
+                      <option value="9" ${setObj.rpe == 9 ? 'selected' : ''}>9</option>
+                      <option value="9.5" ${setObj.rpe == 9.5 ? 'selected' : ''}>9.5</option>
+                      <option value="10" ${setObj.rpe == 10 ? 'selected' : ''}>10 (Max)</option>
+                    </select>
+                  </div>
+
+                  <div class="col-span-2 sm:col-span-2 flex justify-center">
+                    <button onclick="toggleSetCompletion('${session.date}', '${exData.name}', ${setIdx})"
+                      class="w-7 h-7 rounded-lg font-black text-xs flex items-center justify-center transition-all nexus-btn ${setObj.completed ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border border-slate-300 text-slate-400 hover:border-slate-500'}">
+                      ✓
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1 border-t border-slate-100">
+            <span>إجمالي حجم التمرين: <strong class="text-slate-700">${exVolume} kg</strong></span>
+            <span>مجموعات منجزة: <strong class="text-slate-700">${completedSets.length} / ${exData.sets.length}</strong></span>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function updateExerciseSet(dateStr, exName, setIdx, field, value) {
+      const session = getOrCreateGymSession(dateStr);
+      const ex = (session.exercises || []).find(e => e.name === exName);
+      if (ex && ex.sets && ex.sets[setIdx]) {
+        ex.sets[setIdx][field] = value === '' ? null : Number(value);
+        if (field === 'weight' || field === 'reps') {
+          session.totalVolume = calculateSessionVolume(session);
+        }
+        notifyChange();
+      }
+    }
+
+    function toggleSetCompletion(dateStr, exName, setIdx) {
+      const session = getOrCreateGymSession(dateStr);
+      const ex = (session.exercises || []).find(e => e.name === exName);
+      if (ex && ex.sets && ex.sets[setIdx]) {
+        const target = ex.sets[setIdx];
+        target.completed = !target.completed;
+        
+        session.totalVolume = calculateSessionVolume(session);
+        session.completionPct = calculateSessionCompletionPct(session);
+
+        // Auto trigger rest timer if just completed
+        if (target.completed && ex.restSec) {
+          setAndStartRestTimer(ex.restSec);
+          playSubtleTimerBeep(650, 0.08); // Friendly haptic sound
+        }
+
+        notifyChange();
+      }
+    }
+
+    function setAndStartRestTimer(seconds) {
+      if (restTimerInterval) clearInterval(restTimerInterval);
+      restTimerSecondsLeft = seconds;
+      updateRestTimerDisplay();
+
+      restTimerInterval = setInterval(() => {
+        restTimerSecondsLeft--;
+        if (restTimerSecondsLeft <= 0) {
+          clearInterval(restTimerInterval);
+          restTimerInterval = null;
+          restTimerSecondsLeft = 0;
+          updateRestTimerDisplay();
+          playSubtleTimerBeep(880, 0.4); // Completion tone
+          showToast('انتهى وقت الراحة! حان وقت المجموعة التالية 💪');
+        } else {
+          updateRestTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function stopRestTimer() {
+      if (restTimerInterval) clearInterval(restTimerInterval);
+      restTimerInterval = null;
+      restTimerSecondsLeft = 0;
+      updateRestTimerDisplay();
+    }
+
+    function updateRestTimerDisplay() {
+      const m = Math.floor(restTimerSecondsLeft / 60);
+      const s = restTimerSecondsLeft % 60;
+      const str = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      setElText('timer-display-digits', str);
+    }
+
+    function playSubtleTimerBeep(freq = 600, durationSec = 0.15) {
+      try {
+        if (!audioCtxInstance) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) audioCtxInstance = new AudioContext();
+        }
+        if (audioCtxInstance && audioCtxInstance.state === 'suspended') {
+          audioCtxInstance.resume();
+        }
+        if (!audioCtxInstance) return;
+
+        const osc = audioCtxInstance.createOscillator();
+        const gain = audioCtxInstance.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtxInstance.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtxInstance.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxInstance.currentTime + durationSec);
+        osc.connect(gain);
+        gain.connect(audioCtxInstance.destination);
+        osc.start();
+        osc.stop(audioCtxInstance.currentTime + durationSec);
+      } catch (e) {
+        // Fallback silently if audio context restricted
+      }
+    }
+
+    function startActiveWorkoutSession() {
+      const today = appData.activeDate;
+      const session = getOrCreateGymSession(today);
+      
+      const modalTitle = document.getElementById('active-workout-title');
+      const modalSub = document.getElementById('active-workout-subtitle');
+      const badge = document.getElementById('active-workout-type-badge');
+
+      if (modalTitle) modalTitle.textContent = `تمرين اليوم (${today})`;
+      if (modalSub) modalSub.textContent = `خطة ${session.type} — ${session.exercises.length} تمارين بأوزان وتكرارات حقيقية`;
+      if (badge) badge.textContent = session.type;
+
+      renderActiveWorkoutModalContent(session);
+      document.getElementById('workout-modal')?.classList.remove('hidden');
+    }
+
+    function renderActiveWorkoutModalContent(session) {
+      const container = document.getElementById('active-workout-exercises-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      session.exercises.forEach((ex, exIdx) => {
+        const div = document.createElement('div');
+        div.className = 'p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5';
+        
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-black text-slate-900 text-sm">${exIdx + 1}. ${escapeHtml(ex.name)} (${ex.section})</span>
+            <button onclick="setAndStartRestTimer(${ex.restSec})" class="px-2 py-1 rounded bg-white border border-slate-200 text-sky-700 font-mono text-[10px] font-bold">
+              ⏱️ مؤقت الراحة (${ex.restSec}s)
+            </button>
+          </div>
+
+          <div class="space-y-1">
+            ${(ex.sets || []).map((st, sIdx) => `
+              <div class="flex items-center justify-between p-1.5 rounded-xl border bg-white ${st.completed ? 'border-sky-300' : 'border-slate-200'}">
+                <span class="font-mono font-bold text-xs text-slate-700 w-12">S${st.setNum}</span>
+                
+                <div class="flex items-center gap-1 font-mono text-xs">
+                  <input type="number" step="0.5" placeholder="وزن kg" value="${st.weight !== null ? st.weight : ''}"
+                    onchange="updateExerciseSet('${session.date}', '${ex.name}', ${sIdx}, 'weight', this.value)"
+                    class="w-16 px-1.5 py-1 rounded-lg border border-slate-200 text-center font-bold">
+                  <span class="text-slate-400">×</span>
+                  <input type="number" placeholder="تكرار" value="${st.reps !== null ? st.reps : ''}"
+                    onchange="updateExerciseSet('${session.date}', '${ex.name}', ${sIdx}, 'reps', this.value)"
+                    class="w-14 px-1.5 py-1 rounded-lg border border-slate-200 text-center font-bold">
+                </div>
+
+                <button onclick="toggleSetCompletion('${session.date}', '${ex.name}', ${sIdx}); renderActiveWorkoutModalContent(getOrCreateGymSession('${session.date}'))"
+                  class="w-7 h-7 rounded-lg text-xs font-black transition-all ${st.completed ? 'bg-emerald-600 text-white' : 'border border-slate-300 text-slate-400'}">
+                  ✓
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      const liveVol = calculateSessionVolume(session);
+      setElText('active-workout-live-volume', `إجمالي الحجم: ${liveVol} kg`);
+    }
+
+    function finishActiveWorkoutSession() {
+      const today = appData.activeDate;
+      const session = getOrCreateGymSession(today);
+
+      session.totalVolume = calculateSessionVolume(session);
+      session.completionPct = calculateSessionCompletionPct(session);
+
+      // Mirror into backwards-compatible gymWorkouts array
+      const existingIdx = (appData.gymWorkouts || []).findIndex(w => w.date === today);
+      const summaryPayload = {
+        id: 'wo_' + Date.now(),
+        date: today,
+        type: session.type,
+        sets: session.exercises.reduce((acc, e) => acc + (e.sets || []).filter(s => s.completed).length, 0),
+        reps: session.exercises.reduce((acc, e) => acc + (e.sets || []).reduce((r, s) => r + (s.completed ? Number(s.reps) || 0 : 0), 0), 0),
+        weight: session.totalVolume,
+        notes: `اكتمال: ${session.completionPct}% · إجمالي حجم: ${session.totalVolume} kg`
+      };
+
+      if (existingIdx > -1) {
+        appData.gymWorkouts[existingIdx] = summaryPayload;
+      } else {
+        appData.gymWorkouts.unshift(summaryPayload);
+      }
+
+      closeWorkoutModal();
+      notifyChange();
+
+      showToast(`WORKOUT COMPLETE ✓ | الحجم التدريبي: ${session.totalVolume} kg | الإنجاز: ${session.completionPct}%`);
+    }
+
+    function closeWorkoutModal() {
+      document.getElementById('workout-modal')?.classList.add('hidden');
+    }
+
+    function renderPRsTable() {
+      const tbody = document.getElementById('gym-prs-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const prs = calculateExercisePRs();
+      const allRoutineExercises = [
+        ...defaultAnteriorRoutine.map(e => ({ name: e.name, section: 'ANTERIOR' })),
+        ...defaultPosteriorRoutine.map(e => ({ name: e.name, section: 'POSTERIOR' }))
+      ];
+
+      allRoutineExercises.forEach(ex => {
+        const p = prs[ex.name];
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition-colors';
+
+        if (p && (p.bestWeight > 0 || p.bestVolume > 0)) {
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-bold text-slate-900">${escapeHtml(p.name)}</td>
+            <td class="px-2 text-center text-[10px] font-mono text-slate-400">${escapeHtml(p.section || ex.section)}</td>
+            <td class="px-3 text-center font-mono font-bold text-slate-900">${p.bestWeight} kg</td>
+            <td class="px-3 text-center font-mono font-bold text-slate-700">${p.bestReps} reps</td>
+            <td class="px-3 text-center font-mono font-bold text-sky-800">${p.bestVolume} kg</td>
+            <td class="px-3 text-center font-mono text-slate-500">${p.date}</td>
+          `;
+        } else {
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-medium text-slate-500">${escapeHtml(ex.name)}</td>
+            <td class="px-2 text-center text-[10px] font-mono text-slate-400">${escapeHtml(ex.section)}</td>
+            <td class="px-3 text-center font-mono text-slate-300">--</td>
+            <td class="px-3 text-center font-mono text-slate-300">--</td>
+            <td class="px-3 text-center font-mono text-slate-300">--</td>
+            <td class="px-3 text-center font-mono text-slate-300">لم يسجل بعد</td>
+          `;
+        }
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Water Tracker
+    function renderWaterTracker() {
+      const today = appData.activeDate;
+      const wObj = (appData.waterEntries && appData.waterEntries[today]) ? appData.waterEntries[today] : { amount: 0, target: 2500 };
+      
+      setElText('water-current-text', `${wObj.amount}`);
+      setElText('water-target-text', `${wObj.target} ml`);
+
+      const pct = Math.min(100, Math.round((wObj.amount / (wObj.target || 2500)) * 100));
+      const pBar = document.getElementById('water-progress-bar');
+      if (pBar) pBar.style.width = `${pct}%`;
+
+      // Weekly average
+      const days = Object.keys(appData.waterEntries || {});
+      if (days.length > 0) {
+        const sum = days.reduce((acc, d) => acc + (appData.waterEntries[d].amount || 0), 0);
+        const avg = Math.round(sum / Math.max(1, days.length));
+        setElText('water-weekly-avg-badge', `متوسط السجلات: ${avg} ml`);
+      } else {
+        setElText('water-weekly-avg-badge', 'متوسط الأسبوع: 0 ml');
+      }
+    }
+
+    function quickAddWater(ml) {
+      const today = appData.activeDate;
+      if (!appData.waterEntries) appData.waterEntries = {};
+      if (!appData.waterEntries[today]) {
+        appData.waterEntries[today] = { amount: 0, target: 2500 };
+      }
+      appData.waterEntries[today].amount += ml;
+      notifyChange();
+      showToast(`تمت إضافة ${ml} ml ماء 💧`);
+    }
+
+    function openCustomWaterModal() {
+      const today = appData.activeDate;
+      const wObj = (appData.waterEntries && appData.waterEntries[today]) ? appData.waterEntries[today] : { amount: 0, target: 2500 };
+      const gInput = document.getElementById('water-goal-input');
+      const mInput = document.getElementById('water-manual-today-input');
+      if (gInput) gInput.value = wObj.target || 2500;
+      if (mInput) mInput.value = wObj.amount || 0;
+      document.getElementById('water-modal')?.classList.remove('hidden');
+    }
+    function closeCustomWaterModal() {
+      document.getElementById('water-modal')?.classList.add('hidden');
+    }
+    function submitWaterGoalForm() {
+      const today = appData.activeDate;
+      const target = Number(document.getElementById('water-goal-input')?.value || 2500);
+      const amount = Number(document.getElementById('water-manual-today-input')?.value || 0);
+
+      if (!appData.waterEntries) appData.waterEntries = {};
+      appData.waterEntries[today] = { amount, target };
+      closeCustomWaterModal();
+      notifyChange();
+      showToast('تم تحديث هدف وسجل الماء بنجاح');
+    }
+
+    // Health Checkin & Recovery
+    function renderRecoveryHealthCard() {
+      const today = appData.activeDate;
+      const health = (appData.dailyHealthCheckins && appData.dailyHealthCheckins[today]) ? appData.dailyHealthCheckins[today] : { sleep: '', energy: 0, soreness: 0, stress: 0 };
+
+      const sInput = document.getElementById('health-sleep-input');
+      const eSel = document.getElementById('health-energy-select');
+      const soSel = document.getElementById('health-soreness-select');
+      const stSel = document.getElementById('health-stress-select');
+
+      if (sInput && health.sleep !== undefined) sInput.value = health.sleep;
+      if (eSel) eSel.value = health.energy || 0;
+      if (soSel) soSel.value = health.soreness || 0;
+      if (stSel) stSel.value = health.stress || 0;
+
+      // Calculate strictly from data
+      const badge = document.getElementById('recovery-score-badge');
+      if (badge) {
+        if (!health.sleep && !health.energy && !health.soreness && !health.stress) {
+          badge.textContent = 'لم يحدد بعد';
+          badge.className = 'px-2.5 py-0.5 rounded-full font-mono font-black text-[10px] bg-slate-200 text-slate-700';
+        } else {
+          let scorePoints = 0;
+          let factors = 0;
+          if (health.sleep) {
+            scorePoints += (health.sleep >= 7.5 ? 3 : health.sleep >= 6 ? 2 : 1);
+            factors++;
+          }
+          if (health.energy) {
+            scorePoints += (health.energy >= 4 ? 3 : health.energy >= 3 ? 2 : 1);
+            factors++;
+          }
+          if (health.soreness) {
+            scorePoints += (health.soreness <= 2 ? 3 : health.soreness <= 3 ? 2 : 1);
+            factors++;
+          }
+          if (health.stress) {
+            scorePoints += (health.stress <= 2 ? 3 : health.stress <= 3 ? 2 : 1);
+            factors++;
+          }
+
+          const avg = factors > 0 ? (scorePoints / factors) : 0;
+          if (avg >= 2.5) {
+            badge.textContent = 'GOOD (استشفاء ممتاز)';
+            badge.className = 'px-2.5 py-0.5 rounded-full font-mono font-black text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300';
+          } else if (avg >= 1.8) {
+            badge.textContent = 'MODERATE (استشفاء متوسط)';
+            badge.className = 'px-2.5 py-0.5 rounded-full font-mono font-black text-[10px] bg-amber-100 text-amber-800 border border-amber-300';
+          } else {
+            badge.textContent = 'LOW (إجهاد مرتفع — خفف الأحمال)';
+            badge.className = 'px-2.5 py-0.5 rounded-full font-mono font-black text-[10px] bg-rose-100 text-rose-800 border border-rose-300';
+          }
         }
       }
     }
 
-    function deleteWorkout(id) {
-      showConfirmModal('حذف التمرين', 'هل أنت متأكد من حذف هذا التمرين من سجلك؟', () => {
-        appData.gymWorkouts = (appData.gymWorkouts || []).filter(w => w.id !== id);
-        notifyChange();
-        showToast('تم حذف التمرين بنجاح');
+    function saveHealthCheckin() {
+      const today = appData.activeDate;
+      if (!appData.dailyHealthCheckins) appData.dailyHealthCheckins = {};
+      appData.dailyHealthCheckins[today] = {
+        sleep: parseFloat(document.getElementById('health-sleep-input')?.value) || 0,
+        energy: Number(document.getElementById('health-energy-select')?.value) || 0,
+        soreness: Number(document.getElementById('health-soreness-select')?.value) || 0,
+        stress: Number(document.getElementById('health-stress-select')?.value) || 0
+      };
+      saveAppData();
+      renderRecoveryHealthCard();
+      showToast('تم حفظ مؤشرات الجاهزية والاستشفاء');
+    }
+
+    // Body Measurements
+    function renderBodyMeasurements() {
+      const list = document.getElementById('body-measurements-container');
+      const measurements = appData.bodyMeasurements || [];
+
+      if (!measurements.length) {
+        setElText('body-start-weight', '--');
+        setElText('body-latest-weight', '--');
+        setElText('body-weight-diff', '--');
+        setElText('body-fat-diff', '--');
+        if (list) list.innerHTML = '<p class="text-slate-400 text-center py-4 text-xs font-mono">Start logging your measurements.</p>';
+        return;
+      }
+
+      const sorted = [...measurements].sort((a, b) => a.date.localeCompare(b.date));
+      const first = sorted[0];
+      const latest = sorted[sorted.length - 1];
+
+      setElText('body-start-weight', `${first.weight} kg`);
+      setElText('body-latest-weight', `${latest.weight} kg`);
+
+      const diff = (latest.weight - first.weight).toFixed(1);
+      setElText('body-weight-diff', `${diff > 0 ? '+' : ''}${diff} kg`);
+
+      if (latest.fat && first.fat) {
+        const fatDiff = (latest.fat - first.fat).toFixed(1);
+        setElText('body-fat-diff', `${fatDiff > 0 ? '+' : ''}${fatDiff}%`);
+      } else {
+        setElText('body-fat-diff', '--');
+      }
+
+      if (list) {
+        list.innerHTML = '';
+        measurements.forEach(m => {
+          const row = document.createElement('div');
+          row.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs font-mono';
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <strong class="text-slate-900 text-sm">${m.weight} kg</strong>
+              <span class="text-slate-500">${escapeHtml(m.date)}</span>
+              ${m.fat ? `<span class="text-sky-700">دهون: ${m.fat}%</span>` : ''}
+              ${m.muscleKg ? `<span class="text-emerald-700">عضل: ${m.muscleKg}kg</span>` : ''}
+              ${m.waist ? `<span class="text-slate-600">خصر: ${m.waist}cm</span>` : ''}
+            </div>
+            <button onclick="deleteMeasurement('${m.id}')" class="text-rose-600 hover:text-rose-800 text-[11px] font-sans font-semibold">حذف</button>
+          `;
+          list.appendChild(row);
+        });
+      }
+    }
+
+    function openBodyMeasurementModal() {
+      document.getElementById('measurement-modal')?.classList.remove('hidden');
+    }
+    function closeMeasurementModal() {
+      document.getElementById('measurement-modal')?.classList.add('hidden');
+    }
+    function submitMeasurementForm() {
+      const weight = parseFloat(document.getElementById('m-form-weight')?.value);
+      if (isNaN(weight) || weight <= 20) {
+        showToast('يرجى إدخال وزن صحيح');
+        return;
+      }
+      const fat = parseFloat(document.getElementById('m-form-fat')?.value) || null;
+      const musclePct = parseFloat(document.getElementById('m-form-muscle-pct')?.value) || null;
+      const muscleKg = parseFloat(document.getElementById('m-form-muscle-kg')?.value) || null;
+      const bmi = parseFloat(document.getElementById('m-form-bmi')?.value) || null;
+      const waist = parseFloat(document.getElementById('m-form-waist')?.value) || null;
+      const chest = parseFloat(document.getElementById('m-form-chest')?.value) || null;
+      const arm = parseFloat(document.getElementById('m-form-arm')?.value) || null;
+      const thigh = parseFloat(document.getElementById('m-form-thigh')?.value) || null;
+
+      if (!appData.bodyMeasurements) appData.bodyMeasurements = [];
+      appData.bodyMeasurements.unshift({
+        id: 'bm_' + Date.now(),
+        date: appData.activeDate,
+        weight,
+        fat,
+        musclePct,
+        muscleKg,
+        bmi,
+        waist,
+        chest,
+        arm,
+        thigh
+      });
+
+      closeMeasurementModal();
+      notifyChange();
+      showToast('تم حفظ قياس الجسم الذكي بنجاح ⚖️');
+    }
+
+    // Nutrition
+    function openLogNutritionModal() {
+      document.getElementById('nutrition-modal')?.classList.remove('hidden');
+    }
+    function closeLogNutritionModal() {
+      document.getElementById('nutrition-modal')?.classList.add('hidden');
+    }
+    function submitNutritionForm() {
+      const meal = document.getElementById('nutri-form-meal')?.value || 'Breakfast';
+      const food = document.getElementById('nutri-form-food')?.value.trim();
+      const qty = document.getElementById('nutri-form-qty')?.value.trim() || '1 حصة';
+      const cal = Number(document.getElementById('nutri-form-cal')?.value) || null;
+      const protein = Number(document.getElementById('nutri-form-protein')?.value) || null;
+      const notes = document.getElementById('nutri-form-notes')?.value.trim() || '';
+
+      if (!food) {
+        showToast('يرجى كتابة الصنف أو الطعام');
+        return;
+      }
+
+      if (!appData.nutritionEntries) appData.nutritionEntries = [];
+      appData.nutritionEntries.unshift({
+        id: 'nutri_' + Date.now(),
+        date: appData.activeDate,
+        meal,
+        food,
+        qty,
+        cal,
+        protein,
+        notes
+      });
+
+      closeLogNutritionModal();
+      notifyChange();
+      showToast('تم تسجيل الوجبة بنجاح 🥗');
+    }
+
+    function renderNutritionToday() {
+      const list = document.getElementById('nutrition-today-list');
+      if (!list) return;
+      const today = appData.activeDate;
+      const logs = (appData.nutritionEntries || []).filter(n => n.date === today);
+
+      if (!logs.length) {
+        list.innerHTML = '<p class="text-slate-400 py-1 text-[11px]">لم تسجل وجبات اليوم بعد.</p>';
+      } else {
+        list.innerHTML = '';
+        logs.forEach(item => {
+          const d = document.createElement('div');
+          d.className = 'p-2 rounded-xl bg-white border border-amber-200 flex items-center justify-between text-[11px]';
+          d.innerHTML = `
+            <div>
+              <strong class="text-amber-950 font-bold">${escapeHtml(item.meal)}:</strong> ${escapeHtml(item.food)} (${escapeHtml(item.qty)})
+              ${item.cal ? `· <span class="font-mono text-slate-500">${item.cal} kcal</span>` : ''}
+              ${item.protein ? `· <span class="font-mono text-emerald-700 font-bold">${item.protein}g P</span>` : ''}
+            </div>
+            <button onclick="deleteNutritionEntry('${item.id}')" class="text-rose-600 hover:text-rose-800 font-bold">حذف</button>
+          `;
+          list.appendChild(d);
+        });
+      }
+    }
+
+    function deleteNutritionEntry(id) {
+      appData.nutritionEntries = (appData.nutritionEntries || []).filter(n => n.id !== id);
+      notifyChange();
+      showToast('تم حذف الوجبة');
+    }
+
+    // Workout History List
+    function renderWorkoutHistory() {
+      const list = document.getElementById('gym-history-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const sessions = (appData.gymSessions || []).filter(s => s.completionPct > 0);
+      setElText('gym-history-count', `${sessions.length} جلسة مسجلة`);
+
+      if (!sessions.length) {
+        list.innerHTML = '<p class="text-slate-400 text-center py-4 font-mono text-xs">No workout sessions logged yet.</p>';
+        return;
+      }
+
+      sessions.sort((a, b) => b.date.localeCompare(a.date));
+      sessions.forEach(sess => {
+        const div = document.createElement('div');
+        div.className = 'p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2';
+        
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="font-mono font-bold text-xs px-2 py-0.5 rounded-md bg-slate-900 text-white">${sess.type}</span>
+              <strong class="text-slate-900 font-bold text-xs">${sess.date}</strong>
+            </div>
+            <div class="flex items-center gap-2 font-mono text-[11px]">
+              <span class="font-bold text-sky-800">${sess.totalVolume} kg حجم</span>
+              <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold">${sess.completionPct}% مكتمل</span>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-600 flex flex-wrap gap-2 pt-1 border-t border-slate-200/60 font-mono">
+            ${(sess.exercises || []).filter(e => (e.sets || []).some(s => s.completed)).map(e => {
+              const doneCount = e.sets.filter(s => s.completed).length;
+              const maxWeight = Math.max(0, ...e.sets.filter(s => s.completed).map(s => Number(s.weight) || 0));
+              return `<span class="bg-white px-2 py-0.5 rounded border border-slate-200">${escapeHtml(e.name)}: ${doneCount}S (${maxWeight}kg)</span>`;
+            }).join('')}
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    // Analytics & 38-Day Review
+    function renderGymWeeklyAndReviewAnalytics() {
+      const weeklyCont = document.getElementById('gym-weekly-analytics-content');
+      const reviewCont = document.getElementById('gym-program-review-content');
+
+      const allSessions = appData.gymSessions || [];
+      const completedCount = allSessions.filter(s => s.completionPct >= 100).length;
+      const totalVolume = allSessions.reduce((sum, s) => sum + (s.totalVolume || 0), 0);
+
+      if (weeklyCont) {
+        if (!allSessions.length) {
+          weeklyCont.innerHTML = '<p class="text-slate-400 py-1">Not enough data yet. ابدأ بتسجيل تمارينك لحساب الإحصائيات.</p>';
+        } else {
+          const avgVol = completedCount > 0 ? Math.round(totalVolume / completedCount) : 0;
+          weeklyCont.innerHTML = `
+            <div>• التمارين المكتملة حتى الآن: <strong>${completedCount} حصص</strong></div>
+            <div>• إجمالي الحجم التدريبي المرفوع: <strong>${totalVolume.toLocaleString()} kg</strong></div>
+            <div>• متوسط الحجم لكل حصة: <strong>${avgVol} kg</strong></div>
+            <div>• نسبة الانضباط الميداني: <strong>${Math.round((completedCount / 38) * 100)}%</strong></div>
+          `;
+        }
+      }
+
+      if (reviewCont) {
+        const prs = calculateExercisePRs();
+        const prList = Object.values(prs).filter(p => p.bestWeight > 0);
+        
+        if (!prList.length) {
+          reviewCont.innerHTML = '<p class="text-slate-400 py-1">Not enough data yet. ستظهر هنا أبرز التطورات والأرقام القياسية المحققة.</p>';
+        } else {
+          prList.sort((a, b) => b.bestVolume - a.bestVolume);
+          const top = prList[0];
+          reviewCont.innerHTML = `
+            <div>🏆 <strong>أعلى قمة في الحجم:</strong> ${escapeHtml(top.name)} (${top.bestWeight}kg × ${top.bestReps} تكرار)</div>
+            <div>📊 <strong>إجمالي التمارين التي سُجل لها أرقام قياسية:</strong> ${prList.length} تمارين</div>
+            <div>💡 <strong>التطور الأكبر (Biggest Improvement):</strong> تقدم تدريجي متزن مستند إلى مدخلاتك الحقيقية.</div>
+          `;
+        }
+      }
+    }
+
+    // Program Customizer
+    function openProgramCustomizerModal() {
+      const list = document.getElementById('program-customizer-list');
+      if (list) {
+        list.innerHTML = '';
+        const all = [
+          ...appData.gymRoutines.ANTERIOR.map(e => ({ ...e, type: 'ANTERIOR' })),
+          ...appData.gymRoutines.POSTERIOR.map(e => ({ ...e, type: 'POSTERIOR' }))
+        ];
+
+        all.forEach(ex => {
+          const div = document.createElement('div');
+          div.className = 'p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 font-mono';
+          div.innerHTML = `
+            <div class="flex justify-between items-center">
+              <strong class="text-slate-900 text-xs">${escapeHtml(ex.name)}</strong>
+              <span class="text-[10px] text-slate-500">${ex.type} · ${ex.section}</span>
+            </div>
+            <div class="flex items-center gap-2 text-[11px]">
+              <span>المجموعات: <strong>${ex.sets}</strong></span>
+              <span>التكرارات: <strong>${ex.repsMin}–${ex.repsMax}</strong></span>
+              <span>الراحة: <strong>${ex.restSec}s</strong></span>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      }
+      document.getElementById('program-customizer-modal')?.classList.remove('hidden');
+    }
+
+    function closeProgramCustomizerModal() {
+      document.getElementById('program-customizer-modal')?.classList.add('hidden');
+    }
+
+    function resetProgramToScientificDefaults() {
+      showConfirmModal('استعادة البرنامج الافتراضي', 'هل تريد استعادة ترتيب وتكرارات ومجموعات البرنامج العلمي الـ 38 يوماً الافتراضي؟', () => {
+        appData.gymRoutines = {
+          ANTERIOR: defaultAnteriorRoutine,
+          POSTERIOR: defaultPosteriorRoutine
+        };
+        saveAppData();
+        renderGymSection();
+        closeProgramCustomizerModal();
+        showToast('تم استعادة إعدادات البرنامج الافتراضية بنجاح');
       });
     }
 
@@ -1935,20 +3474,19 @@
             <span class="font-bold text-slate-900">${actualDone} / ${totalSlots} (${pct}%)</span>
           </div>
           <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-            <div class="bg-gradient-to-r from-sky-500 to-indigo-600 h-2 rounded-full" style="width: ${pct}%"></div>
+            <div class="bg-gradient-to-r from-sky-500 to-indigo-600 h-2 rounded-full duration-500" style="width: ${pct}%"></div>
           </div>
         `;
         container.appendChild(row);
       });
 
-      // Habit performance and correlation insights
       const perfContainer = document.getElementById('analytics-strongest-weakest');
       const moodCorr = document.getElementById('analytics-mood-correlation');
 
       let habitCounts = active.map(h => {
         let count = 0;
         for (let d = 8; d <= 30; d++) {
-          const dStr = `2026-09-${d < 10 ? '0' + d : d}`;
+          const dStr = `2026-09-${d < 10 ? '0' + d : dayFormat(d)}`;
           if (isHabitCompleted(h.id, dStr)) count++;
         }
         return { name: h.name, icon: h.icon, count };
@@ -1979,6 +3517,10 @@
           `;
         }
       }
+    }
+
+    function dayFormat(d) {
+      return d < 10 ? '0' + d : '' + d;
     }
 
     function renderMonthlyReviewSection() {
@@ -2184,17 +3726,21 @@
       closeSettingsModal();
       showConfirmModal(
         'إعادة ضبط الدورة والبدء من الصفر',
-        'سيتم إعادة ضبط سجلات إنجاز العادات، المزاج، الصلوات، والتمارين لدورة سبتمبر (8 إلى 30 سبتمبر) لتبدأ نظيفة من 0% دون مسح العادات نفسها. هل أنت متأكد؟',
+        'سيتم إعادة ضبط سجلات إنجاز العادات، المزاج، الصلوات، وبرنامج الجيم الـ 38 يوماً لدورة سبتمبر وأكتوبر لتبدأ نظيفة من 0% دون مسح العادات نفسها. هل أنت متأكد؟',
         () => {
           appData.habitCompletions = {};
           appData.moodEntries = {};
           appData.prayerEntries = {};
           appData.quranLogs = [];
           appData.gymWorkouts = [];
+          appData.gymSessions = [];
           appData.bodyMeasurements = [];
+          appData.waterEntries = {};
+          appData.nutritionEntries = [];
+          appData.dailyHealthCheckins = {};
           saveAppData();
           renderAllComponents();
-          showToast('تمت إعادة ضبط دورة التتبع بنجاح لتبدأ نظيفة من 0%');
+          showToast('تمت إعادة ضبط الدورة بنجاح لتبدأ نظيفة من 0%');
         }
       );
     }
@@ -2245,21 +3791,17 @@
     }
 
     window.onload = async function() {
-      // 1. Render immediately from localStorage cache for instant UI
       renderAllComponents();
 
-      // 2. Then attempt to sync with Supabase cloud
       if (supabaseClient) {
         setSyncStatus('connecting');
         const cloudData = await fetchAppDataFromSupabase();
         if (cloudData) {
-          // Cloud has data — treat it as the source of truth and merge with local
           appData = normalizeAppData(cloudData);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
           renderAllComponents();
           setSyncStatus('synced');
         } else {
-          // No cloud data yet — push current local data up to initialize it
           await pushAppDataToSupabase();
         }
       } else {
@@ -2274,6 +3816,9 @@
           closeWorkoutModal();
           closeMeasurementModal();
           closeQuranModal();
+          closeCustomWaterModal();
+          closeLogNutritionModal();
+          closeProgramCustomizerModal();
           closeSettingsModal();
           closeConfirmModal();
         }
