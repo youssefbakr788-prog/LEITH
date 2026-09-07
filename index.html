@@ -9,6 +9,9 @@
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   
   <!-- Google Fonts: Cairo, Amiri, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -96,6 +99,10 @@
 
       <!-- Header Action Utilities -->
       <div class="flex items-center gap-2">
+        <span id="sync-status-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[10px] font-mono text-slate-500">
+          <span id="sync-status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          <span id="sync-status-text">جاري الاتصال...</span>
+        </span>
         <button onclick="openQuickAddHabitModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs nexus-btn">
           <span>+</span>
           <span class="hidden sm:inline">عادة جديدة</span>
@@ -959,6 +966,16 @@
         <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
       </div>
       <div class="space-y-3 text-xs">
+        <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 space-y-1.5">
+          <span class="font-bold text-sky-900 block">☁️ المزامنة السحابية (Supabase):</span>
+          <div class="flex items-center justify-between">
+            <span id="settings-sync-status-text" class="text-[11px] text-sky-700 font-mono">جاري الفحص...</span>
+            <button onclick="manualSyncNow()" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold nexus-btn">
+              مزامنة الآن 🔄
+            </button>
+          </div>
+        </div>
+
         <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
           <span class="font-bold text-slate-800 block">💾 النسخ الاحتياطي المحلي:</span>
           <div class="grid grid-cols-2 gap-2">
@@ -1008,6 +1025,99 @@
   </div>
 
   <script>
+    // ===================================================================
+    // SUPABASE CONFIGURATION — LEITH Cloud Sync
+    // ===================================================================
+    const SUPABASE_URL = 'https://okiobzkfqnpwhxdfmvzd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9raW9iemtmcW5wd2h4ZGZtdnpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NjMyNTcsImV4cCI6MjEwNDMzOTI1N30.--gIGIonAnCmW2TUSnm2UxJZ1jk7xv-ZYDtG9Z03GGw';
+    const SUPABASE_ROW_ID = 'main';
+
+    let supabaseClient = null;
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.warn('Supabase init failed, continuing with localStorage only:', e);
+    }
+
+    let syncDebounceTimer = null;
+    let isCurrentlySyncing = false;
+
+    function setSyncStatus(state) {
+      // state: 'connecting' | 'synced' | 'saving' | 'offline' | 'error'
+      const dot = document.getElementById('sync-status-dot');
+      const text = document.getElementById('sync-status-text');
+      const settingsText = document.getElementById('settings-sync-status-text');
+
+      const map = {
+        connecting: { color: 'bg-slate-400', label: 'جاري الاتصال...' },
+        synced:     { color: 'bg-emerald-500', label: 'متصل ✓ محفوظ سحابياً' },
+        saving:     { color: 'bg-amber-500', label: 'جاري الحفظ...' },
+        offline:    { color: 'bg-slate-400', label: 'محلي فقط (Supabase غير مفعل)' },
+        error:      { color: 'bg-rose-500', label: 'خطأ في الاتصال — يعمل محلياً' }
+      };
+      const cfg = map[state] || map.connecting;
+
+      if (dot) dot.className = `w-1.5 h-1.5 rounded-full ${cfg.color}`;
+      if (text) text.textContent = cfg.label;
+      if (settingsText) settingsText.textContent = cfg.label;
+    }
+
+    // Push the full appData object to Supabase (debounced to avoid spamming requests)
+    function queueSupabaseSync() {
+      if (!supabaseClient) return;
+      if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
+      setSyncStatus('saving');
+      syncDebounceTimer = setTimeout(pushAppDataToSupabase, 900);
+    }
+
+    async function pushAppDataToSupabase() {
+      if (!supabaseClient) return;
+      isCurrentlySyncing = true;
+      try {
+        const { error } = await supabaseClient
+          .from('leith_state')
+          .upsert({ id: SUPABASE_ROW_ID, data: appData, updated_at: new Date().toISOString() });
+        if (error) throw error;
+        setSyncStatus('synced');
+      } catch (e) {
+        console.error('Supabase sync error message:', e?.message);
+        console.error('Supabase sync error code:', e?.code);
+        console.error('Supabase sync error details:', e?.details);
+        console.error('Supabase sync error hint:', e?.hint);
+        setSyncStatus('error');
+      } finally {
+        isCurrentlySyncing = false;
+      }
+    }
+
+    async function fetchAppDataFromSupabase() {
+      if (!supabaseClient) return null;
+      try {
+        const { data, error } = await supabaseClient
+          .from('leith_state')
+          .select('data, updated_at')
+          .eq('id', SUPABASE_ROW_ID)
+          .single();
+        if (error) throw error;
+        return data && data.data && Object.keys(data.data).length ? data.data : null;
+      } catch (e) {
+        console.warn('Supabase fetch error message:', e?.message);
+        console.warn('Supabase fetch error code:', e?.code);
+        console.warn('Supabase fetch error details:', e?.details);
+        console.warn('Supabase fetch error hint:', e?.hint);
+        return null;
+      }
+    }
+
+    async function manualSyncNow() {
+      showToast('جاري المزامنة مع السحابة...');
+      await pushAppDataToSupabase();
+      showToast('تمت المزامنة السحابية بنجاح ☁️');
+    }
+
+    // ===================================================================
     const STORAGE_KEY = 'leith_life_os_v5_singlepage';
 
     let currentHabitCategoryFilter = 'ALL';
@@ -1096,12 +1206,29 @@
       return JSON.parse(JSON.stringify(defaultState));
     }
 
+    function normalizeAppData(raw) {
+      if (!raw) return JSON.parse(JSON.stringify(defaultState));
+      return Object.assign({}, defaultState, raw, {
+        habits: (raw.habits && raw.habits.length) ? raw.habits : defaultHabits,
+        habitCompletions: raw.habitCompletions || {},
+        moodEntries: raw.moodEntries || {},
+        prayerEntries: raw.prayerEntries || {},
+        quranLogs: raw.quranLogs || [],
+        adhkarEntries: raw.adhkarEntries || {},
+        gymWorkouts: raw.gymWorkouts || [],
+        bodyMeasurements: raw.bodyMeasurements || [],
+        faithJourney: raw.faithJourney || { day: 1, completedDays: [] },
+        monthlyReview: raw.monthlyReview || { well: '', diff: '', change: '' }
+      });
+    }
+
     function saveAppData() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
       } catch (e) {
         console.error('Failed to save to localStorage:', e);
       }
+      queueSupabaseSync();
     }
 
     function notifyChange() {
@@ -2039,7 +2166,7 @@
           const parsed = JSON.parse(evt.target.result);
           if (parsed && parsed.habits) {
             showConfirmModal('استرجاع البيانات', 'سيؤدي هذا لاستبدال كافة السجلات الحالية بالنسخة المرفوعة، هل تريد الاستمرار؟', () => {
-              appData = parsed;
+              appData = normalizeAppData(parsed);
               saveAppData();
               renderAllComponents();
               closeSettingsModal();
@@ -2117,8 +2244,27 @@
       }
     }
 
-    window.onload = function() {
+    window.onload = async function() {
+      // 1. Render immediately from localStorage cache for instant UI
       renderAllComponents();
+
+      // 2. Then attempt to sync with Supabase cloud
+      if (supabaseClient) {
+        setSyncStatus('connecting');
+        const cloudData = await fetchAppDataFromSupabase();
+        if (cloudData) {
+          // Cloud has data — treat it as the source of truth and merge with local
+          appData = normalizeAppData(cloudData);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+          renderAllComponents();
+          setSyncStatus('synced');
+        } else {
+          // No cloud data yet — push current local data up to initialize it
+          await pushAppDataToSupabase();
+        }
+      } else {
+        setSyncStatus('offline');
+      }
 
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
