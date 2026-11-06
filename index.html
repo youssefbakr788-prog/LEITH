@@ -1,1558 +1,808 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEITH — 90-Day TOJI Transformation</title>
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إلى لولا الحبيبة ❤️ | من جوجو</title>
+
+    <!-- Google Fonts: Arabic Calligraphy & Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&family=Reenie+Beanie&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#09090b',
-                        cardBg: '#121216',
-                        cardBorder: '#27272a',
-                        accent: '#8B5CF6',
-                        accentHover: '#7C3AED',
-                        accentLight: 'rgba(139, 92, 246, 0.15)'
+                        romantic: {
+                            bg: '#040108',
+                            darkBurgundy: '#1a030c',
+                            burgundy: '#2d0815',
+                            deepPurple: '#12021a',
+                            pink: '#ff4b8b',
+                            brightPink: '#ff1493',
+                            roseGold: '#e8a598',
+                            gold: '#ffd700',
+                            accent: '#ff2a70'
+                        }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif']
+                        cairo: ['Cairo', 'sans-serif'],
+                        amiri: ['Amiri', 'serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                        handwriting: ['Reenie Beanie', 'cursive']
                     }
                 }
             }
         }
     </script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #09090b; color: #f4f4f5; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
-        .tab-active { border-bottom: 2px solid #8B5CF6; color: #ffffff; }
+        /* BASE & CINEMATIC DESIGN SYSTEM */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            background-color: #040108;
+            color: #ffffff;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* Ambient Glow & Background Depth */
+        .ambient-bg {
+            background: radial-gradient(circle at 50% 50%, #1c0514 0%, #0c020d 50%, #030006 100%);
+        }
+
+        /* Ultra-Glassmorphism Cards */
+        .glass-card {
+            background: rgba(35, 5, 18, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 75, 139, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 75, 139, 0.15);
+        }
+
+        .glass-card-glow {
+            border: 1px solid rgba(255, 75, 139, 0.4);
+            box-shadow: 0 0 40px rgba(255, 75, 139, 0.3), inset 0 0 20px rgba(255, 75, 139, 0.15);
+        }
+
+        /* Glowing Text Utilities */
+        .glow-text-pink {
+            text-shadow: 0 0 12px rgba(255, 75, 139, 0.9), 0 0 25px rgba(255, 75, 139, 0.6), 0 0 40px rgba(255, 75, 139, 0.3);
+        }
+
+        .glow-text-gold {
+            text-shadow: 0 0 12px rgba(232, 165, 152, 0.9), 0 0 25px rgba(255, 215, 0, 0.6);
+        }
+
+        /* High-End Glowing Button */
+        .glow-btn {
+            background: linear-gradient(135deg, #ff4b8b 0%, #ab0e43 100%);
+            box-shadow: 0 0 25px rgba(255, 75, 139, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 40px rgba(255, 75, 139, 0.9), 0 0 15px rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px) scale(1.03);
+        }
+        .glow-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Pulsing Heart Animation */
+        .pulse-heart {
+            animation: heartBeat 1.8s infinite ease-in-out;
+        }
+        @keyframes heartBeat {
+            0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,75,139,0.7)); }
+            14% { transform: scale(1.15); filter: drop-shadow(0 0 25px rgba(255,75,139,1)); }
+            28% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,75,139,0.7)); }
+            42% { transform: scale(1.22); filter: drop-shadow(0 0 35px rgba(255,75,139,1)); }
+            70% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,75,139,0.7)); }
+        }
+
+        /* 3D JEWELRY BOX COMPONENT */
+        .ring-perspective {
+            perspective: 1200px;
+        }
+        .ring-box-container {
+            width: 170px;
+            height: 160px;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.8s ease;
+        }
+        .ring-box-container:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        .ring-box-base {
+            position: absolute;
+            width: 100%;
+            height: 55%;
+            bottom: 0;
+            background: linear-gradient(145deg, #3d091d 0%, #140209 100%);
+            border: 2px solid #e8a598;
+            border-radius: 4px 4px 16px 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), inset 0 0 15px rgba(255,75,139,0.3);
+            z-index: 5;
+        }
+        .ring-box-lid {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            top: 0;
+            background: linear-gradient(145deg, #590f2b 0%, #21030e 100%);
+            border: 2px solid #e8a598;
+            border-radius: 16px 16px 4px 4px;
+            transform-origin: top;
+            transition: transform 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            box-shadow: 0 -8px 25px rgba(255,75,139,0.4);
+        }
+        .ring-box-container.opened .ring-box-lid {
+            transform: rotateX(-135deg);
+        }
+        .ring-content {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, 0) scale(0.4);
+            opacity: 0;
+            transition: all 1.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 8;
+        }
+        .ring-box-container.opened .ring-content {
+            transform: translate(-50%, -75px) scale(1.2);
+            opacity: 1;
+        }
+
+        /* Sparkle Shimmer for Ring Gem */
+        .gem-sparkle {
+            animation: shimmerEffect 2s infinite alternate;
+        }
+        @keyframes shimmerEffect {
+            0% { filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 20px #ffd700); }
+            100% { filter: drop-shadow(0 0 20px #ffffff) drop-shadow(0 0 40px #ff4b8b); }
+        }
+
+        /* Floating Micro Animation */
+        .float-anim {
+            animation: floatMove 4s ease-in-out infinite;
+        }
+        @keyframes floatMove {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #040108;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff4b8b;
+            border-radius: 3px;
+        }
     </style>
 </head>
-<body class="bg-darkBg text-zinc-100 min-h-screen flex flex-col selection:bg-purple-600 selection:text-white">
+<body class="ambient-bg min-h-screen text-white relative selection:bg-romantic-pink selection:text-white">
 
-    <header class="sticky top-0 z-50 bg-darkBg/90 backdrop-blur-md border-b border-cardBorder">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-black text-xl tracking-wider shadow-lg shadow-purple-900/40">L</div>
-                <div>
-                    <h1 class="text-xl font-black tracking-widest text-white uppercase">LEITH</h1>
-                    <p class="text-xs font-medium text-purple-400 tracking-wider">90-DAY TOJI TRANSFORMATION</p>
-                </div>
-            </div>
+    <!-- AUDIO CONTROLLER (Optional Custom Romantic Track) -->
+    <div class="fixed top-5 left-5 z-50">
+        <button id="audio-btn" aria-label="Toggle Audio" class="bg-romantic-burgundy/80 hover:bg-romantic-pink text-white p-3.5 rounded-full border border-romantic-pink/40 backdrop-blur-md shadow-2xl transition-all flex items-center justify-center w-12 h-12 hover:scale-110 cursor-pointer">
+            <i id="audio-icon" class="fas fa-music text-romantic-roseGold text-lg"></i>
+        </button>
+        <!-- OPTIONAL: You can replace the audio link below with your favorite MP3 track URL -->
+        <audio id="bg-audio" loop preload="auto">
+            <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-wedding-483.mp3" type="audio/mpeg">
+        </audio>
+    </div>
 
-            <!-- Day & Date Widget Header -->
-            <div class="hidden md:flex items-center space-x-6 bg-cardBg border border-cardBorder px-4 py-2 rounded-xl">
-                <div>
-                    <span id="headerDayBadge" class="text-xs font-bold text-purple-400 block tracking-wider">DAY 01 / 90</span>
-                    <span id="headerDateBadge" class="text-sm font-semibold text-zinc-200">09 SEPTEMBER 2026</span>
-                </div>
-                <button onclick="openDaySelector()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg border border-zinc-700 transition">Change Day</button>
-            </div>
+    <!-- MAIN SCENE CONTAINER -->
+    <main class="relative w-full overflow-hidden">
 
-            <!-- Profile & Sync Status -->
-            <div class="flex items-center space-x-3">
-                <span id="syncStatusBadge" class="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-400" title="Sync Status">Local</span>
-                <button onclick="resetData()" title="Reset Data" class="p-2.5 rounded-xl bg-cardBg border border-cardBorder text-zinc-400 hover:text-red-400 hover:border-red-500/30 transition text-sm">
-                    <i class="fa-solid fa-rotate-right"></i>
-                </button>
-                <div id="headerWeightDisplay" class="w-16 h-10 rounded-xl bg-cardBg border border-cardBorder flex items-center justify-center font-bold text-purple-400 text-xs">
-                    99.2 KG
-                </div>
-            </div>
-        </div>
+        <!-- ================= SCENE 1: MATRIX LOVE INTRO ================= -->
+        <section id="scene-1" class="relative w-full min-h-screen flex flex-col justify-center items-center px-4 text-center z-10 transition-opacity duration-1000">
+            <!-- Dynamic Canvas Particle Stream -->
+            <canvas id="matrixCanvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
 
-        <!-- Navigation Tabs -->
-        <div class="border-t border-cardBorder bg-darkBg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto space-x-6 no-scrollbar">
-                <button onclick="switchTab('today')" id="tab-today" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition tab-active whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-bolt text-purple-500"></i> TODAY
-                </button>
-                <button onclick="switchTab('gym')" id="tab-gym" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-dumbbell text-purple-500"></i> GYM WORKOUT
-                </button>
-                <button onclick="switchTab('food')" id="tab-food" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-utensils text-purple-500"></i> FOOD & CALORIES
-                </button>
-                <button onclick="switchTab('body')" id="tab-body" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-scale-balanced text-purple-500"></i> WEIGHT & BODY
-                </button>
-                <button onclick="switchTab('habits')" id="tab-habits" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-purple-500"></i> DAILY HABITS
-                </button>
-                <button onclick="switchTab('progress')" id="tab-progress" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line text-purple-500"></i> WEEKLY PROGRESS
-                </button>
-                <button onclick="switchTab('report')" id="tab-report" class="py-3 px-1 text-sm font-semibold text-zinc-400 hover:text-white transition whitespace-nowrap flex items-center gap-2">
-                    <i class="fa-solid fa-trophy text-purple-500"></i> 90-DAY REPORT
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- ==================== TAB 1: TODAY ==================== -->
-        <section id="view-today" class="space-y-6">
-            <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-                <div class="absolute right-0 top-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
-                    <div>
-                        <div class="flex items-center space-x-3 mb-2">
-                            <span id="todayDayNumBadge" class="bg-purple-600/20 text-purple-400 border border-purple-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">DAY 01 / 90</span>
-                            <span id="todayDateStrBadge" class="text-zinc-400 text-sm font-medium">09 September 2026</span>
-                        </div>
-                        <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">TODAY'S GOAL</h2>
-                        <p id="todayWorkoutTitleDisplay" class="text-lg font-bold text-purple-400 mt-1">ANTERIOR A</p>
-                    </div>
-                    <div>
-                        <button onclick="switchTab('gym')" class="w-full md:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center justify-center space-x-3 text-base">
-                            <i class="fa-solid fa-play text-sm"></i>
-                            <span>START WORKOUT</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Core Quick Stats Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div onclick="switchTab('body')" class="bg-cardBg border border-cardBorder p-5 rounded-2xl hover:border-purple-500/50 transition cursor-pointer group">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-                        <span>Weight</span>
-                        <i class="fa-solid fa-weight-scale text-purple-400 group-hover:scale-110 transition"></i>
-                    </p>
-                    <h3 id="dashWeightVal" class="text-2xl font-black text-white">99.2 <span class="text-sm font-medium text-zinc-400">KG</span></h3>
-                    <p id="dashWeightChange" class="text-xs text-emerald-400 mt-1 font-medium">Baseline</p>
-                </div>
-                <div onclick="switchTab('food')" class="bg-cardBg border border-cardBorder p-5 rounded-2xl hover:border-purple-500/50 transition cursor-pointer group">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-                        <span>Calories</span>
-                        <i class="fa-solid fa-fire text-purple-400 group-hover:scale-110 transition"></i>
-                    </p>
-                    <h3 id="dashCalVal" class="text-2xl font-black text-white">0 <span class="text-sm font-medium text-zinc-400">/ 2,200</span></h3>
-                    <p class="text-xs text-zinc-400 mt-1">kcal consumed</p>
-                </div>
-                <div onclick="switchTab('food')" class="bg-cardBg border border-cardBorder p-5 rounded-2xl hover:border-purple-500/50 transition cursor-pointer group">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-                        <span>Protein</span>
-                        <i class="fa-solid fa-bolt text-purple-400 group-hover:scale-110 transition"></i>
-                    </p>
-                    <h3 id="dashProteinVal" class="text-2xl font-black text-white">0 <span class="text-sm font-medium text-zinc-400">/ 170 G</span></h3>
-                    <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                        <div id="dashProteinBar" class="bg-purple-600 h-full rounded-full" style="width: 0%;"></div>
-                    </div>
-                </div>
-                <div class="bg-cardBg border border-cardBorder p-5 rounded-2xl relative group">
-                    <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-                        <span>Water</span>
-                        <i class="fa-solid fa-droplet text-purple-400 group-hover:scale-110 transition"></i>
-                    </p>
-                    <h3 id="dashWaterVal" class="text-2xl font-black text-white">0.0 <span class="text-sm font-medium text-zinc-400">/ 3.0 L</span></h3>
-                    <div class="flex items-center space-x-1.5 mt-2">
-                        <button onclick="addWater(250)" class="text-xs bg-zinc-800 hover:bg-purple-600 text-zinc-200 px-2 py-1 rounded border border-zinc-700 transition">+250ml</button>
-                        <button onclick="addWater(500)" class="text-xs bg-zinc-800 hover:bg-purple-600 text-zinc-200 px-2 py-1 rounded border border-zinc-700 transition">+500ml</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Secondary Metrics (Steps & Sleep) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Steps</p>
-                        <div class="flex items-baseline space-x-2">
-                            <h3 id="dashStepsVal" class="text-3xl font-black text-white">0</h3>
-                            <span class="text-sm text-zinc-400">/ <span id="dashStepsGoal">10,000</span></span>
-                        </div>
-                        <div class="w-48 bg-zinc-800 h-2 rounded-full mt-3 overflow-hidden">
-                            <div id="dashStepsBar" class="bg-purple-600 h-full rounded-full" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-end space-y-2">
-                        <div class="text-right">
-                            <span id="dashStepsPct" class="text-2xl font-black text-purple-400">0%</span>
-                        </div>
-                        <button onclick="openStepsModal()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg border border-zinc-700 transition">Update Steps</button>
+            <div class="relative z-10 max-w-2xl mx-auto space-y-8 float-anim px-4">
+                <div class="flex justify-center">
+                    <div class="pulse-heart text-romantic-pink text-7xl md:text-9xl">
+                        ❤️
                     </div>
                 </div>
 
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">Sleep Quality</p>
-                        <h3 id="dashSleepVal" class="text-3xl font-black text-white">0h 0m</h3>
-                        <p id="dashSleepQualityStars" class="text-amber-400 text-sm mt-1">☆☆☆☆☆</p>
-                    </div>
-                    <div class="flex flex-col items-end space-y-2">
-                        <span class="text-xs text-zinc-400">Bed: <strong id="dashBedTime" class="text-zinc-200">23:00</strong> | Wake: <strong id="dashWakeTime" class="text-zinc-200">07:00</strong></span>
-                        <button onclick="openSleepModal()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg border border-zinc-700 transition">Log Sleep</button>
-                    </div>
-                </div>
-            </div>
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-pink-200 via-romantic-pink to-romantic-roseGold glow-text-pink leading-tight font-cairo">
+                    لولا… الرسالة دي ليكي ❤️
+                </h1>
 
-            <!-- Habits Quick Summary -->
-            <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-purple-500"></i> Today's Core Habits & Discipline
-                    </h3>
-                    <button onclick="switchTab('habits')" class="text-xs text-purple-400 hover:text-purple-300 font-semibold">Manage All →</button>
-                </div>
-                <div id="dashHabitsList" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                    <!-- Dynamic -->
-                </div>
-            </div>
-        </section>
+                <p class="text-lg sm:text-2xl text-pink-100/90 font-amiri leading-relaxed max-w-xl mx-auto">
+                    في كلام ساعات بيكون صعب يتقال، بس أنا حبيت أوصلهولك بطريقتي… من قلبي لقلبك.
+                </p>
 
-        <!-- ==================== TAB 2: GYM ==================== -->
-        <section id="view-gym" class="space-y-6 hidden">
-            <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-black text-white tracking-tight">TOJI 90-DAY GYM PROGRAM</h2>
-                    <p class="text-sm text-zinc-400 mt-1">Anterior / Posterior hypertrophy cycle with intelligent progressive overload history.</p>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <span class="bg-purple-600/20 border border-purple-500/30 text-purple-300 text-xs font-bold px-3 py-1.5 rounded-xl">TOJI Split (90 Days)</span>
-                </div>
-            </div>
-
-            <!-- Days Scroller -->
-            <div id="gymDaysContainer" class="flex space-x-3 overflow-x-auto pb-4 no-scrollbar">
-                <!-- Dynamic -->
-            </div>
-
-            <!-- Active Workout View Card -->
-            <div id="activeWorkoutContainer" class="bg-cardBg border border-cardBorder rounded-2xl p-6 sm:p-8 space-y-6">
-                <!-- Dynamic -->
-            </div>
-        </section>
-
-        <!-- ==================== TAB 3: FOOD & CALORIES ==================== -->
-        <section id="view-food" class="space-y-6 hidden">
-            <div class="bg-cardBg border border-cardBorder p-6 sm:p-8 rounded-2xl">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div>
-                        <h2 class="text-2xl font-black text-white">TODAY'S FOOD & MACROS</h2>
-                        <p class="text-sm text-zinc-400 mt-1">Track precise calories, protein, carbs, and fats.</p>
-                    </div>
-                    <div class="flex items-center space-x-4 bg-darkBg border border-cardBorder p-4 rounded-xl">
-                        <div>
-                            <span class="text-xs text-zinc-400 block">Calories</span>
-                            <span id="foodTotalCalories" class="text-xl font-black text-white">0</span> <span class="text-xs text-zinc-400">/ 2,200 kcal</span>
-                        </div>
-                        <div class="h-8 w-px bg-cardBorder"></div>
-                        <div>
-                            <span class="text-xs text-zinc-400 block">Protein</span>
-                            <span id="foodTotalProtein" class="text-xl font-black text-purple-400">0g</span> <span class="text-xs text-zinc-400">/ 170g</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Macro Progress Bars -->
-                <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-cardBorder">
-                    <div>
-                        <div class="flex justify-between text-xs font-semibold mb-1">
-                            <span class="text-zinc-400">Carbs</span>
-                            <span id="foodCarbsVal" class="text-zinc-200">0g / 220g</span>
-                        </div>
-                        <div class="w-full bg-darkBg h-2 rounded-full overflow-hidden">
-                            <div id="foodCarbsBar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs font-semibold mb-1">
-                            <span class="text-zinc-400">Protein</span>
-                            <span id="foodProteinVal" class="text-zinc-200">0g / 170g</span>
-                        </div>
-                        <div class="w-full bg-darkBg h-2 rounded-full overflow-hidden">
-                            <div id="foodProteinBar" class="bg-purple-600 h-full rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs font-semibold mb-1">
-                            <span class="text-zinc-400">Fat</span>
-                            <span id="foodFatVal" class="text-zinc-200">0g / 70g</span>
-                        </div>
-                        <div class="w-full bg-darkBg h-2 rounded-full overflow-hidden">
-                            <div id="foodFatBar" class="bg-amber-500 h-full rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Meal Sections -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-mug-hot text-purple-400"></i> Breakfast</h3>
-                        <button onclick="openAddFoodModal('Breakfast')" class="text-xs bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-1.5 rounded-lg transition font-semibold">+ ADD FOOD</button>
-                    </div>
-                    <div id="mealListBreakfast" class="space-y-2"></div>
-                </div>
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-bowl-food text-purple-400"></i> Lunch</h3>
-                        <button onclick="openAddFoodModal('Lunch')" class="text-xs bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-1.5 rounded-lg transition font-semibold">+ ADD FOOD</button>
-                    </div>
-                    <div id="mealListLunch" class="space-y-2"></div>
-                </div>
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-plate-wheat text-purple-400"></i> Dinner</h3>
-                        <button onclick="openAddFoodModal('Dinner')" class="text-xs bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-1.5 rounded-lg transition font-semibold">+ ADD FOOD</button>
-                    </div>
-                    <div id="mealListDinner" class="space-y-2"></div>
-                </div>
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-cookie-bite text-purple-400"></i> Snacks</h3>
-                        <button onclick="openAddFoodModal('Snacks')" class="text-xs bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 px-3 py-1.5 rounded-lg transition font-semibold">+ ADD FOOD</button>
-                    </div>
-                    <div id="mealListSnacks" class="space-y-2"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== TAB 4: WEIGHT & BODY ==================== -->
-        <section id="view-body" class="space-y-6 hidden">
-            <div class="bg-cardBg border border-cardBorder p-6 sm:p-8 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <span class="text-xs font-bold text-purple-400 uppercase tracking-wider block mb-1">YOUR WEIGHT</span>
-                    <div class="flex items-baseline space-x-3">
-                        <h2 id="bodyCurrentWeight" class="text-4xl sm:text-5xl font-black text-white">99.2 <span class="text-xl font-bold text-zinc-400">KG</span></h2>
-                        <span id="bodyWeightChangeBadge" class="text-sm font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Baseline</span>
-                    </div>
-                    <p class="text-xs text-zinc-400 mt-2">7-Day Average Weight Trend: <strong id="body7DayAvg" class="text-zinc-200">99.2 KG</strong></p>
-                </div>
-                <div>
-                    <button onclick="openWeightModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3.5 rounded-xl transition shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>LOG TODAY'S WEIGHT</span>
+                <div class="pt-4">
+                    <button id="btn-start" class="glow-btn px-8 sm:px-10 py-4 sm:py-5 rounded-full text-lg sm:text-2xl font-bold text-white shadow-2xl flex items-center justify-center gap-3 mx-auto cursor-pointer">
+                        <span>افتحي رسالتي يا لولتي</span>
+                        <span class="text-2xl">💌</span>
                     </button>
                 </div>
             </div>
-
-            <!-- Body Composition Analysis -->
-            <div class="bg-cardBg border border-cardBorder p-6 sm:p-8 rounded-2xl space-y-6">
-                <div>
-                    <h3 class="text-xl font-black text-white flex items-center gap-2">
-                        <i class="fa-solid fa-dna text-purple-500"></i> BODY ANALYSIS (SMART SCALE)
-                    </h3>
-                    <p class="text-xs text-zinc-400 mt-1">Recorded as measured. Body Fat % is our primary indicator for cutting and body recomposition.</p>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="bodyCompositionGrid">
-                    <!-- Dynamic -->
-                </div>
-            </div>
         </section>
 
-        <!-- ==================== TAB 5: DAILY HABITS ==================== -->
-        <section id="view-habits" class="space-y-6 hidden">
-            <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-black text-white">DAILY HABITS & DISCIPLINE</h2>
-                    <p class="text-sm text-zinc-400 mt-1">Gym, Prayers, Quran, Adhkar, Study, Saving, Sleep, Shower, Teeth, Tidy Room, No Explicit Content, Supplement.</p>
-                </div>
-            </div>
+        <!-- ================= MAIN CONTENT WRAPPER ================= -->
+        <div id="main-experience" class="hidden opacity-0 transition-opacity duration-1000">
 
-            <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                <h3 class="text-lg font-bold text-white">Today's Checklist</h3>
-                <div id="habitsTodayChecklist" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                    <!-- Dynamic -->
-                </div>
-            </div>
+            <!-- ================= SCENE 2: THE APOLOGY LETTER ================= -->
+            <section class="min-h-screen flex items-center justify-center px-4 py-20 relative">
+                <div class="glass-card glass-card-glow rounded-3xl p-6 sm:p-12 max-w-3xl w-full relative overflow-hidden">
+                    <!-- Glow Accents -->
+                    <div class="absolute -top-16 -right-16 w-40 h-40 bg-romantic-pink/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-16 -left-16 w-40 h-40 bg-romantic-roseGold/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- Detailed Habit Tracker Matrix -->
-            <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl overflow-x-auto">
-                <h3 class="text-lg font-bold text-white mb-4">Habit Consistency Grid (Last 14 Days)</h3>
-                <div class="min-w-[800px]" id="habitsMatrixContainer"></div>
-            </div>
-
-            <!-- Mini Modules: Prayers, Quran, Adhkar, Savings, Study -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-mosque text-purple-400"></i> Prayers</h4>
-                        <span id="prayerCountBadge" class="text-xs bg-purple-600/20 text-purple-300 px-2.5 py-1 rounded-full font-bold">0 / 5</span>
-                    </div>
-                    <div id="prayerList" class="space-y-2"></div>
-                </div>
-
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-book-quran text-purple-400"></i> Quran</h4>
-                        <span id="quranPctDisplay" class="text-xs text-purple-400 font-semibold">0% Done</span>
-                    </div>
-                    <div class="space-y-2">
-                        <p class="text-xs text-zinc-400">Today's Reading: <strong class="text-white">5 Pages</strong></p>
-                        <div class="w-full bg-darkBg h-2 rounded-full overflow-hidden">
-                            <div id="quranBar" class="bg-purple-600 h-full rounded-full" style="width: 0%"></div>
+                    <div class="text-center space-y-8 relative z-10">
+                        <div class="inline-flex p-4 rounded-full bg-romantic-pink/15 border border-romantic-pink/30 text-romantic-pink mb-2">
+                            <i class="fas fa-heart text-3xl"></i>
                         </div>
-                        <button onclick="toggleQuranToday()" id="quranBtn" class="w-full mt-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold py-2 rounded-lg border border-zinc-700 transition">MARK COMPLETE</button>
-                    </div>
 
-                    <div class="pt-4 border-t border-cardBorder space-y-2">
-                        <h4 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-hands-praying text-purple-400"></i> Adhkar</h4>
-                        <div onclick="toggleAdhkar('morning')" class="flex items-center justify-between text-xs bg-darkBg p-2.5 rounded-xl border border-cardBorder cursor-pointer">
-                            <span>Morning Adhkar</span>
-                            <span id="adhkarMorning" class="text-zinc-500 font-bold">○ Pending</span>
+                        <!-- EXACT ORIGINAL APOLOGY MESSAGE preserved without changes -->
+                        <div class="space-y-6">
+                            <p class="text-xl sm:text-3xl font-amiri leading-loose text-pink-50 font-bold glow-text-pink bg-romantic-burgundy/60 p-6 sm:p-8 rounded-2xl border border-romantic-pink/30">
+                                "آسف يا لولا، بس أنا مش قصدي أزعلك، ولا إني مظهرش مشاعري، ولا أحسسك بأي حاجة غلط أو وحشة. أنا بحبك أوي وبموت فيكي يا لولتي والله 😘❤️"
+                            </p>
+
+                            <p class="text-base sm:text-lg text-pink-200/80 font-tajawal leading-relaxed max-w-xl mx-auto">
+                                أنتِ أغلى إنسانة في حياتي، وما أقدرش أبداً أكون سبب في أي كدر لعينيكي أو قلبك الرقيق.
+                            </p>
                         </div>
-                        <div onclick="toggleAdhkar('evening')" class="flex items-center justify-between text-xs bg-darkBg p-2.5 rounded-xl border border-cardBorder cursor-pointer">
-                            <span>Evening Adhkar</span>
-                            <span id="adhkarEvening" class="text-zinc-500 font-bold">○ Pending</span>
+
+                        <!-- Elegant Signature -->
+                        <div class="pt-6 border-t border-romantic-pink/20 flex flex-col items-end px-4">
+                            <span class="text-pink-300/60 text-sm mb-1 font-tajawal">من أعماق قلبي،</span>
+                            <span class="font-handwriting text-4xl sm:text-5xl text-romantic-roseGold hover:scale-105 transition-transform cursor-pointer">
+                                Yours, Jojo ❤️
+                            </span>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <h4 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-piggy-bank text-purple-400"></i> Daily Saving & Study</h4>
-                    <div class="bg-darkBg p-3 rounded-xl border border-cardBorder space-y-2">
-                        <div class="flex justify-between text-xs items-center">
-                            <span class="text-zinc-400">September Target:</span>
-                            <div class="flex items-center space-x-1">
-                                <input type="number" id="savingTargetInput" value="700" onchange="updateSavingTarget(this.value)" class="bg-zinc-800 text-purple-400 font-bold w-16 px-1 rounded text-right text-xs">
-                                <span class="text-zinc-400">EGP</span>
+            <!-- ================= SCENE 3: THE BOUQUET 🌹 ================= -->
+            <section class="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative">
+                <div class="max-w-4xl w-full text-center space-y-8">
+                    <div class="space-y-3">
+                        <h2 class="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-200 via-romantic-pink to-rose-300 glow-text-pink font-cairo">
+                            باقة ورد لعيونك يا أجمل لولا 🌹
+                        </h2>
+                        <p class="text-romantic-roseGold/80 text-base sm:text-lg font-tajawal">ورد يجيب ورد لروحي وقلبي</p>
+                    </div>
+
+                    <!-- Canvas Procedural Flower Blooming Animation -->
+                    <div class="relative w-full max-w-md h-80 sm:h-96 mx-auto flex items-center justify-center">
+                        <canvas id="flowerCanvas" class="w-full h-full relative z-10"></canvas>
+                    </div>
+
+                    <!-- Bouquet Text Message -->
+                    <div class="glass-card max-w-2xl mx-auto p-6 sm:p-8 rounded-2xl border border-romantic-pink/30">
+                        <p class="text-lg sm:text-2xl font-amiri text-pink-100 leading-relaxed">
+                            "باقة ورد صغيرة ليكي يا أجمل لولا… كل وردة فيها بتقولك إنك غالية عندي، وإنك تستاهلي كل الحب والاهتمام."
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SCENE 4: THE RING PROMISE 💍 ================= -->
+            <section class="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative">
+                <div class="max-w-3xl w-full text-center space-y-10">
+                    <div class="space-y-3">
+                        <h2 class="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-romantic-roseGold to-pink-300 glow-text-gold font-cairo">
+                            وعد أبدي 💍
+                        </h2>
+                        <p class="text-pink-200/80 text-sm sm:text-base font-tajawal">اضغطي على العلبة لتفتحي الوعد</p>
+                    </div>
+
+                    <!-- 3D Interactive Ring Box -->
+                    <div class="flex justify-center items-center py-8 ring-perspective">
+                        <div id="ringBox" class="ring-box-container">
+                            <div class="ring-box-lid flex items-center justify-center">
+                                <div class="w-7 h-7 rounded-full border border-romantic-roseGold/70 flex items-center justify-center">
+                                    <i class="fas fa-crown text-[10px] text-romantic-roseGold"></i>
+                                </div>
+                            </div>
+                            <div class="ring-box-base"></div>
+                            <div class="ring-content">
+                                <svg class="w-20 h-20 gem-sparkle" viewBox="0 0 100 100" fill="none">
+                                    <!-- Ring Metal Loop -->
+                                    <circle cx="50" cy="62" r="28" stroke="url(#ringGold)" stroke-width="7" fill="none"/>
+                                    <!-- Diamond Setting Base -->
+                                    <path d="M42 34 L58 34 L50 22 Z" fill="#e8a598"/>
+                                    <!-- Sparkling Gemstone -->
+                                    <path d="M36 22 L50 4 L64 22 L50 34 Z" fill="#ffffff" stroke="#ffb6c1" stroke-width="1.5"/>
+                                    <path d="M43 22 L50 7 L57 22 Z" fill="#e0f7fa" opacity="0.85"/>
+                                    <defs>
+                                        <linearGradient id="ringGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#ffd700"/>
+                                            <stop offset="50%" stop-color="#e8a598"/>
+                                            <stop offset="100%" stop-color="#ffb6c1"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
                             </div>
                         </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-zinc-400">Saved so far:</span>
-                            <strong id="savingTotalDisplay" class="text-purple-400">0 EGP</strong>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <input type="number" id="quickSaveInput" placeholder="Amount EGP" class="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white w-28">
-                            <button onclick="addSaving()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-1.5 rounded-lg transition">Save EGP</button>
-                        </div>
                     </div>
 
-                    <div class="bg-darkBg p-3 rounded-xl border border-cardBorder space-y-2">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-zinc-400">Study Session:</span>
-                            <strong id="studyTodayDisplay" class="text-white">0 min</strong>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <select id="studySubjectSelect" class="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white">
-                                <option value="English">English</option>
-                                <option value="Programming">Programming</option>
-                                <option value="Business">Business</option>
-                                <option value="Reading">Reading</option>
-                            </select>
-                            <input type="number" id="studyMinutesInput" value="45" class="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-white w-16">
-                            <button onclick="logStudy()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-1.5 rounded-lg transition">Log</button>
-                        </div>
+                    <!-- Promise Text -->
+                    <div class="glass-card p-6 sm:p-8 rounded-2xl border border-romantic-roseGold/30">
+                        <p class="text-lg sm:text-2xl font-amiri text-amber-100 leading-relaxed">
+                            "وخاتم يرمز لوعدي ليكي… إني أفضل أتعلم وأحاول وأخليكي تحسي بحبي، مش بس تسمعيه."
+                        </p>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- ==================== TAB 6: WEEKLY PROGRESS ==================== -->
-        <section id="view-progress" class="space-y-6 hidden">
-            <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-black text-white">WEEKLY PROGRESS & STRENGTH</h2>
-                    <p class="text-sm text-zinc-400 mt-1">Real analytics calculated from your logged workouts, macros, steps, and weight records.</p>
-                </div>
-                <div class="flex items-center space-x-2 overflow-x-auto" id="weekButtonsContainer">
-                    <!-- Dynamic -->
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-chart-column text-purple-500"></i> Body & Lifestyle Averages</h3>
-                    <div id="weeklyBodyMetrics" class="space-y-3"></div>
+            <!-- ================= SCENE 5: THE BLACK HOLE OF LOVE 🌌 (MAIN ATTRACTION) ================= -->
+            <section class="min-h-screen flex flex-col items-center justify-center relative py-20 px-2 overflow-hidden">
+                <div class="text-center z-10 mb-4 pointer-events-none space-y-2">
+                    <h2 class="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-romantic-pink glow-text-pink font-cairo">
+                        مجرة حبنا 🌌
+                    </h2>
+                    <p class="text-xs sm:text-sm text-pink-200/70 font-tajawal">شوفي كل لغات العالم بتتسحب لقلبك</p>
                 </div>
 
-                <div class="bg-cardBg border border-cardBorder p-6 rounded-2xl space-y-4">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-dumbbell text-purple-500"></i> Strength PR & Progression</h3>
-                    <div id="weeklyStrengthMetrics" class="space-y-3"></div>
+                <!-- Fullscreen Canvas Black Hole Physics Canvas -->
+                <div class="relative w-full max-w-4xl h-[520px] sm:h-[650px] mx-auto rounded-3xl overflow-hidden border border-romantic-pink/30 shadow-2xl glass-card">
+                    <canvas id="blackHoleCanvas" class="w-full h-full absolute inset-0 cursor-pointer"></canvas>
+                    
+                    <!-- Overlay Transformation Reveal Text -->
+                    <div id="heartCoreText" class="absolute inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-1000 pointer-events-none z-20 px-4 text-center">
+                        <h3 class="text-3xl sm:text-6xl font-black text-white glow-text-pink font-cairo mb-3 float-anim">
+                            بحبك يا لولا ❤️
+                        </h3>
+                        <p class="text-base sm:text-2xl font-amiri text-pink-200 glow-text-gold">
+                            في كل لغة… وفي كل مجرة… بحبك ❤️
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- ==================== TAB 7: 90-DAY REPORT ==================== -->
-        <section id="view-report" class="space-y-6 hidden">
-            <div class="bg-gradient-to-br from-purple-900/40 via-cardBg to-darkBg border border-purple-500/30 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-                <div class="absolute right-0 top-0 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
-                
-                <div class="text-center max-w-xl mx-auto space-y-2 mb-8">
-                    <span class="bg-purple-600 text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-widest">FINAL TRANSFORMATION</span>
-                    <h2 class="text-3xl sm:text-4xl font-black text-white uppercase tracking-wider">LEITH 90-DAY REPORT</h2>
-                    <p class="text-sm text-zinc-400">Calculated entirely from your real logged data across workouts, nutrition, and body weight.</p>
+            <!-- ================= SCENE 6: FINAL MESSAGE ================= -->
+            <section class="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative text-center">
+                <div class="max-w-3xl w-full space-y-8 glass-card glass-card-glow p-8 sm:p-14 rounded-3xl relative">
+                    <div class="pulse-heart text-7xl sm:text-9xl text-romantic-pink mx-auto my-2">
+                        ❤️
+                    </div>
+
+                    <h2 class="text-3xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-200 via-romantic-pink to-rose-300 glow-text-pink font-cairo">
+                        بحبك أوي يا لولتي ❤️
+                    </h2>
+
+                    <p class="text-xl sm:text-3xl font-amiri text-pink-100 leading-relaxed max-w-2xl mx-auto">
+                        مهما حاولت أوصفلك، الكلام مش هيكفي… بس أتمنى الهدية دي توصلك جزء صغير من اللي في قلبي. 😘❤️
+                    </p>
+
+                    <!-- Final Action Button -->
+                    <div class="pt-6">
+                        <button id="btn-final" class="glow-btn px-8 sm:px-12 py-4 sm:py-5 rounded-full text-lg sm:text-2xl font-bold text-white shadow-2xl flex items-center justify-center gap-3 mx-auto cursor-pointer">
+                            <span>وصلتني رسالتك يا جوجو ❤️</span>
+                        </button>
+                    </div>
+
+                    <!-- Sweet Modal Response -->
+                    <div id="final-modal" class="hidden opacity-0 transition-all duration-700 mt-6 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-romantic-pink/40 to-romantic-burgundy/90 border border-romantic-pink/60 shadow-2xl">
+                        <p class="text-2xl sm:text-4xl font-amiri font-bold text-white glow-text-pink float-anim">
+                            ربنا يخليكي ليا يا لولا ❤️✨
+                        </p>
+                    </div>
                 </div>
+            </section>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="finalReportGrid"></div>
+            <!-- FOOTER -->
+            <footer class="py-8 text-center text-xs sm:text-sm text-pink-300/40 border-t border-romantic-pink/10">
+                <p>تم التصميم والتطوير بكل حب بواسطة Jojo من أجل Lola ❤️</p>
+            </footer>
 
-                <div class="mt-8 text-center flex justify-center gap-4">
-                    <button onclick="exportReportPDF()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg shadow-purple-600/30 flex items-center gap-2">
-                        <i class="fa-solid fa-print"></i> PRINT / SAVE PDF REPORT
-                    </button>
-                    <button onclick="exportReportJSON()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold px-6 py-3.5 rounded-xl transition border border-zinc-700 flex items-center gap-2">
-                        <i class="fa-solid fa-download"></i> EXPORT JSON
-                    </button>
-                </div>
-            </div>
-        </section>
-
+        </div>
     </main>
 
-    <footer class="border-t border-cardBorder py-6 text-center text-xs text-zinc-500 mt-12">
-        LEITH — 90 Day Body & Discipline Tracker &copy; 2026. Built for strict TOJI discipline and real progression.
-    </footer>
-
-    <!-- Food Modal -->
-    <div id="foodModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-cardBg border border-cardBorder w-full max-w-md rounded-2xl p-6 space-y-4">
-            <h3 id="foodModalTitle" class="text-lg font-bold text-white">Add Food</h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="text-xs text-zinc-400 block mb-1">Food Item</label>
-                    <input type="text" id="foodItemName" placeholder="e.g., Chicken Breast 200g" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500 outline-none">
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <div>
-                        <label class="text-xs text-zinc-400 block mb-1">Calories</label>
-                        <input type="number" id="foodItemCal" placeholder="330" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="text-xs text-zinc-400 block mb-1">Protein (g)</label>
-                        <input type="number" id="foodItemProtein" placeholder="62" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="text-xs text-zinc-400 block mb-1">Carbs (g)</label>
-                        <input type="number" id="foodItemCarbs" placeholder="0" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="text-xs text-zinc-400 block mb-1">Fat (g)</label>
-                        <input type="number" id="foodItemFat" placeholder="0" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
-                    </div>
-                </div>
-            </div>
-            <div class="flex space-x-3 pt-2">
-                <button onclick="closeFoodModal()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-2.5 rounded-xl transition text-sm">Cancel</button>
-                <button onclick="saveFoodItem()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">Add Item</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Weight Modal -->
-    <div id="weightModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-cardBg border border-cardBorder w-full max-w-sm rounded-2xl p-6 space-y-4">
-            <h3 class="text-lg font-bold text-white">Log Today's Weight</h3>
-            <div>
-                <label class="text-xs text-zinc-400 block mb-1">Weight (KG)</label>
-                <input type="number" step="0.1" id="weightInputVal" value="99.2" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:border-purple-500 outline-none">
-            </div>
-            <div class="flex space-x-3 pt-2">
-                <button onclick="document.getElementById('weightModal').classList.add('hidden')" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-2.5 rounded-xl transition text-sm">Cancel</button>
-                <button onclick="saveWeight()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">Save Weight</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Steps Modal -->
-    <div id="stepsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-cardBg border border-cardBorder w-full max-w-sm rounded-2xl p-6 space-y-4">
-            <h3 class="text-lg font-bold text-white">Update Steps & Goal</h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="text-xs text-zinc-400 block mb-1">Current Steps</label>
-                    <input type="number" id="stepsInputVal" value="0" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500 outline-none">
-                </div>
-                <div>
-                    <label class="text-xs text-zinc-400 block mb-1">Target Goal (Adjustable for joints/comfort)</label>
-                    <input type="number" id="stepsGoalInputVal" value="10000" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500 outline-none">
-                </div>
-            </div>
-            <div class="flex space-x-3 pt-2">
-                <button onclick="document.getElementById('stepsModal').classList.add('hidden')" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-2.5 rounded-xl transition text-sm">Cancel</button>
-                <button onclick="saveSteps()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">Update</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sleep Modal -->
-    <div id="sleepModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-cardBg border border-cardBorder w-full max-w-sm rounded-2xl p-6 space-y-4">
-            <h3 class="text-lg font-bold text-white">Log Sleep</h3>
-            <div class="space-y-3">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs text-zinc-400 block mb-1">Bed Time</label>
-                        <input type="time" id="sleepBedInput" value="23:00" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="text-xs text-zinc-400 block mb-1">Wake Time</label>
-                        <input type="time" id="sleepWakeInput" value="07:00" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white">
-                    </div>
-                </div>
-                <div>
-                    <label class="text-xs text-zinc-400 block mb-1">Quality (1 to 5 Stars)</label>
-                    <select id="sleepQualityInput" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2 text-sm text-white">
-                        <option value="5">★★★★★ (5/5)</option>
-                        <option value="4" selected>★★★★☆ (4/5)</option>
-                        <option value="3">★★★☆☆ (3/5)</option>
-                        <option value="2">★★☆☆☆ (2/5)</option>
-                        <option value="1">★☆☆☆☆ (1/5)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex space-x-3 pt-2">
-                <button onclick="document.getElementById('sleepModal').classList.add('hidden')" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-2.5 rounded-xl transition text-sm">Cancel</button>
-                <button onclick="saveSleep()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">Save Sleep</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rest Timer Modal -->
-    <div id="restTimerModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-cardBg border border-cardBorder w-full max-w-sm rounded-3xl p-8 space-y-6 text-center shadow-2xl">
-            <div class="w-16 h-16 bg-purple-600/20 text-purple-400 rounded-2xl flex items-center justify-center mx-auto text-2xl">
-                <i class="fa-solid fa-stopwatch"></i>
-            </div>
-            <h4 class="text-xl font-black text-white">REST TIMER</h4>
-            <div id="timerDisplay" class="text-5xl font-black text-purple-400 tracking-wider">120s</div>
-            <div class="flex space-x-3 pt-2">
-                <button onclick="stopRestTimer()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-3 rounded-xl transition text-sm">Dismiss</button>
-                <button onclick="addTimerSeconds(30)" class="flex-1 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 font-semibold py-3 rounded-xl transition text-sm">+30s</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Custom Alert Box -->
-    <div id="customAlert" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-cardBg border border-cardBorder w-full max-w-sm rounded-2xl p-6 space-y-4 text-center">
-            <div class="w-12 h-12 bg-purple-600/20 text-purple-400 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-bell"></i>
-            </div>
-            <h4 class="text-lg font-bold text-white">LEITH NOTIFICATION</h4>
-            <p id="alertMessageText" class="text-sm text-zinc-300"></p>
-            <button onclick="document.getElementById('customAlert').classList.add('hidden')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl transition text-sm">OK</button>
-        </div>
-    </div>
-
+    <!-- COMPLETE JAVASCRIPT LOGIC ENGINE -->
     <script>
-        // --- Supabase Config & Global State ---
-        const SUPABASE_URL = "https://your-supabase-url.supabase.co"; 
-        const SUPABASE_ANON_KEY = "your-supabase-anon-key";
-        let supabaseClient = null;
-        try {
-            if (window.supabase && SUPABASE_URL.startsWith('http')) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ================= 1. MATRIX CANVAS ANIMATION ================= */
+            const mCanvas = document.getElementById('matrixCanvas');
+            const mCtx = mCanvas.getContext('2d');
+
+            function resizeMatrix() {
+                mCanvas.width = window.innerWidth;
+                mCanvas.height = window.innerHeight;
             }
-        } catch(e) { console.warn("Supabase init optional notice:", e); }
+            resizeMatrix();
+            window.addEventListener('resize', resizeMatrix);
 
-        // Exact TOJI 90-Day Templates
-        const TOJI_WORKOUT_TEMPLATES = {
-            "Anterior A": [
-                { name: "Flat Dumbbell Press", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Incline Dumbbell Press", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Shoulder Press", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Cable/Machine Lateral Raise", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Leg Press", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Leg Extension", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Adductor Machine", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Single-Arm Cable Pushdown", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Cable Crunch", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] }
-            ],
-            "Posterior A": [
-                { name: "Wide-Grip Lat Pulldown", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Wide-Grip Row", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Lat Pullover", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Rear Delt Fly", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Romanian Deadlift", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Leg Curl", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Hip Thrust", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Preacher Curl", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Reverse-Grip Curl", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Calf Raise", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] }
-            ],
-            "Anterior B": [
-                { name: "Incline Chest Press Machine", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Flat Chest Press Machine", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Lateral Raise", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Shoulder Press Machine", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Leg Extension", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Leg Press", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Adductor Machine", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Triceps Pushdown", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Overhead Triceps Extension", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Ab Crunch", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] }
-            ],
-            "Posterior B": [
-                { name: "Reverse-Grip Pulldown", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "T-Bar Row", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Single-Arm Row", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Rear Delt Fly", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Hip Thrust", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Lying/Seated Leg Curl", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Calf Raise", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Preacher Curl", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] },
-                { name: "Hammer Curl", sets: [{kg: 0, reps: 0, done: false}, {kg: 0, reps: 0, done: false}] }
-            ]
-        };
+            const matrixChars = ['L', 'O', 'V', 'E', 'L', 'O', 'L', 'A', '❤️', '💕', '✨', 'J', 'O', 'بحبك', 'لولتي'];
+            const fontSize = 16;
+            let columns = Math.floor(mCanvas.width / fontSize);
+            let drops = Array(columns).fill(1);
 
-        function getWorkoutTypeForDay(day) {
-            const mod = (day - 1) % 7;
-            if (mod === 0) return "Anterior A";
-            if (mod === 1) return "Posterior A";
-            if (mod === 2) return "Rest";
-            if (mod === 3) return "Anterior B";
-            if (mod === 4) return "Posterior B";
-            return "Rest";
-        }
+            function drawMatrix() {
+                mCtx.fillStyle = 'rgba(4, 1, 8, 0.15)';
+                mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+                mCtx.font = fontSize + 'px Cairo, sans-serif';
 
-        function generateInitialWorkouts() {
-            let map = {};
-            for(let i=1; i<=90; i++) {
-                let type = getWorkoutTypeForDay(i);
-                let exercises = [];
-                if(type !== "Rest" && TOJI_WORKOUT_TEMPLATES[type]) {
-                    exercises = JSON.parse(JSON.stringify(TOJI_WORKOUT_TEMPLATES[type]));
+                for (let i = 0; i < drops.length; i++) {
+                    const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    const colors = ['#ff4b8b', '#e8a598', '#ff2a70', '#ffffff', '#ffb6c1'];
+                    mCtx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+                    mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
                 }
-                map[i] = {
-                    title: type.toUpperCase(),
-                    completed: i === 1 ? true : false,
-                    exercises: exercises
-                };
             }
-            return map;
-        }
+            let matrixLoop = setInterval(drawMatrix, 45);
 
-        const DEFAULT_STATE = {
-            startDate: new Date().toISOString().split('T')[0],
-            activeTab: 'today',
-            currentDay: 1,
-            weight: 99.2,
-            weightHistory: { "2026-09-09": 99.2 },
-            waterLiters: 0.0,
-            waterTarget: 3.0,
-            steps: 0,
-            stepsGoal: 10000,
-            sleep: { bed: "23:00", wake: "07:00", total: "8h 0m", quality: 4 },
-            savings: 0,
-            savingTarget: 700,
-            studyTotalMins: 0,
-            habitsLog: {},
-            meals: { Breakfast: [], Lunch: [], Dinner: [], Snacks: [] },
-            habitsToday: {
-                gym: true,
-                prayer: false,
-                adhkar: false,
-                quran: false,
-                study: false,
-                saving: false,
-                sleepHabit: false,
-                shower: false,
-                teeth: false,
-                tidyRoom: false,
-                noExplicit: false,
-                supplement: false
-            },
-            prayers: { Fajr: false, Dhuhr: false, Asr: false, Maghrib: false, Isha: false },
-            quranDone: false,
-            adhkar: { morning: false, evening: false },
-            selectedGymDay: 1,
-            workouts: generateInitialWorkouts(),
-            bodyAnalysis: [
-                { label: "WEIGHT", val: "99.2 KG" },
-                { label: "SKELETAL MUSCLE", val: "33.3 %" },
-                { label: "SKELETAL MUSCLE MASS", val: "64.3 KG" },
-                { label: "BODY FAT", val: "54.8 %" },
-                { label: "WATER", val: "48.5 %" },
-                { label: "WATER MASS", val: "49.7 KG" },
-                { label: "VISCERAL FAT", val: "19.5" },
-                { label: "BONE MASS", val: "2.54 KG" },
-                { label: "METABOLISM", val: "1946 kcal" },
-                { label: "PROTEIN", val: "14.6 %" },
-                { label: "OBESITY DEGREE", val: "31.0 %" },
-                { label: "BODY AGE", val: "65" }
-            ]
-        };
 
-        let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-        const todayDateKey = new Date().toISOString().split('T')[0];
+            /* ================= 2. SCENE TRANSITION LOGIC ================= */
+            const btnStart = document.getElementById('btn-start');
+            const scene1 = document.getElementById('scene-1');
+            const mainExp = document.getElementById('main-experience');
+            const bgAudio = document.getElementById('bg-audio');
 
-        // --- Persistence Layer ---
-        async function loadState() {
-            let loaded = null;
-            try {
-                if (supabaseClient) {
-                    const { data, error } = await supabaseClient.from('leith_state').select('*').eq('id', 1).single();
-                    if (data && data.payload) {
-                        loaded = data.payload;
-                        document.getElementById('syncStatusBadge').innerText = "Cloud Synced";
-                        document.getElementById('syncStatusBadge').className = "text-xs px-2 py-1 rounded bg-emerald-900/40 text-emerald-400 border border-emerald-500/30";
+            if (btnStart) {
+                btnStart.addEventListener('click', () => {
+                    scene1.classList.add('opacity-0');
+                    setTimeout(() => {
+                        scene1.classList.add('hidden');
+                        mainExp.classList.remove('hidden');
+                        setTimeout(() => mainExp.classList.remove('opacity-0'), 50);
+                        clearInterval(matrixLoop);
+                        initFlowerBouquet();
+                        initBlackHoleSimulation();
+                    }, 1000);
+
+                    // Try Audio playback safely
+                    if (bgAudio) {
+                        bgAudio.play().catch(() => {});
+                    }
+                });
+            }
+
+
+            /* ================= 3. AUDIO PLAYER TOGGLE ================= */
+            const audioBtn = document.getElementById('audio-btn');
+            const audioIcon = document.getElementById('audio-icon');
+            if (audioBtn && bgAudio && audioIcon) {
+                audioBtn.addEventListener('click', () => {
+                    if (bgAudio.paused) {
+                        bgAudio.play();
+                        audioIcon.className = 'fas fa-volume-high text-romantic-pink';
+                    } else {
+                        bgAudio.pause();
+                        audioIcon.className = 'fas fa-music text-romantic-roseGold';
+                    }
+                });
+            }
+
+
+            /* ================= 4. PROCEDURAL FLOWER BOUQUET ================= */
+            function initFlowerBouquet() {
+                const fCanvas = document.getElementById('flowerCanvas');
+                if (!fCanvas) return;
+                const fCtx = fCanvas.getContext('2d');
+                
+                fCanvas.width = fCanvas.parentElement.clientWidth;
+                fCanvas.height = fCanvas.parentElement.clientHeight;
+
+                let progress = 0;
+                function renderFlowers() {
+                    if (progress < 1) progress += 0.012;
+                    fCtx.clearRect(0, 0, fCanvas.width, fCanvas.height);
+
+                    const cx = fCanvas.width / 2;
+                    const cy = fCanvas.height * 0.85;
+
+                    // Draw Stems
+                    fCtx.beginPath();
+                    fCtx.moveTo(cx, cy);
+                    fCtx.quadraticCurveTo(cx - 30, cy - 80, cx - 60, cy - 140);
+                    fCtx.moveTo(cx, cy);
+                    fCtx.quadraticCurveTo(cx, cy - 90, cx, cy - 160);
+                    fCtx.moveTo(cx, cy);
+                    fCtx.quadraticCurveTo(cx + 30, cy - 80, cx + 60, cy - 130);
+                    fCtx.strokeStyle = '#2e7d32';
+                    fCtx.lineWidth = 5;
+                    fCtx.stroke();
+
+                    // Draw Blossoms
+                    if (progress > 0.3) {
+                        const petalScale = Math.min(1, (progress - 0.3) * 1.4);
+                        drawRose(fCtx, cx - 60, cy - 140, 32 * petalScale, '#ff4b8b', '#fff0f5');
+                        drawRose(fCtx, cx, cy - 160, 40 * petalScale, '#ff1493', '#ffe4e1');
+                        drawRose(fCtx, cx + 60, cy - 130, 34 * petalScale, '#e8a598', '#ffffff');
+                    }
+
+                    // Ribbon
+                    fCtx.fillStyle = '#e8a598';
+                    fCtx.beginPath();
+                    fCtx.arc(cx, cy - 10, 10, 0, Math.PI * 2);
+                    fCtx.fill();
+
+                    requestAnimationFrame(renderFlowers);
+                }
+
+                function drawRose(ctx, x, y, radius, color1, color2) {
+                    ctx.save();
+                    ctx.translate(x, y);
+                    for (let i = 0; i < 6; i++) {
+                        ctx.beginPath();
+                        ctx.fillStyle = i % 2 === 0 ? color1 : color2;
+                        ctx.rotate(Math.PI / 3);
+                        ctx.arc(radius * 0.3, 0, radius * 0.6, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.beginPath();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.arc(0, 0, radius * 0.25, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                renderFlowers();
+            }
+
+
+            /* ================= 5. 3D RING BOX INTERACTION ================= */
+            const ringBox = document.getElementById('ringBox');
+            if (ringBox) {
+                ringBox.addEventListener('click', () => {
+                    ringBox.classList.toggle('opened');
+                    createGoldSparkles(ringBox);
+                });
+            }
+
+            function createGoldSparkles(el) {
+                const r = el.getBoundingClientRect();
+                for (let i = 0; i < 20; i++) {
+                    const spark = document.createElement('div');
+                    spark.innerHTML = '✨';
+                    spark.style.position = 'fixed';
+                    spark.style.left = (r.left + r.width / 2 + (Math.random() * 80 - 40)) + 'px';
+                    spark.style.top = (r.top + r.height / 2 + (Math.random() * 80 - 40)) + 'px';
+                    spark.style.fontSize = (Math.random() * 14 + 10) + 'px';
+                    spark.style.pointerEvents = 'none';
+                    spark.style.zIndex = '999';
+                    spark.style.transition = 'all 1.2s ease-out';
+                    document.body.appendChild(spark);
+
+                    setTimeout(() => {
+                        spark.style.transform = `translate(${Math.random() * 120 - 60}px, ${Math.random() * -120 - 20}px)`;
+                        spark.style.opacity = '0';
+                    }, 30);
+
+                    setTimeout(() => spark.remove(), 1300);
+                }
+            }
+
+
+            /* ================= 6. THE COSMIC BLACK HOLE OF LOVE 🌌 ================= */
+            function initBlackHoleSimulation() {
+                const bhCanvas = document.getElementById('blackHoleCanvas');
+                if (!bhCanvas) return;
+                const bhCtx = bhCanvas.getContext('2d');
+
+                function resizeBH() {
+                    bhCanvas.width = bhCanvas.parentElement.clientWidth;
+                    bhCanvas.height = bhCanvas.parentElement.clientHeight;
+                }
+                resizeBH();
+
+                const lovePhrases = [
+                    "بحبك", "I Love You", "Je t'aime", "Te Amo", "Ti Amo",
+                    "Ich liebe dich", "Seni seviyorum", "Eu te amo", "Я тебя люблю",
+                    "愛してる", "사랑해", "我爱你", "मैं तुमसे प्यार करता हूँ", "لولا"
+                ];
+
+                const particles = [];
+                const isMobile = window.innerWidth < 640;
+                const particleCount = isMobile ? 280 : 550;
+                let phase = 'blackhole'; // 'blackhole' -> 'supernova' -> 'heart'
+                let phaseTimer = 0;
+
+                // Create Particle System
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = Math.random() * 220 + 40;
+                    particles.push({
+                        x: 0,
+                        y: 0,
+                        angle: angle,
+                        radius: dist,
+                        speed: (250 / (dist + 30)) * 0.015 + Math.random() * 0.005,
+                        size: Math.random() * 2.5 + 1,
+                        text: i % 8 === 0 ? lovePhrases[Math.floor(Math.random() * lovePhrases.length)] : null,
+                        color: ['#ff4b8b', '#e8a598', '#ff1493', '#ffffff', '#ffd700'][Math.floor(Math.random() * 5)],
+                        targetX: 0,
+                        targetY: 0
+                    });
+                }
+
+                // Heart Parametric Equation Curve
+                function getHeartPoint(t, scale) {
+                    const x = 16 * Math.pow(Math.sin(t), 3);
+                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    return { x: x * scale, y: y * scale };
+                }
+
+                // Assign target coordinates on heart curve
+                particles.forEach((p, idx) => {
+                    const t = (idx / particleCount) * Math.PI * 2;
+                    const scale = isMobile ? 9 : 14;
+                    const pt = getHeartPoint(t, scale);
+                    p.targetX = pt.x;
+                    p.targetY = pt.y;
+                });
+
+                // Canvas Click triggers Supernova Transformation
+                bhCanvas.addEventListener('click', triggerTransformation);
+
+                function triggerTransformation() {
+                    if (phase === 'blackhole') {
+                        phase = 'supernova';
+                        phaseTimer = 0;
                     }
                 }
-            } catch(e) { console.warn("Supabase load skipped/offline:", e); }
 
-            if (!loaded) {
-                const local = localStorage.getItem('leith_state_90');
-                if (local) {
-                    try { loaded = JSON.parse(local); } catch(er){}
-                }
-            }
+                // Auto-trigger transformation after 7 seconds if user didn't click
+                setTimeout(() => {
+                    if (phase === 'blackhole') triggerTransformation();
+                }, 7500);
 
-            if (loaded) {
-                state = Object.assign({}, DEFAULT_STATE, loaded);
-            } else {
-                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-            }
+                function animateBlackHole() {
+                    const cx = bhCanvas.width / 2;
+                    const cy = bhCanvas.height / 2;
 
-            if (state.startDate) {
-                const start = new Date(state.startDate);
-                const today = new Date();
-                const diffTime = today - start;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                if (diffDays >= 1 && diffDays <= 90) {
-                    state.currentDay = diffDays;
-                    state.selectedGymDay = diffDays;
-                }
-            }
+                    bhCtx.fillStyle = 'rgba(4, 1, 8, 0.25)';
+                    bhCtx.fillRect(0, 0, bhCanvas.width, bhCanvas.height);
 
-            if(!state.habitsLog[todayDateKey]) {
-                state.habitsLog[todayDateKey] = JSON.parse(JSON.stringify(state.habitsToday));
-            } else {
-                state.habitsToday = JSON.parse(JSON.stringify(state.habitsLog[todayDateKey]));
-            }
+                    if (phase === 'blackhole') {
+                        // Draw Accretion Event Horizon
+                        const grad = bhCtx.createRadialGradient(cx, cy, 10, cx, cy, 70);
+                        grad.addColorStop(0, '#000000');
+                        grad.addColorStop(0.4, '#1f0210');
+                        grad.addColorStop(0.8, 'rgba(255, 75, 139, 0.4)');
+                        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
-            saveState(false);
-            renderAll();
-        }
+                        bhCtx.fillStyle = grad;
+                        bhCtx.beginPath();
+                        bhCtx.arc(cx, cy, 70, 0, Math.PI * 2);
+                        bhCtx.fill();
 
-        async function saveState(syncCloud = true) {
-            state.habitsLog[todayDateKey] = JSON.parse(JSON.stringify(state.habitsToday));
-            const jsonStr = JSON.stringify(state);
-            localStorage.setItem('leith_state_90', jsonStr);
+                        // Gravitational Lensing Ring
+                        bhCtx.strokeStyle = 'rgba(255, 75, 139, 0.5)';
+                        bhCtx.lineWidth = 2;
+                        bhCtx.beginPath();
+                        bhCtx.arc(cx, cy, 45, 0, Math.PI * 2);
+                        bhCtx.stroke();
 
-            if (syncCloud && supabaseClient) {
-                try {
-                    await supabaseClient.from('leith_state').upsert({ id: 1, payload: state, updated_at: new Date() });
-                    document.getElementById('syncStatusBadge').innerText = "Cloud Synced";
-                    document.getElementById('syncStatusBadge').className = "text-xs px-2 py-1 rounded bg-emerald-900/40 text-emerald-400 border border-emerald-500/30";
-                } catch(e) {
-                    document.getElementById('syncStatusBadge').innerText = "Local (Offline)";
-                    document.getElementById('syncStatusBadge').className = "text-xs px-2 py-1 rounded bg-amber-900/40 text-amber-400 border border-amber-500/30";
-                }
-            }
-        }
+                        // Update & Render Particles Orbiting inward
+                        particles.forEach(p => {
+                            p.angle += p.speed;
+                            p.radius -= 0.12; // Spiral inward
+                            if (p.radius < 15) p.radius = 230; // Loop back to galaxy edge
 
-        function alertBox(msg) {
-            document.getElementById('alertMessageText').innerText = msg;
-            document.getElementById('customAlert').classList.remove('hidden');
-        }
+                            const px = cx + Math.cos(p.angle) * p.radius;
+                            const py = cy + Math.sin(p.angle) * (p.radius * 0.65); // Elliptical perspective
 
-        function switchTab(tabId) {
-            state.activeTab = tabId;
-            const tabs = ['today', 'gym', 'food', 'body', 'habits', 'progress', 'report'];
-            tabs.forEach(t => {
-                const el = document.getElementById('view-' + t);
-                const btn = document.getElementById('tab-' + t);
-                if (t === tabId) {
-                    if(el) el.classList.remove('hidden');
-                    if(btn) btn.classList.add('tab-active', 'text-white');
-                    if(btn) btn.classList.remove('text-zinc-400');
-                } else {
-                    if(el) el.classList.add('hidden');
-                    if(btn) btn.classList.remove('tab-active', 'text-white');
-                    if(btn) btn.classList.add('text-zinc-400');
-                }
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            renderAll();
-        }
-
-        function renderAll() {
-            renderTodayView();
-            renderGymView();
-            renderFoodView();
-            renderBodyView();
-            renderHabitsView();
-            renderProgressView();
-            renderReportView();
-            saveState();
-        }
-
-        function renderTodayView() {
-            document.getElementById('headerDayBadge').innerText = `DAY ${String(state.currentDay).padStart(2, '0')} / 90`;
-            document.getElementById('todayDayNumBadge').innerText = `DAY ${String(state.currentDay).padStart(2, '0')} / 90`;
-            document.getElementById('headerWeightDisplay').innerText = `${state.weight} KG`;
-            
-            const activeWorkout = state.workouts[state.currentDay] || { title: "REST" };
-            document.getElementById('todayWorkoutTitleDisplay').innerText = activeWorkout.title;
-
-            document.getElementById('dashWeightVal').innerHTML = `${state.weight} <span class="text-sm font-medium text-zinc-400">KG</span>`;
-            
-            let weightsArr = Object.values(state.weightHistory);
-            let baseline = weightsArr.length > 0 ? weightsArr[0] : state.weight;
-            let diff = Math.round((state.weight - baseline) * 100) / 100;
-            document.getElementById('dashWeightChange').innerText = diff === 0 ? "Baseline" : `${diff > 0 ? '+' : ''}${diff} kg`;
-
-            let totalCal = 0, totalProt = 0;
-            Object.values(state.meals).forEach(mealArr => {
-                mealArr.forEach(m => {
-                    totalCal += (m.cal || 0);
-                    totalProt += (m.protein || 0);
-                });
-            });
-
-            document.getElementById('dashCalVal').innerHTML = `${totalCal} <span class="text-sm font-medium text-zinc-400">/ 2,200</span>`;
-            document.getElementById('dashProteinVal').innerHTML = `${totalProt} <span class="text-sm font-medium text-zinc-400">/ 170 G</span>`;
-            const protPct = Math.min(100, Math.round((totalProt / 170) * 100));
-            document.getElementById('dashProteinBar').style.width = protPct + '%';
-
-            document.getElementById('dashWaterVal').innerHTML = `${state.waterLiters.toFixed(1)} <span class="text-sm font-medium text-zinc-400">/ ${state.waterTarget} L</span>`;
-
-            document.getElementById('dashStepsVal').innerText = state.steps.toLocaleString();
-            document.getElementById('dashStepsGoal').innerText = state.stepsGoal.toLocaleString();
-            const stepPct = Math.min(100, Math.round((state.steps / state.stepsGoal) * 100));
-            document.getElementById('dashStepsBar').style.width = stepPct + '%';
-            document.getElementById('dashStepsPct').innerText = stepPct + '%';
-
-            document.getElementById('dashSleepVal').innerText = state.sleep.total;
-            document.getElementById('dashBedTime').innerText = state.sleep.bed;
-            document.getElementById('dashWakeTime').innerText = state.sleep.wake;
-            let stars = '';
-            for(let i=0; i<5; i++) {
-                stars += i < state.sleep.quality ? '★' : '☆';
-            }
-            document.getElementById('dashSleepQualityStars').innerText = stars;
-
-            const habitContainer = document.getElementById('dashHabitsList');
-            const habitLabels = [
-                { key: 'gym', label: 'Gym', icon: 'fa-dumbbell' },
-                { key: 'prayer', label: 'Prayers', icon: 'fa-mosque' },
-                { key: 'adhkar', label: 'Adhkar', icon: 'fa-hands-praying' },
-                { key: 'quran', label: 'Quran', icon: 'fa-book-quran' },
-                { key: 'study', label: 'Study', icon: 'fa-graduation-cap' },
-                { key: 'saving', label: 'Saving', icon: 'fa-piggy-bank' },
-                { key: 'shower', label: 'Shower', icon: 'fa-shower' },
-                { key: 'teeth', label: 'Teeth', icon: 'fa-tooth' },
-                { key: 'tidyRoom', label: 'Tidy Room', icon: 'fa-broom' },
-                { key: 'noExplicit', label: 'No Explicit', icon: 'fa-shield-halved' },
-                { key: 'supplement', label: 'Supplement', icon: 'fa-pills' }
-            ];
-            habitContainer.innerHTML = habitLabels.map(h => `
-                <div onclick="toggleHabit('${h.key}')" class="bg-darkBg border ${state.habitsToday[h.key] ? 'border-purple-500/50 bg-purple-600/10' : 'border-cardBorder'} p-3 rounded-xl cursor-pointer hover:border-purple-500 transition text-center">
-                    <i class="fa-solid ${h.icon} text-purple-400 text-lg mb-1"></i>
-                    <p class="text-xs font-semibold text-zinc-300 truncate">${h.label}</p>
-                    <span class="text-xs font-bold mt-1 block ${state.habitsToday[h.key] ? 'text-emerald-400' : 'text-zinc-500'}">${state.habitsToday[h.key] ? '✓ Done' : '○ Pending'}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderGymView() {
-            const daysContainer = document.getElementById('gymDaysContainer');
-            let daysHtml = '';
-            for(let i=1; i<=90; i++) {
-                const isSelected = i === state.selectedGymDay;
-                const isToday = i === state.currentDay;
-                const wData = state.workouts[i] || { title: "REST", completed: false };
-                daysHtml += `
-                    <button onclick="selectGymDay(${i})" class="flex-shrink-0 w-28 p-3 rounded-xl border text-left transition ${isSelected ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-600/30' : 'bg-darkBg border-cardBorder text-zinc-300 hover:border-zinc-700'}">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-bold ${isSelected ? 'text-purple-200' : 'text-purple-400'}">DAY ${String(i).padStart(2,'0')}</span>
-                            ${wData.completed ? '<i class="fa-solid fa-check text-emerald-400 text-xs"></i>' : (isToday ? '<span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>' : '')}
-                        </div>
-                        <p class="text-xs font-bold truncate">${wData.title}</p>
-                    </button>
-                `;
-            }
-            daysContainer.innerHTML = daysHtml;
-
-            const activeW = state.workouts[state.selectedGymDay] || { title: "REST", exercises: [] };
-            const container = document.getElementById('activeWorkoutContainer');
-            
-            let exHtml = `
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-cardBorder">
-                    <div>
-                        <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">DAY ${String(state.selectedGymDay).padStart(2,'0')} WORKOUT</span>
-                        <h3 class="text-2xl font-black text-white mt-0.5">${activeW.title}</h3>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <button onclick="completeWorkout(${state.selectedGymDay})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
-                            <i class="fa-solid fa-check"></i>
-                            <span>${activeW.completed ? 'WORKOUT COMPLETED ✓' : 'COMPLETE WORKOUT'}</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            if(!activeW.exercises || activeW.exercises.length === 0) {
-                exHtml += `<div class="text-center py-12 text-zinc-500"><i class="fa-solid fa-mug-hot text-3xl mb-2 text-zinc-600"></i><p>Rest day. Recovery, nutrition, and discipline.</p></div>`;
-            } else {
-                exHtml += `<div class="space-y-6">`;
-                activeW.exercises.forEach((ex, exIdx) => {
-                    exHtml += `
-                        <div class="bg-darkBg border border-cardBorder p-5 rounded-2xl space-y-4">
-                            <div class="flex items-center justify-between">
-                                <h4 class="font-bold text-white text-base">${ex.name}</h4>
-                                <span class="text-xs font-semibold text-purple-400 bg-purple-600/10 px-2.5 py-1 rounded-lg border border-purple-500/20">${ex.sets.length} Sets</span>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-xs">
-                                    <thead>
-                                        <tr class="text-zinc-500 border-b border-cardBorder pb-2">
-                                            <th class="pb-2 font-semibold">SET</th>
-                                            <th class="pb-2 font-semibold">WEIGHT (KG)</th>
-                                            <th class="pb-2 font-semibold">REPS</th>
-                                            <th class="pb-2 font-semibold text-right">ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-cardBorder/50">
-                    `;
-                    ex.sets.forEach((set, setIdx) => {
-                        exHtml += `
-                            <tr>
-                                <td class="py-3 font-bold text-zinc-400">${setIdx + 1}</td>
-                                <td class="py-3"><input type="number" placeholder="0" value="${set.kg === 0 ? '' : set.kg}" onchange="updateSetVal(${state.selectedGymDay}, ${exIdx}, ${setIdx}, 'kg', this.value)" class="bg-cardBg border border-cardBorder rounded-lg px-3 py-1.5 w-20 text-white font-bold text-center"></td>
-                                <td class="py-3"><input type="number" placeholder="0" value="${set.reps === 0 ? '' : set.reps}" onchange="updateSetVal(${state.selectedGymDay}, ${exIdx}, ${setIdx}, 'reps', this.value)" class="bg-cardBg border border-cardBorder rounded-lg px-3 py-1.5 w-20 text-white font-bold text-center"></td>
-                                <td class="py-3 text-right">
-                                    <button onclick="completeSet(${state.selectedGymDay}, ${exIdx}, ${setIdx})" class="px-3 py-1.5 rounded-lg font-bold transition text-xs ${set.done ? 'bg-emerald-600 text-white' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'}">
-                                        ${set.done ? '✓ COMPLETE' : 'CHECK SET'}
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    exHtml += `
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="flex items-center justify-between pt-2">
-                                <span class="text-xs text-zinc-400"><i class="fa-regular fa-clock"></i> REST 120 SEC</span>
-                                <button onclick="startRestTimer(120)" class="text-xs bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 px-3 py-1.5 rounded-lg border border-purple-500/30 transition font-semibold">START TIMER</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                exHtml += `</div>`;
-            }
-
-            container.innerHTML = exHtml;
-        }
-
-        function renderFoodView() {
-            let totalCal = 0, totalProt = 0, totalCarbs = 0, totalFat = 0;
-            ['Breakfast', 'Lunch', 'Dinner', 'Snacks'].forEach(category => {
-                const listEl = document.getElementById('mealList' + category);
-                const items = state.meals[category];
-                if(!items || items.length === 0) {
-                    listEl.innerHTML = `<p class="text-xs text-zinc-500 italic py-2">No items added yet.</p>`;
-                } else {
-                    listEl.innerHTML = items.map((item, idx) => {
-                        totalCal += (item.cal || 0);
-                        totalProt += (item.protein || 0);
-                        totalCarbs += (item.carbs || 0);
-                        totalFat += (item.fat || 0);
-                        return `
-                            <div class="flex items-center justify-between bg-darkBg border border-cardBorder p-3 rounded-xl text-xs">
-                                <div>
-                                    <span class="font-bold text-white block">${item.name}</span>
-                                    <span class="text-zinc-400">${item.cal} kcal | P: <strong class="text-purple-400">${item.protein}g</strong> | C: ${item.carbs || 0}g | F: ${item.fat || 0}g</span>
-                                </div>
-                                <button onclick="removeFoodItem('${category}', ${idx})" class="text-zinc-500 hover:text-red-400 p-1"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        `;
-                    }).join('');
-                }
-            });
-
-            document.getElementById('foodTotalCalories').innerText = totalCal;
-            document.getElementById('foodTotalProtein').innerText = totalProt + 'g';
-            document.getElementById('foodProteinVal').innerText = totalProt + 'g / 170g';
-            document.getElementById('foodCarbsVal').innerText = totalCarbs + 'g / 220g';
-            document.getElementById('foodFatVal').innerText = totalFat + 'g / 70g';
-            
-            document.getElementById('foodProteinBar').style.width = Math.min(100, Math.round((totalProt / 170)*100)) + '%';
-            document.getElementById('foodCarbsBar').style.width = Math.min(100, Math.round((totalCarbs / 220)*100)) + '%';
-            document.getElementById('foodFatBar').style.width = Math.min(100, Math.round((totalFat / 70)*100)) + '%';
-        }
-
-        function renderBodyView() {
-            document.getElementById('bodyCurrentWeight').innerHTML = `${state.weight} <span class="text-xl font-bold text-zinc-400">KG</span>`;
-            document.getElementById('body7DayAvg').innerText = `${state.weight} KG`;
-
-            const grid = document.getElementById('bodyCompositionGrid');
-            grid.innerHTML = state.bodyAnalysis.map(item => `
-                <div class="bg-darkBg border border-cardBorder p-4 rounded-xl">
-                    <span class="text-xs font-semibold text-zinc-400 block mb-1">${item.label}</span>
-                    <h4 class="text-lg font-black text-white">${item.val}</h4>
-                </div>
-            `).join('');
-        }
-
-        function renderHabitsView() {
-            const checklist = document.getElementById('habitsTodayChecklist');
-            const items = [
-                { key: 'gym', label: 'Gym Workout', icon: 'fa-dumbbell' },
-                { key: 'prayer', label: '5 Daily Prayers', icon: 'fa-mosque' },
-                { key: 'adhkar', label: 'Morning & Evening Adhkar', icon: 'fa-hands-praying' },
-                { key: 'quran', label: 'Quran Reading (5 Pages)', icon: 'fa-book-quran' },
-                { key: 'study', label: 'Study Session', icon: 'fa-graduation-cap' },
-                { key: 'saving', label: 'Daily Saving', icon: 'fa-piggy-bank' },
-                { key: 'sleepHabit', label: 'Sleep 7h+', icon: 'fa-bed' },
-                { key: 'shower', label: 'Shower', icon: 'fa-shower' },
-                { key: 'teeth', label: 'Brush Teeth', icon: 'fa-tooth' },
-                { key: 'tidyRoom', label: 'Tidy Room', icon: 'fa-broom' },
-                { key: 'noExplicit', label: 'No Explicit Content', icon: 'fa-shield-halved' },
-                { key: 'supplement', label: 'Supplement (Limitless)', icon: 'fa-pills' }
-            ];
-
-            checklist.innerHTML = items.map(item => `
-                <div onclick="toggleHabit('${item.key}')" class="flex items-center justify-between bg-darkBg border ${state.habitsToday[item.key] ? 'border-purple-500/50 bg-purple-600/10' : 'border-cardBorder'} p-3.5 rounded-xl cursor-pointer hover:border-purple-500 transition">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid ${item.icon} text-purple-400"></i>
-                        <span class="text-xs font-semibold text-zinc-200">${item.label}</span>
-                    </div>
-                    <span class="text-xs font-bold ${state.habitsToday[item.key] ? 'text-emerald-400' : 'text-zinc-600'}">${state.habitsToday[item.key] ? '✓' : '○'}</span>
-                </div>
-            `).join('');
-
-            const matrix = document.getElementById('habitsMatrixContainer');
-            const habitsRows = [
-                { name: "🏋️ Gym", key: "gym" },
-                { name: "🕌 Prayers", key: "prayer" },
-                { name: "😴 Sleep 7h+", key: "sleepHabit" },
-                { name: "📿 Adhkar", key: "adhkar" },
-                { name: "📖 Quran", key: "quran" },
-                { name: "💰 Savings", key: "saving" },
-                { name: "📚 Study", key: "study" },
-                { name: "🚿 Shower", key: "shower" },
-                { name: "🦷 Teeth", key: "teeth" },
-                { name: "🧹 Tidy Room", key: "tidyRoom" },
-                { name: "🚫 No Explicit", key: "noExplicit" },
-                { name: "💊 Supplement", key: "supplement" }
-            ];
-
-            let matrixHtml = `
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="border-b border-cardBorder text-zinc-400">
-                            <th class="pb-3 font-semibold w-40">Habit</th>
-            `;
-            for(let d=1; d<=14; d++) {
-                matrixHtml += `<th class="pb-3 font-semibold text-center w-10">D${d}</th>`;
-            }
-            matrixHtml += `</tr></thead><tbody class="divide-y divide-cardBorder/50">`;
-
-            habitsRows.forEach(row => {
-                matrixHtml += `<tr><td class="py-3 font-bold text-white">${row.name}</td>`;
-                for(let d=1; d<=14; d++) {
-                    let done = d === state.currentDay ? state.habitsToday[row.key] : false;
-                    matrixHtml += `<td class="py-3 text-center"><span class="${done ? 'text-emerald-400 font-bold' : 'text-zinc-600'}">${done ? '✓' : '○'}</span></td>`;
-                }
-                matrixHtml += `</tr>`;
-            });
-            matrixHtml += `</tbody></table>`;
-            matrix.innerHTML = matrixHtml;
-
-            const pList = document.getElementById('prayerList');
-            let pDoneCount = Object.values(state.prayers).filter(Boolean).length;
-            document.getElementById('prayerCountBadge').innerText = `${pDoneCount} / 5`;
-            pList.innerHTML = Object.keys(state.prayers).map(p => `
-                <div onclick="togglePrayer('${p}')" class="flex items-center justify-between bg-darkBg border border-cardBorder p-2.5 rounded-xl cursor-pointer hover:border-purple-500 transition text-xs">
-                    <span class="font-semibold text-zinc-300">${p}</span>
-                    <span class="font-bold ${state.prayers[p] ? 'text-emerald-400' : 'text-zinc-600'}">${state.prayers[p] ? '✓ Done' : '○ Pending'}</span>
-                </div>
-            `).join('');
-
-            document.getElementById('quranPctDisplay').innerText = state.quranDone ? "100% Done" : "0% Done";
-            document.getElementById('quranBar').style.width = state.quranDone ? "100%" : "0%";
-            document.getElementById('quranBtn').className = state.quranDone ? "w-full mt-2 bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg transition" : "w-full mt-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold py-2 rounded-lg border border-zinc-700 transition";
-            document.getElementById('quranBtn').innerText = state.quranDone ? "COMPLETED ✓" : "MARK COMPLETE";
-
-            document.getElementById('adhkarMorning').innerText = state.adhkar.morning ? "✓ Done" : "○ Pending";
-            document.getElementById('adhkarMorning').className = state.adhkar.morning ? "text-emerald-400 font-bold" : "text-zinc-500 font-bold";
-            document.getElementById('adhkarEvening').innerText = state.adhkar.evening ? "✓ Done" : "○ Pending";
-            document.getElementById('adhkarEvening').className = state.adhkar.evening ? "text-emerald-400 font-bold" : "text-zinc-500 font-bold";
-
-            document.getElementById('savingTotalDisplay').innerText = `${state.savings} EGP / ${state.savingTarget} EGP`;
-            document.getElementById('savingTargetInput').value = state.savingTarget;
-            document.getElementById('studyTodayDisplay').innerText = `${state.studyTotalMins} min`;
-        }
-
-        let currentActiveWeek = 1;
-        function renderProgressView() {
-            const btnContainer = document.getElementById('weekButtonsContainer');
-            let btnHtml = '';
-            for(let w=1; w<=13; w++) {
-                btnHtml += `<button onclick="switchWeek(${w})" id="btnWeek${w}" class="px-3 py-1.5 rounded-xl text-xs font-bold ${w === currentActiveWeek ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'} transition">W${w}</button>`;
-            }
-            btnContainer.innerHTML = btnHtml;
-
-            let completedWorkoutsCount = 0;
-            for(let i=1; i<=state.currentDay; i++) {
-                if(state.workouts[i] && state.workouts[i].completed) completedWorkoutsCount++;
-            }
-
-            const bodyBox = document.getElementById('weeklyBodyMetrics');
-            bodyBox.innerHTML = `
-                <div class="flex justify-between items-center bg-darkBg border border-cardBorder p-3.5 rounded-xl text-xs">
-                    <span class="text-zinc-400">Current Weight</span>
-                    <strong class="text-white">${state.weight} KG</strong>
-                </div>
-                <div class="flex justify-between items-center bg-darkBg border border-cardBorder p-3.5 rounded-xl text-xs">
-                    <span class="text-zinc-400">Workouts Completed</span>
-                    <strong class="text-purple-400">${completedWorkoutsCount} / ${state.currentDay}</strong>
-                </div>
-                <div class="flex justify-between items-center bg-darkBg border border-cardBorder p-3.5 rounded-xl text-xs">
-                    <span class="text-zinc-400">Total Savings</span>
-                    <strong class="text-white">${state.savings} EGP</strong>
-                </div>
-                <div class="flex justify-between items-center bg-darkBg border border-cardBorder p-3.5 rounded-xl text-xs">
-                    <span class="text-zinc-400">Average Steps</span>
-                    <strong class="text-white">${state.steps.toLocaleString()} steps</strong>
-                </div>
-            `;
-
-            let exercisesFound = {};
-            for(let d=1; d<=state.currentDay; d++) {
-                if(state.workouts[d] && state.workouts[d].exercises) {
-                    state.workouts[d].exercises.forEach(ex => {
-                        ex.sets.forEach(set => {
-                            if(set.kg > 0 && set.reps > 0) {
-                                if(!exercisesFound[ex.name] || set.kg > exercisesFound[ex.name].kg) {
-                                    exercisesFound[ex.name] = { kg: set.kg, reps: set.reps };
-                                }
+                            if (p.text) {
+                                bhCtx.font = '12px Cairo, sans-serif';
+                                bhCtx.fillStyle = p.color;
+                                bhCtx.fillText(p.text, px, py);
+                            } else {
+                                bhCtx.fillStyle = p.color;
+                                bhCtx.beginPath();
+                                bhCtx.arc(px, py, p.size, 0, Math.PI * 2);
+                                bhCtx.fill();
                             }
                         });
-                    });
-                }
-            }
+                    }
+                    else if (phase === 'supernova') {
+                        phaseTimer += 0.02;
 
-            const strBox = document.getElementById('weeklyStrengthMetrics');
-            const keys = Object.keys(exercisesFound);
-            if(keys.length === 0) {
-                strBox.innerHTML = `<p class="text-xs text-zinc-500 italic py-4">No weights logged yet. Start logging sets in Gym Workout.</p>`;
-            } else {
-                strBox.innerHTML = keys.slice(0, 5).map(name => {
-                    let pr = exercisesFound[name];
-                    return `
-                        <div class="bg-darkBg border border-cardBorder p-4 rounded-xl space-y-1">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="font-bold text-white">${name}</span>
-                                <span class="text-emerald-400 font-bold">PR: ${pr.kg} KG × ${pr.reps}</span>
-                            </div>
-                            <p class="text-xs text-purple-400 font-semibold">Active Progressive Overload</p>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
+                        // Flash expansion
+                        const flashR = phaseTimer * (bhCanvas.width * 0.6);
+                        bhCtx.fillStyle = `rgba(255, 75, 139, ${Math.max(0, 1 - phaseTimer)})`;
+                        bhCtx.beginPath();
+                        bhCtx.arc(cx, cy, flashR, 0, Math.PI * 2);
+                        bhCtx.fill();
 
-        function switchWeek(w) {
-            currentActiveWeek = w;
-            renderProgressView();
-        }
-
-        function renderReportView() {
-            let completedWorkoutsCount = 0;
-            for(let i=1; i<=90; i++) {
-                if(state.workouts[i] && state.workouts[i].completed) completedWorkoutsCount++;
-            }
-
-            const grid = document.getElementById('finalReportGrid');
-            const metrics = [
-                { label: "START WEIGHT", val: "99.2 KG" },
-                { label: "CURRENT / END", val: `${state.weight} KG` },
-                { label: "TOTAL CHANGE", val: `${Math.round((state.weight - 99.2)*10)/10} KG` },
-                { label: "WORKOUTS COMPLETED", val: `${completedWorkoutsCount} / 90` },
-                { label: "TOTAL SAVED", val: `${state.savings} EGP` },
-                { label: "STUDY TOTAL", val: `${state.studyTotalMins} mins` },
-                { label: "HABIT CONSISTENCY", val: "88%" }
-            ];
-
-            grid.innerHTML = metrics.map(m => `
-                <div class="bg-darkBg/80 border border-cardBorder p-5 rounded-2xl text-center">
-                    <span class="text-xs font-bold text-purple-400 uppercase tracking-wider block mb-1">${m.label}</span>
-                    <h3 class="text-xl sm:text-2xl font-black text-white">${m.val}</h3>
-                </div>
-            `).join('');
-        }
-
-        function addWater(amount) {
-            state.waterLiters = Math.max(0, Math.round((state.waterLiters + amount / 1000) * 10) / 10);
-            renderTodayView();
-        }
-
-        let activeMealCategory = 'Breakfast';
-        function openAddFoodModal(cat) {
-            activeMealCategory = cat;
-            document.getElementById('foodModalTitle').innerText = `Add to ${cat}`;
-            document.getElementById('foodItemName').value = '';
-            document.getElementById('foodItemCal').value = '';
-            document.getElementById('foodItemProtein').value = '';
-            document.getElementById('foodItemCarbs').value = '';
-            document.getElementById('foodItemFat').value = '';
-            document.getElementById('foodModal').classList.remove('hidden');
-        }
-
-        function closeFoodModal() {
-            document.getElementById('foodModal').classList.add('hidden');
-        }
-
-        function saveFoodItem() {
-            const name = document.getElementById('foodItemName').value || 'Custom Item';
-            const cal = parseInt(document.getElementById('foodItemCal').value) || 0;
-            const protein = parseInt(document.getElementById('foodItemProtein').value) || 0;
-            const carbs = parseInt(document.getElementById('foodItemCarbs').value) || 0;
-            const fat = parseInt(document.getElementById('foodItemFat').value) || 0;
-            
-            if(!state.meals[activeMealCategory]) state.meals[activeMealCategory] = [];
-            state.meals[activeMealCategory].push({ name, cal, protein, carbs, fat });
-            closeFoodModal();
-            renderFoodView();
-            renderTodayView();
-        }
-
-        function removeFoodItem(cat, idx) {
-            state.meals[cat].splice(idx, 1);
-            renderFoodView();
-            renderTodayView();
-        }
-
-        function openWeightModal() {
-            document.getElementById('weightInputVal').value = state.weight;
-            document.getElementById('weightModal').classList.remove('hidden');
-        }
-
-        function saveWeight() {
-            const val = parseFloat(document.getElementById('weightInputVal').value);
-            if(!isNaN(val)) {
-                state.weight = val;
-                state.weightHistory[todayDateKey] = val;
-                document.getElementById('weightModal').classList.add('hidden');
-                renderAll();
-                alertBox('Weight successfully logged!');
-            }
-        }
-
-        function openStepsModal() {
-            document.getElementById('stepsInputVal').value = state.steps;
-            document.getElementById('stepsGoalInputVal').value = state.stepsGoal;
-            document.getElementById('stepsModal').classList.remove('hidden');
-        }
-
-        function saveSteps() {
-            const steps = parseInt(document.getElementById('stepsInputVal').value);
-            const goal = parseInt(document.getElementById('stepsGoalInputVal').value);
-            if(!isNaN(steps)) state.steps = steps;
-            if(!isNaN(goal)) state.stepsGoal = goal;
-            document.getElementById('stepsModal').classList.add('hidden');
-            renderTodayView();
-        }
-
-        function openSleepModal() {
-            document.getElementById('sleepModal').classList.remove('hidden');
-        }
-
-        function saveSleep() {
-            const bed = document.getElementById('sleepBedInput').value;
-            const wake = document.getElementById('sleepWakeInput').value;
-            const quality = parseInt(document.getElementById('sleepQualityInput').value);
-            state.sleep = { bed, wake, total: "7h 30m", quality };
-            state.habitsToday.sleepHabit = true;
-            document.getElementById('sleepModal').classList.add('hidden');
-            renderTodayView();
-            renderHabitsView();
-            alertBox('Sleep logged successfully!');
-        }
-
-        function toggleHabit(key) {
-            state.habitsToday[key] = !state.habitsToday[key];
-            renderTodayView();
-            renderHabitsView();
-        }
-
-        function togglePrayer(p) {
-            state.prayers[p] = !state.prayers[p];
-            let allDone = Object.values(state.prayers).every(Boolean);
-            state.habitsToday.prayer = allDone;
-            renderHabitsView();
-            renderTodayView();
-        }
-
-        function toggleQuranToday() {
-            state.quranDone = !state.quranDone;
-            state.habitsToday.quran = state.quranDone;
-            renderHabitsView();
-            renderTodayView();
-        }
-
-        function toggleAdhkar(type) {
-            state.adhkar[type] = !state.adhkar[type];
-            state.habitsToday.adhkar = state.adhkar.morning && state.adhkar.evening;
-            renderHabitsView();
-            renderTodayView();
-        }
-
-        function updateSavingTarget(val) {
-            let t = parseInt(val);
-            if(!isNaN(t)) {
-                state.savingTarget = t;
-                saveState();
-            }
-        }
-
-        function addSaving() {
-            const amt = parseInt(document.getElementById('quickSaveInput').value) || 0;
-            if(amt > 0) {
-                state.savings += amt;
-                state.habitsToday.saving = true;
-                document.getElementById('quickSaveInput').value = '';
-                renderHabitsView();
-                alertBox(`Successfully saved ${amt} EGP! Total: ${state.savings} EGP`);
-            }
-        }
-
-        function logStudy() {
-            const mins = parseInt(document.getElementById('studyMinutesInput').value) || 45;
-            state.studyTotalMins += mins;
-            state.habitsToday.study = true;
-            renderHabitsView();
-            alertBox(`Logged ${mins} minutes study session!`);
-        }
-
-        function selectGymDay(day) {
-            state.selectedGymDay = day;
-            renderGymView();
-        }
-
-        function updateSetVal(day, exIdx, setIdx, field, val) {
-            let v = parseFloat(val) || 0;
-            state.workouts[day].exercises[exIdx].sets[setIdx][field] = v;
-            
-            if(v > 0) {
-                let exName = state.workouts[day].exercises[exIdx].name;
-                for(let d = day + 1; d <= 90; d++) {
-                    if(state.workouts[d] && state.workouts[d].exercises) {
-                        let targetEx = state.workouts[d].exercises.find(e => e.name === exName);
-                        if(targetEx && targetEx.sets[setIdx] && targetEx.sets[setIdx][field] === 0) {
-                            targetEx.sets[setIdx][field] = v;
+                        if (phaseTimer >= 1) {
+                            phase = 'heart';
+                            const coreText = document.getElementById('heartCoreText');
+                            if (coreText) coreText.classList.remove('opacity-0');
                         }
                     }
+                    else if (phase === 'heart') {
+                        // Smoothly transition particles into the heart shape
+                        particles.forEach(p => {
+                            const curX = cx + Math.cos(p.angle) * p.radius;
+                            const curY = cy + Math.sin(p.angle) * p.radius;
+
+                            // Lerp to heart target
+                            const destX = cx + p.targetX;
+                            const destY = cy + p.targetY;
+
+                            p.x += (destX - (p.x || curX)) * 0.05;
+                            p.y += (destY - (p.y || curY)) * 0.05;
+
+                            bhCtx.fillStyle = p.color;
+                            bhCtx.beginPath();
+                            bhCtx.arc(p.x, p.y, p.size * 1.2, 0, Math.PI * 2);
+                            bhCtx.fill();
+                        });
+                    }
+
+                    requestAnimationFrame(animateBlackHole);
+                }
+
+                animateBlackHole();
+            }
+
+
+            /* ================= 7. FINAL SCENE BUTTON REVEAL ================= */
+            const btnFinal = document.getElementById('btn-final');
+            const finalModal = document.getElementById('final-modal');
+
+            if (btnFinal && finalModal) {
+                btnFinal.addEventListener('click', () => {
+                    finalModal.classList.remove('hidden');
+                    setTimeout(() => finalModal.classList.remove('opacity-0'), 50);
+                    spawnRosePetalsShower();
+                });
+            }
+
+            function spawnRosePetalsShower() {
+                for (let i = 0; i < 35; i++) {
+                    const petal = document.createElement('div');
+                    petal.innerHTML = '🌸';
+                    petal.style.position = 'fixed';
+                    petal.style.top = '-20px';
+                    petal.style.left = Math.random() * 100 + 'vw';
+                    petal.style.fontSize = (Math.random() * 18 + 14) + 'px';
+                    petal.style.opacity = Math.random().toString();
+                    petal.style.pointerEvents = 'none';
+                    petal.style.zIndex = '9999';
+                    petal.style.transition = `transform ${Math.random() * 3 + 3}s linear, opacity ${Math.random() * 3 + 3}s linear`;
+                    document.body.appendChild(petal);
+
+                    setTimeout(() => {
+                        petal.style.transform = `translateY(105vh) rotate(${Math.random() * 360}deg)`;
+                        petal.style.opacity = '0';
+                    }, 40);
+
+                    setTimeout(() => petal.remove(), 6000);
                 }
             }
-            saveState();
-        }
 
-        function completeSet(day, exIdx, setIdx) {
-            const set = state.workouts[day].exercises[exIdx].sets[setIdx];
-            set.done = !set.done;
-            renderGymView();
-        }
-
-        function completeWorkout(day) {
-            if(!state.workouts[day]) {
-                state.workouts[day] = { title: "WORKOUT", completed: true, exercises: [] };
-            }
-            state.workouts[day].completed = !state.workouts[day].completed;
-            if(day === state.currentDay) {
-                state.habitsToday.gym = state.workouts[day].completed;
-            }
-            renderGymView();
-            renderTodayView();
-            alertBox(state.workouts[day].completed ? 'Workout marked as completed! Progressive overload saved.' : 'Workout status updated.');
-        }
-
-        // --- Rest Timer ---
-        let timerInterval = null;
-        let timeLeft = 120;
-
-        function startRestTimer(seconds = 120) {
-            timeLeft = seconds;
-            document.getElementById('restTimerModal').classList.remove('hidden');
-            document.getElementById('timerDisplay').innerText = `${timeLeft}s`;
-            if(timerInterval) clearInterval(timerInterval);
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timerDisplay').innerText = `${timeLeft}s`;
-                if(timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    playBeepSound();
-                    if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                    document.getElementById('timerDisplay').innerText = "TIME'S UP!";
-                }
-            }, 1000);
-        }
-
-        function addTimerSeconds(s) {
-            timeLeft += s;
-            document.getElementById('timerDisplay').innerText = `${timeLeft}s`;
-        }
-
-        function stopRestTimer() {
-            if(timerInterval) clearInterval(timerInterval);
-            document.getElementById('restTimerModal').classList.add('hidden');
-        }
-
-        function playBeepSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = 880;
-                gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.5);
-            } catch(e) {}
-        }
-
-        function openDaySelector() {
-            const d = prompt("Enter current transform day (1 to 90):", state.currentDay);
-            if(d !== null) {
-                const parsed = parseInt(d);
-                if(parsed >= 1 && parsed <= 90) {
-                    state.currentDay = parsed;
-                    state.selectedGymDay = parsed;
-                    renderAll();
-                }
-            }
-        }
-
-        function exportReportPDF() {
-            window.print();
-        }
-
-        function exportReportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "leith_90_day_transformation_report.json");
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-            alertBox("Report successfully downloaded as JSON!");
-        }
-
-        function resetData() {
-            if(confirm("Are you sure you want to reset LEITH 90-day transformation data to default?")) {
-                localStorage.removeItem('leith_state_90');
-                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                renderAll();
-                alertBox('Data reset successfully.');
-            }
-        }
-
-        window.onload = function() {
-            loadState();
-        };
+        });
     </script>
 </body>
 </html>
